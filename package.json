@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "ECHO 'Use 'yarn dev-web' to edit the frontend in browser or 'yarn dev-app' to run the tauri app in dev mode.'",
+    "dev-web": "cd web_frontend && yarn dev",
+    "dev-app": "node warning_message.js &&cd src-tauri && tauri dev",
+    "sync-app": "node sync_app.js"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.14"
+  },
+  "dependencies": {
+    "prompt-confirm": "^2.0.4"
+  }
+}
