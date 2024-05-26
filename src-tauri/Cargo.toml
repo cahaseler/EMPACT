@@ -5,7 +5,7 @@ description = "EMPACT: Environment and Maturity Project Assessment and Control T
 authors = ["you"]
 license = ""
 repository = ""
-default-run = "app"
+default-run = "EMPACT"
 edition = "2021"
 rust-version = "1.60"
 

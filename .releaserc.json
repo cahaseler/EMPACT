@@ -151,7 +151,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "export TAUR_FIPS_COMPLIANT=true && cd src-tauri && yarn tauri build"
+        "prepareCmd": "export TAUR_FIPS_COMPLIANT=true && cd src-tauri && yarn tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc"
       }
     ],
     [
@@ -159,8 +159,8 @@
       {
         "assets": [
           {
-            "path": "dist/EMPACT_Installer_Windows_{nextRelease.version}.exe",
-            "label": "Windows Installer"
+            "path": "src-tauri/target/release/bundle/nsis/EMPACT_{nextRelease.version}_x64-setup.exe",
+            "label": "Windows EXE installer"
           }
         ],
         "addReleases": "bottom"
