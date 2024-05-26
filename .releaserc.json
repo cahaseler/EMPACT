@@ -115,8 +115,8 @@
           },
           {
             "files": ["src-tauri/Cargo.toml"],
-            "from": "version = \"(.*?)\"",
-            "to": "version = \"${nextRelease.version}\"",
+            "from": "name = \"EMPACT\"\\nversion = \"(.*?)\"",
+            "to": "name = \"EMPACT\"\\nversion = \"${nextRelease.version}\"",
             "results": [
               {
                 "file": "src-tauri/Cargo.toml",
