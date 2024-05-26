@@ -7,7 +7,7 @@
     "distDir": "../web_static/out"
   },
   "package": {
-    "productName": "PROMISE",
+    "productName": "EMPACT",
     "version": "0.1.0"
   },
   "tauri": {
@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "gov.doe.pars.promise",
+      "identifier": "gov.doe.pars.empact",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
