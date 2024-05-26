@@ -21,25 +21,19 @@ jobs:
           ref: main
           persist-credentials: false
 
-      - name: Copy frontend files to web_static
-        run: |
-          mkdir -p 'web_static/app/(frontend)/'
-          cp -rf 'web/app/(frontend)'/* 'web_static/app/(frontend)'
-          mkdir -p web_static/public
-          cp -rf web/public/* web_static/public
-
-      - name: install dependencies
+      - name: Install Rust dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf nsis lld llvm
 
-      - uses: actions/setup-node@v3
+      - name: Install node 18
+        uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: yarn
           cache-dependency-path: yarn.lock
 
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
       - name: Rust cache
@@ -47,16 +41,22 @@ jobs:
         with:
           workspaces: "./src-tauri -> target"
 
-      - name: install tauri dependencies
+      - name: Install Tauri dependencies
         run: |
           rustup target add x86_64-pc-windows-msvc
           cargo install cargo-xwin
 
-      - name: install and build static webapp
+      - name: Build webapp for docker and static webapp for tauri
         run: |
+          mkdir -p 'web_static/app/(frontend)/'
+          cp -rf 'web/app/(frontend)'/* 'web_static/app/(frontend)'
+          mkdir -p web_static/public
+          cp -rf web/public/* web_static/public
+          cd yarn-web && yarn build && cd ..
           cd web_static && yarn install && cd ..
 
-      - uses: actions/setup-node@v3
+      - name: Swap to node 14 for semantic release compatibility
+        uses: actions/setup-node@v3
         with:
           node-version: 14
 
