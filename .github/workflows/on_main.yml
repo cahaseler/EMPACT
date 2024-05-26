@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  semantic-release:
+  build_and_release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
