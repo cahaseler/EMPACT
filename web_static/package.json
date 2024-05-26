@@ -1,6 +1,19 @@
 {
-  "name": "empact_offline",
+  "name": "empact_local",
   "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "description": "Environment and Maturity Program Assessment and Control Tool",
+  "keywords": [
+    "Earned Value",
+    "Project Management"
+  ],
+  "repository": "https://github.com/cahaseler/EMPACT",
+  "homepage": "https://github.com/cahaseler/EMPACT",
+  "bugs": "https://github.com/cahaseler/EMPACT/issues",
+  "author": {
+    "name": "cahaseler",
+    "url": "https://github.com/cahaseler"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,14 +35,5 @@
     "tailwindcss": "^3.4.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.3"
-  },
-  "pkg": {
-    "scripts": ".next/standalone/**/*.*",
-    "assets": "public/**/*.*",
-    "targets": [
-      "node18-linux-arm64",
-      "node18-win-x64"
-    ],
-    "outputPath": "dist"
   }
 }

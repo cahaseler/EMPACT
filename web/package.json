@@ -1,6 +1,19 @@
 {
   "name": "empact_web",
   "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "description": "Environment and Maturity Program Assessment and Control Tool",
+  "keywords": [
+    "Earned Value",
+    "Project Management"
+  ],
+  "repository": "https://github.com/cahaseler/EMPACT",
+  "homepage": "https://github.com/cahaseler/EMPACT",
+  "bugs": "https://github.com/cahaseler/EMPACT/issues",
+  "author": {
+    "name": "cahaseler",
+    "url": "https://github.com/cahaseler"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",

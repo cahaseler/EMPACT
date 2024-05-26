@@ -29,7 +29,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "gov.doe.pars.empact",
+      "identifier": "com.empact",
       "longDescription": "EMPACT: The Environment and Maturity Program Assessment and Control Tool is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model.",
       "macOS": {
         "entitlements": null,
@@ -39,7 +39,7 @@
         "signingIdentity": null
       },
       "resources": [],
-      "shortDescription": "",
+      "shortDescription": "EMPACT: Environment and Maturity Program Assessment and Control Tool",
       "targets": "all",
       "windows": {
         "certificateThumbprint": null,

@@ -2,9 +2,9 @@
 name = "EMPACT"
 version = "0.1.0"
 description = "EMPACT: Environment and Maturity Project Assessment and Control Tool"
-authors = ["you"]
-license = ""
-repository = ""
+authors = ["Craig Haseler"]
+license = "CC BY 4.0"
+repository = "https://github.com/cahaseler/EMPACT"
 default-run = "EMPACT"
 edition = "2021"
 rust-version = "1.60"
