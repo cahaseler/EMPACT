@@ -70,12 +70,12 @@
             "countMatches": true
           },
           {
-            "files": ["web/app/components/version-indicator.tsx"],
+            "files": ["web/app/(frontend)/components/version-indicator.tsx"],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "web/app/components/version-indicator.tsx",
+                "file": "web/app/(frontend)/components/version-indicator.tsx",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -84,12 +84,14 @@
             "countMatches": true
           },
           {
-            "files": ["web_static/app/components/version-indicator.tsx"],
+            "files": [
+              "web_static/app/(frontend)/components/version-indicator.tsx"
+            ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
             "results": [
               {
-                "file": "web_static/app/components/version-indicator.tsx",
+                "file": "web_static/app/(frontend)/components/version-indicator.tsx",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -136,8 +138,8 @@
           "web/package.json",
           "web_static/package.json",
           "web/app/api/version/route.ts",
-          "web/app/components/version-indicator.tsx",
-          "web_static/app/components/version-indicator.tsx"
+          "web/app/(frontend)/components/version-indicator.tsx",
+          "web_static/app/(frontend)/components/version-indicator.tsx"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
