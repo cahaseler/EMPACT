@@ -1,0 +1,170 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "angular",
+        "releaseRules": [
+          { "type": "docs", "release": false },
+          { "scope": "no-release", "release": false },
+          { "type": "refactor", "release": "patch" },
+          { "type": "chore", "release": "patch" },
+          { "type": "test", "release": false },
+          { "type": "build", "release": "patch" },
+          { "type": "ci", "release": false },
+          { "type": "style", "release": "patch" }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "angular"
+      }
+    ],
+    [
+      "@google/semantic-release-replace-plugin",
+      {
+        "replacements": [
+          {
+            "files": ["package.json"],
+            "from": "\"version\": \"(.*?)\"",
+            "to": "\"version\": \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "package.json",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["web/package.json"],
+            "from": "\"version\": \"(.*?)\"",
+            "to": "\"version\": \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "web/package.json",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["web_static/package.json"],
+            "from": "\"version\": \"(.*?)\"",
+            "to": "\"version\": \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "web_static/package.json",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["web/app/components/version-indicator.tsx"],
+            "from": "version: \"(.*?)\"",
+            "to": "version: \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "web/app/components/version-indicator.tsx",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["web_static/app/components/version-indicator.tsx"],
+            "from": "version: \"(.*?)\"",
+            "to": "version: \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "web/app/components/version-indicator.tsx",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["web/app/api/version/route.ts"],
+            "from": "version: \"(.*?)\"",
+            "to": "version: \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "web/app/api/version/route.ts",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
+            "files": ["src-tauri/Cargo.toml"],
+            "from": "version = \"(.*?)\"",
+            "to": "version = \"${nextRelease.version}\"",
+            "results": [
+              {
+                "file": "src-tauri/Cargo.toml",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "package.json",
+          "web/package.json",
+          "web_static/package.json",
+          "web/app/api/version/route.ts",
+          "web/app/components/version-indicator.tsx",
+          "web_static/app/components/version-indicator.tsx"
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    [
+      "@codedependant/semantic-release-docker",
+      {
+        "dockerProject": "cahaseler/empact"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "export TAUR_FIPS_COMPLIANT=true && cd src-tauri && yarn tauri build"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "dist/EMPACT_Installer_Windows_{nextRelease.version}.exe",
+            "label": "Windows Installer"
+          }
+        ],
+        "addReleases": "bottom"
+      }
+    ]
+  ]
+}

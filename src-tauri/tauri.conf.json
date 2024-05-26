@@ -4,7 +4,7 @@
     "beforeBuildCommand": "cd web_static && yarn build && cd ..",
     "beforeDevCommand": "cd web_static && yarn dev && cd ..",
     "devPath": "http://localhost:3000",
-    "distDir": "../web_static/out"
+    "distDir": "../dist"
   },
   "package": {
     "productName": "EMPACT",
@@ -16,8 +16,8 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
+      "category": "Business",
+      "copyright": "CC BY 4.0",
       "deb": {
         "depends": []
       },
@@ -30,7 +30,7 @@
         "icons/icon.ico"
       ],
       "identifier": "gov.doe.pars.empact",
-      "longDescription": "",
+      "longDescription": "EMPACT: The Environment and Maturity Program Assessment and Control Tool is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -44,7 +44,10 @@
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "webviewInstallMode": {
+          "type": "offlineInstaller"
+        }
       }
     },
     "security": {
@@ -58,7 +61,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "PROMISE",
+        "title": "EMPACT",
         "width": 800
       }
     ]

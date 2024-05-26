@@ -1,15 +1,18 @@
 {
+  "name": "empact",
+  "version": "0.1.0",
   "scripts": {
     "dev": "ECHO 'Use 'yarn dev-web' to edit the frontend in browser or 'yarn dev-app' to run the tauri app in dev mode.'",
-    "dev-web": "cd web_frontend && yarn dev",
+    "dev-web": "cd web && yarn dev",
     "dev-app": "node warning_message.js &&cd src-tauri && tauri dev",
     "sync-app": "node sync_app.js"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.14"
+    "@tauri-apps/cli": "^1.5.14",
+    "@codedependant/semantic-release-docker": "^5.0.3",
+    "prompt-confirm": "^2.0.4"
   },
   "dependencies": {
-    "prompt-confirm": "^2.0.4"
   },
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
 }

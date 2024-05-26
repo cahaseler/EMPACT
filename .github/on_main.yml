@@ -1,0 +1,195 @@
+name: release
+
+on:
+  push:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: false
+
+      - name: Generate GitHub App Token
+        id: generate-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Semantic Release
+        id: semantic-release
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          # You can specify specifying version range for the extra plugins if you prefer.
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+            @semantic-release/github
+            @google/semantic-release-replace-plugin@1.2.0
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+    outputs:
+      version: ${{ steps.semantic-release.outputs.new_release_version }}
+      notes: ${{ steps.semantic-release.outputs.new_release_notes }}
+      new_release_published: ${{ steps.semantic-release.outputs.new_release_published }}
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: [semantic-release]
+    if: needs.semantic-release.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: test
+
+      # Setup Node.js version (Add this step)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.17.1"
+
+      # Setup pnpm
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Log in to Docker
+      - name: Log in to Docker
+        uses: azure/docker-login@v1
+        with:
+          login-server: parsdocker.azurecr.us
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+        # Build and push Docker image
+      - name: Build and push Docker image
+        env:
+          NEXTAUTH_URL: https://test.pars.doe.gov
+          NEXT_PUBLIC_BASE_URL: https://test.pars.doe.gov
+          ENVIRONMENT: test
+          NODE_ENV: test
+          SQL_USERNAME: parsadmin
+          SQL_PASSWORD: ${{ secrets.SQL_PASSWORD}}
+          DATABASE_URL: ${{ secrets.PRISMA_DATABASE_URL }}
+          DATABASE_URL_EVM: ${{ secrets.PRISMA_DATABASE_URL_EVM }}
+          DATABASE_URL_EVMNEXT: ${{ secrets.PRISMA_DATABASE_URL_EVMNEXT }}
+          DATABASE_URL_EVMDATASTAGING: ${{secrets.PRISMA_DATABASE_URL_EVMDATASTAGING}}
+          SQL_URL: prod-sql-01.public.c0575602f434.database.usgovcloudapi.net
+          DB_PORT: 3342
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING_TEST }}
+          REDISCACHEHOSTNAME: parsnext.redis.cache.usgovcloudapi.net
+          REDISCACHEKEY: ${{ secrets.REDISCACHEKEY }}
+          NODE_OPTIONS: "--max_old_space_size=4096"
+          BUILD_STANDALONE: true
+        run: |
+          sudo apt-get update
+          sudo apt-get install openssl
+          pnpm install
+          npx prisma generate
+          npx prisma generate --schema=prisma/evm.prisma
+          npx prisma generate --schema=prisma/evmnext.prisma
+          npx prisma generate --schema=prisma/evmnextdiq.prisma
+          npx prisma generate --schema=prisma/evmdatastaging.prisma
+          pnpm run build:prod
+          docker build . -t parsdocker.azurecr.us/parsnext-test2:${{ needs.semantic-release.outputs.version }}-${{ github.sha }}
+          docker push parsdocker.azurecr.us/parsnext-test2:${{ needs.semantic-release.outputs.version }}-${{ github.sha }}
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "pars"
+          slot-name: "test"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_PARS_TEST }}
+          images: "parsdocker.azurecr.us/parsnext-test2:${{ needs.semantic-release.outputs.version }}-${{ github.sha }}"
+
+  confirm-frontend-deployment:
+    needs: [build-and-deploy, semantic-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send GET request until it matches expected version or timeout
+        run: |
+          SECONDS=0
+          TIMEOUT=600 # 10 minutes in seconds
+
+          sleep 60 # Initial delay before starting the loop
+          while true; do
+            # Check if the time elapsed is greater than or equal to the TIMEOUT duration
+            if [ $SECONDS -ge $TIMEOUT ]; then
+              echo "Timeout reached. Exiting..."
+              exit 1
+            fi
+
+            RESPONSE=$(curl --silent --header 'Cache-Control: no-cache' "https://test.pars.doe.gov/api/version")
+            
+            if [ $? -ne 0 ]; then
+              echo "Server is not responding. Retrying in 30 seconds..."
+              sleep 30
+              continue
+            fi
+
+            VERSION=$(echo $RESPONSE | jq -r '.version' 2>&1)
+            
+            if [[ $VERSION == *"parse error:"* ]]; then
+              echo "Non-JSON response received. Server is likely offline, please investigate a fully deployment failure. Retrying in 120 seconds..."
+              sleep 120
+              continue
+            fi
+
+            EXPECTED_VERSION="${{ needs.semantic-release.outputs.version }}"
+            
+            if [[ "$VERSION" == "$EXPECTED_VERSION" ]]; then
+              echo "Matched expected version: $EXPECTED_VERSION"
+              break
+            else
+              echo "Version not matched. Expected: $EXPECTED_VERSION but got: $VERSION. Retrying in 30 seconds..."
+              sleep 30
+            fi
+          done
+        shell: bash
+
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Find Current PR
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+        with:
+          state: all
+
+      - name: Notify Mattermost
+        uses: mattermost/action-mattermost-notify@master
+        with:
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL_ALT }}
+          TEXT: |
+            :tada: Version ${{ needs.semantic-release.outputs.version }} has been successfully deployed to https://test.pars.doe.gov. More information is available at [${{ steps.findPr.outputs.title }}](https://github.com/PARS-DOE/parsnext/pull/${{ steps.findPr.outputs.pr }}). When it's ready for Production, open a new Pull Request.
