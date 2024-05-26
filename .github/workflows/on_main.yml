@@ -60,6 +60,7 @@ jobs:
             @semantic-release/changelog
             @semantic-release/git
             @semantic-release/github
+            @semantic-release/exec
             @google/semantic-release-replace-plugin@1.2.0
             @codedependant/semantic-release-docker
         env:
