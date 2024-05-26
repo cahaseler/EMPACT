@@ -21,6 +21,11 @@ jobs:
           ref: main
           persist-credentials: false
 
+      - name: Copy frontend files to web_static
+        run: |
+          cp -rf web/app/(frontend)/* web_static/app/(frontend)
+          cp -rf web/public/* web_static/public
+
       - name: install dependencies
         run: |
           sudo apt-get update
@@ -29,6 +34,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: yarn
+          cache-dependency-path: yarn.lock
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
