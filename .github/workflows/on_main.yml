@@ -28,7 +28,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 18
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -46,6 +46,10 @@ jobs:
       - name: install and build static webapp
         run: |
           cd web_static && yarn install && cd ..
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
 
       - name: Semantic Release
         id: semantic-release
