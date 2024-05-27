@@ -28,7 +28,12 @@
       {
         "replacements": [
           {
-            "files": ["package.json"],
+            "files": [
+              "package.json",
+              "web/package.json",
+              "web_static/package.json",
+              "src-tauri/tauri-conf.json"
+            ],
             "from": "\"version\": \"(.*?)\"",
             "to": "\"version\": \"${nextRelease.version}\"",
             "results": [
@@ -37,45 +42,21 @@
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
-              }
-            ],
-            "countMatches": true
-          },
-          {
-            "files": ["web/package.json"],
-            "from": "\"version\": \"(.*?)\"",
-            "to": "\"version\": \"${nextRelease.version}\"",
-            "results": [
+              },
               {
                 "file": "web/package.json",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
-              }
-            ],
-            "countMatches": true
-          },
-          {
-            "files": ["web_static/package.json"],
-            "from": "\"version\": \"(.*?)\"",
-            "to": "\"version\": \"${nextRelease.version}\"",
-            "results": [
+              },
               {
                 "file": "web_static/package.json",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
-              }
-            ],
-            "countMatches": true
-          },
-          {
-            "files": ["web/app/(frontend)/components/version-indicator.tsx"],
-            "from": "version: \"(.*?)\"",
-            "to": "version: \"${nextRelease.version}\"",
-            "results": [
+              },
               {
-                "file": "web/app/(frontend)/components/version-indicator.tsx",
+                "file": "src-tauri/tauri.conf.json",
                 "hasChanged": true,
                 "numMatches": 1,
                 "numReplacements": 1
@@ -85,11 +66,18 @@
           },
           {
             "files": [
+              "web/app/(frontend)/components/version-indicator.tsx",
               "web_static/app/(frontend)/components/version-indicator.tsx"
             ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
             "results": [
+              {
+                "file": "web/app/(frontend)/components/version-indicator.tsx",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              },
               {
                 "file": "web_static/app/(frontend)/components/version-indicator.tsx",
                 "hasChanged": true,
@@ -139,7 +127,8 @@
           "web_static/package.json",
           "web/app/api/version/route.ts",
           "web/app/(frontend)/components/version-indicator.tsx",
-          "web_static/app/(frontend)/components/version-indicator.tsx"
+          "src-tauri/Cargo.toml",
+          "src-tauri/tauri.conf.json"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
