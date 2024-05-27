@@ -18,18 +18,19 @@
   "scripts": {
     "install-all": "yarn install && cd web && yarn install && cd .. && yarn sync-app && cd web_static && yarn install && cd ..",
     "dev": "ECHO 'Use 'yarn dev-web' to edit the frontend in browser or 'yarn dev-app' to run the tauri app in dev mode.'",
-    "dev-web": "cd web && yarn dev",
+    "dev-web": "cd web && next dev",
     "dev-app": "node warning_message.js && yarn sync-app && cd src-tauri && tauri dev",
     "sync-app": "Xcopy \"web/app/(frontend)\" \"web_static/app/(frontend)\" /E /I /Y && Xcopy \"web/public\" \"web_static/public\" /E /I /Y",
     "sync-app-linux": "cp -rf 'web/app/(frontend)' 'web_static/app/(frontend)' && cp -rf 'web/public' 'web_static/public'",
+    "build": "next build",
     "build-all": "cd web && yarn build && cd .. && yarn sync-app && cd src-tauri && tauri build",
     "build-web": "cd web && yarn install && yarn build && cd ..",
     "build-static": "cd web_static && yarn install && yarn build && cd ..",
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.5.14",
-    "prompt-confirm": "^2.0.4"
+    "@tauri-apps/cli": "1.5.14",
+    "prompt-confirm": "2.0.4"
   },
   "dependencies": {},
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
