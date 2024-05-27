@@ -39,8 +39,8 @@ jobs:
       - name: Build webapp for docker and static webapp for tauri
         run: |
           yarn sync-app
-          yarn build web
-          yarn build web_static
+          yarn build-web
+          yarn build-static
 
       - name: Swap to node 14 for semantic release compatibility
         uses: actions/setup-node@v3
