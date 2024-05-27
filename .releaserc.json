@@ -35,34 +35,7 @@
               "src-tauri/tauri.conf.json"
             ],
             "from": "\"version\": \"(.*?)\"",
-            "to": "\"version\": \"${nextRelease.version}\"",
-            "results": [
-              {
-                "file": "package.json",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              },
-              {
-                "file": "web/package.json",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              },
-              {
-                "file": "web_static/package.json",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              },
-              {
-                "file": "src-tauri/tauri.conf.json",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              }
-            ],
-            "countMatches": false
+            "to": "\"version\": \"${nextRelease.version}\""
           },
           {
             "files": [
@@ -71,48 +44,18 @@
             ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
-            "results": [
-              {
-                "file": "web/app/(frontend)/components/version-indicator.tsx",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              },
-              {
-                "file": "web_static/app/(frontend)/components/version-indicator.tsx",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              }
-            ],
             "countMatches": false
           },
           {
             "files": ["web/app/api/version/route.ts"],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
-            "results": [
-              {
-                "file": "web/app/api/version/route.ts",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              }
-            ],
             "countMatches": false
           },
           {
             "files": ["src-tauri/Cargo.toml"],
             "from": "name = \"EMPACT\"\\nversion = \"(.*?)\"",
             "to": "name = \"EMPACT\"\\nversion = \"${nextRelease.version}\"",
-            "results": [
-              {
-                "file": "src-tauri/Cargo.toml",
-                "hasChanged": true,
-                "numMatches": 1,
-                "numReplacements": 1
-              }
-            ],
             "countMatches": false
           }
         ]
