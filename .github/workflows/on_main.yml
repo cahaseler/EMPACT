@@ -52,7 +52,7 @@ jobs:
           cp -rf 'web/app/(frontend)'/* 'web_static/app/(frontend)'
           mkdir -p web_static/public
           cp -rf web/public/* web_static/public
-          cd yarn-web && yarn build && cd ..
+          cd web && yarn build && cd ..
           cd web_static && yarn install && cd ..
 
       - name: Swap to node 14 for semantic release compatibility
