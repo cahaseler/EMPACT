@@ -79,7 +79,8 @@
     [
       "@codedependant/semantic-release-docker",
       {
-        "dockerProject": "cahaseler/empact"
+        "dockerProject": "cahaseler/empact",
+        "dockerPlatform": "linux/amd64"
       }
     ],
     [
