@@ -54,8 +54,8 @@
           },
           {
             "files": ["src-tauri/Cargo.toml"],
-            "from": "name = \"EMPACT\"\\nversion = \"(.*?)\"",
-            "to": "name = \"EMPACT\"\\nversion = \"${nextRelease.version}\"",
+            "from": "name = \"EMPACT\"\nversion = \"(.*?)\"",
+            "to": "name = \"EMPACT\"\nversion = \"${nextRelease.version}\"",
             "countMatches": false
           }
         ]

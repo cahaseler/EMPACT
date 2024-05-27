@@ -1,3 +1,9 @@
 {
-  "cSpell.words": ["Tauri"]
+  "cSpell.words": [
+    "Tauri"
+  ],
+  "sonarlint.connectedMode.project": {
+    "connectionId": "cahaseler",
+    "projectKey": "cahaseler_EMPACT"
+  }
 }
