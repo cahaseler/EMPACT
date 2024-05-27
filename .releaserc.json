@@ -80,7 +80,9 @@
       "@codedependant/semantic-release-docker",
       {
         "dockerProject": "cahaseler/empact",
-        "dockerPlatform": "linux/amd64"
+        "dockerBuildFlags": {
+          "platform": "linux/amd64"
+        }
       }
     ],
     [
