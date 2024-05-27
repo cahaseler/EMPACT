@@ -61,6 +61,8 @@ jobs:
         with:
           # You can specify specifying version range for the extra plugins if you prefer.
           semantic_version: 18
+          extra_plugins: |
+            @semantic-release/changelog
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_SEMANTIC_RELEASE }}
           DOCKER_REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
