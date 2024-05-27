@@ -23,7 +23,8 @@
     "sync-app": "Xcopy \"web/app/(frontend)\" \"web_static/app/(frontend)\" /E /I /Y && Xcopy \"web/public\" \"web_static/public\" /E /I /Y",
     "sync-app-linux": "cp -rf 'web/app/(frontend)' 'web_static/app/(frontend)' && cp -rf 'web/public' 'web_static/public'",
     "build": "cd yarn-web && yarn build && cd .. && yarn sync-app && cd src-tauri && tauri build",
-    "build-web": "cd web && yarn build && cd ..",
+    "build-web": "cd web && yarn install && yarn build && cd ..",
+    "build-static": "cd web_static && yarn install && yarn build && cd ..",
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
