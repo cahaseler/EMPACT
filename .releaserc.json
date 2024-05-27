@@ -85,7 +85,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "yarn install && export TAURI_FIPS_COMPLIANT=true && cd src-tauri && yarn tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc"
+        "prepareCmd": "yarn install && cd src-tauri && yarn tauri build"
       }
     ],
     [
