@@ -24,44 +24,6 @@
       }
     ],
     [
-      "@google/semantic-release-replace-plugin",
-      {
-        "replacements": [
-          {
-            "files": [
-              "package.json",
-              "web/package.json",
-              "web_static/package.json",
-              "src-tauri/tauri.conf.json"
-            ],
-            "from": "\"version\": \"(.*?)\"",
-            "to": "\"version\": \"${nextRelease.version}\""
-          },
-          {
-            "files": [
-              "web/app/(frontend)/components/version-indicator.tsx",
-              "web_static/app/(frontend)/components/version-indicator.tsx"
-            ],
-            "from": "version: \"(.*?)\"",
-            "to": "version: \"${nextRelease.version}\"",
-            "countMatches": false
-          },
-          {
-            "files": ["web/app/api/version/route.ts"],
-            "from": "version: \"(.*?)\"",
-            "to": "version: \"${nextRelease.version}\"",
-            "countMatches": false
-          },
-          {
-            "files": ["src-tauri/Cargo.toml"],
-            "from": "name = \"EMPACT\"\nversion = \"(.*?)\"",
-            "to": "name = \"EMPACT\"\nversion = \"${nextRelease.version}\"",
-            "countMatches": false
-          }
-        ]
-      }
-    ],
-    [
       "@semantic-release/git",
       {
         "assets": [
