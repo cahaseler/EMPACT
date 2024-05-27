@@ -32,7 +32,7 @@
               "package.json",
               "web/package.json",
               "web_static/package.json",
-              "src-tauri/tauri-conf.json"
+              "src-tauri/tauri.conf.json"
             ],
             "from": "\"version\": \"(.*?)\"",
             "to": "\"version\": \"${nextRelease.version}\"",
