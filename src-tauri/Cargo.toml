@@ -1,6 +1,6 @@
 [package]
 name = "EMPACT"
-version = "0.1.0"
+version = "1.0.0"
 description = "EMPACT: Environment and Maturity Project Assessment and Control Tool"
 authors = ["Craig Haseler"]
 license = "CC BY 4.0"
