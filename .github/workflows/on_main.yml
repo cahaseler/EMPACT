@@ -55,11 +55,6 @@ jobs:
           cd web && yarn install && yarn build-linux && cd ..
           cd web_static && yarn install && yarn build && cd ..
 
-      - name: Swap to node 14 for semantic release compatibility
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-
       - name: Semantic Release
         id: semantic-release
         uses: cycjimmy/semantic-release-action@v3
@@ -70,7 +65,7 @@ jobs:
             @semantic-release/git
             @semantic-release/github
             @semantic-release/exec
-            @google/semantic-release-replace-plugin@1.2.0
+            semantic-release-replace-plugin
             @codedependant/semantic-release-docker
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_SEMANTIC_RELEASE }}
