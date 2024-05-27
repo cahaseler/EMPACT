@@ -35,7 +35,7 @@
     "@tauri-apps/cli": "^1.5.14",
     "prompt-confirm": "^2.0.4",
     "semantic-release": "^23.1.1",
-    "semantic-release-replace-plugin": "^1.2.7"
+    "@google/semantic-release-replace-plugin": "^1.2.7"
   },
   "dependencies": {},
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
