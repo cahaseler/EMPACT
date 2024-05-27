@@ -62,7 +62,7 @@
                 "numReplacements": 1
               }
             ],
-            "countMatches": true
+            "countMatches": false
           },
           {
             "files": [
@@ -85,7 +85,7 @@
                 "numReplacements": 1
               }
             ],
-            "countMatches": true
+            "countMatches": false
           },
           {
             "files": ["web/app/api/version/route.ts"],
@@ -99,7 +99,7 @@
                 "numReplacements": 1
               }
             ],
-            "countMatches": true
+            "countMatches": false
           },
           {
             "files": ["src-tauri/Cargo.toml"],
@@ -113,7 +113,7 @@
                 "numReplacements": 1
               }
             ],
-            "countMatches": true
+            "countMatches": false
           }
         ]
       }
