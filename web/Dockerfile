@@ -1,4 +1,4 @@
-FROM node:18.18.2 AS deps
+FROM node:20.13.1 AS deps
 
 WORKDIR /usr/src/app
 
