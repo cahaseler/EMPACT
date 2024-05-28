@@ -89,7 +89,7 @@ jobs:
         run: |
           cd web
           yarn install
-          yarn build
+          yarn build-linux
 
       - name: login to dockerhub
         uses: docker/login-action@v2
