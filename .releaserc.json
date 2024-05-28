@@ -77,15 +77,6 @@
       }
     ],
     [
-      "@codedependant/semantic-release-docker",
-      {
-        "dockerProject": "cahaseler/empact",
-        "dockerBuildFlags": {
-          "platform": "linux/amd64"
-        }
-      }
-    ],
-    [
       "@semantic-release/exec",
       {
         "prepareCmd": "yarn install && cd src-tauri && yarn tauri build"

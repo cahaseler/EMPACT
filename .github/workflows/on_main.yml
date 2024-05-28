@@ -13,6 +13,8 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      version: ${{ steps.semantic-release.outputs.new_release_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,8 +60,45 @@ jobs:
             @semantic-release/github
             @semantic-release/exec
             @google/semantic-release-replace-plugin@1.2.0
-            @codedependant/semantic-release-docker
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_SEMANTIC_RELEASE }}
-          DOCKER_REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  publish-docker-image:
+    runs-on: ubuntu-latest
+    needs: build_and_release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: false
+
+      - name: Install node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Build webapp for docker in NextJS standalone mode
+        run: |
+          cd web
+          yarn install
+          yarn build
+
+      - name: login to dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: build and push docker image
+        run: |
+          cd web
+          docker build --tag cahaselerempact/empact:latest --tag cahaselerempact/empact:${{ needs.build_and_release.outputs.version }} .
+          docker push
