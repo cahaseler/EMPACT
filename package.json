@@ -1,6 +1,6 @@
 {
   "name": "empact",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "CC-BY-4.0",
   "description": "Environment and Maturity Program Assessment and Control Tool",
   "keywords": [
@@ -33,5 +33,5 @@
     "prompt-confirm": "2.0.4"
   },
   "dependencies": {},
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  "packageManager": "yarn@1.22.22"
 }
