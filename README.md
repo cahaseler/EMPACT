@@ -10,6 +10,12 @@
 
 This tool is based on the originally published research findings in the DOE-funded study but is developed independently from ASU's proprietary IP2M METRR tool and does not reuse any code from that tool. Development priorities and features are derived from practical lessons learned from use of ASU's IP2M METRR tool.
 
+## Current Status
+
+A proof of concept framework has been developed allowing for a single NextJS Web codebase to be deployed as a locally installable fully offline Windows application and as a Web Server with backend database functions for shared usage. Continuous Integration / Continuous delivery has been designed and deployed with Github Actions so that any merge to the 'main' branch of this project automatically builds and publishes a Docker container for the web site and an MSI and EXE installable application.
+
+Additional systems need to be added to allow for the website development and prototyping the database and backend interactions, as well as the web security layer. Once the framework is fully fleshed out, we can begin creation of the actual web interfaces and functionality.
+
 ## Licensing
 
 This is Open Source software licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). See LICENSE file for more information.
