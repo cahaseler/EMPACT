@@ -100,5 +100,5 @@ jobs:
       - name: build and push docker image
         run: |
           cd web
-          docker build --tag cahaselerempact/empact:latest --tag cahaselerempact/empact:${{ needs.build_and_release.outputs.version }} .
-          docker push
+          docker build --tag cahaseler/empact:latest --tag cahaseler/empact:${{ needs.build_and_release.outputs.version }} .
+          docker push --all-tags cahaseler/empact
