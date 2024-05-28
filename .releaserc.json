@@ -87,7 +87,7 @@
       {
         "assets": [
           {
-            "path": "src-tauri/target/release/bundle/nsis/EMPACT_{nextRelease.version}_x64-setup.exe",
+            "path": "src-tauri/target/release/bundle/nsis/EMPACT_${nextRelease.version}_x64-setup.exe",
             "label": "Windows EXE installer"
           }
         ],
