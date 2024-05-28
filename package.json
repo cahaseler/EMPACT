@@ -29,9 +29,9 @@
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
-    "@tauri-apps/cli": "1.5.14",
-    "prompt-confirm": "2.0.4"
+    "@tauri-apps/cli": "1.5.14"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "packageManager": "yarn@1.22.22"
 }
