@@ -9,4 +9,7 @@ ENV NODE_ENV=production \
 
 EXPOSE 3000
 
+# Use a non-root user for security
+USER node
+
 CMD ["node", "server.js"]
