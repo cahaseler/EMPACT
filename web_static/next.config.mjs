@@ -2,9 +2,10 @@
 const nextConfig = {
   output: "export",
   webpack: (config) => {
-    config.resolve.preferRelative = true;
-    return config;
+    config.resolve.preferRelative = true
+    return config
   },
-};
+  images: { unoptimized: true },
+}
 
-export default nextConfig;
+export default nextConfig
