@@ -1,8 +1,8 @@
-import Image from "next/image";
+import Image from "next/image"
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <div className="flex h-full flex-col items-center justify-start p-24">
       <Image
         src="/empact-logo-transparent-cropped-square.png"
         alt="Logo"
@@ -10,6 +10,6 @@ export default function Home() {
         height={300}
       />
       <div>Work in progress - more to come!</div>
-    </main>
-  );
+    </div>
+  )
 }

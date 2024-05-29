@@ -61,5 +61,7 @@ src-tauri/target/
 # Exclude web_static/app/(frontend) files. These are copied across from web/app/(frontend) during the ci build process. 
 #You may want them in both places during local development, but we shouldn't duplicate in Github
 
-web_static/app/(frontend)/*
-web_static/public/*
+web_static/app/(frontend)/**/*
+web_static/public/**/*
+web_static/components/**/*
+web_static/lib/**/*
