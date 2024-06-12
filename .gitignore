@@ -65,3 +65,4 @@ web_static/app/(frontend)/**/*
 web_static/public/**/*
 web_static/components/**/*
 web_static/lib/**/*
+/web_backend/target/*
