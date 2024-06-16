@@ -3,322 +3,279 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlserver"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 model assessment {
-  id                         Int                         @id(map: "PK__assessme__3213E83FF3B9157F") @default(autoincrement())
-  project_id                 String                      @db.VarChar(256)
-  name                       String?                     @db.VarChar(256)
+  id                         Int                         @id() @default(autoincrement())
+  project_id                 String                      
+  name                       String?                     
   type_id                    Int?
-  type                       String?                     @db.VarChar(256)
-  location                   String?                     @db.VarChar(256)
+  type                       String?                     
+  location                   String?                     
   date                       BigInt?
-  manager                    String?                     @db.VarChar(256)
+  manager                    String?                     
   facilitator                Int?
-  description                String?                     @db.VarChar(Max)
+  description                String?                     
   hide_description           Boolean?
-  status                     String                      @db.VarChar(9)
+  status                     String                      
   has_maturity               Boolean?
   has_environment            Boolean?
   enviroment_score           Int?
   maturity_score             Int?
-  current_progress           String                      @db.VarChar(11)
+  current_progress           String                      
   percent_completed          Float?
-  maturity_progress          String                      @db.VarChar(11)
-  env_progress               String                      @db.VarChar(11)
+  maturity_progress          String                      
+  env_progress               String                      
   is_env_anonymous           Boolean?
   lock_env                   Boolean?
-  internal_assessment_status String?                     @db.VarChar(8)
+  internal_assessment_status String?                     
   expiry_date                BigInt?
   factor_facilitator_answers Boolean?
   environment_score          Int?
-  user                       user?                       @relation(fields: [facilitator], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__facil__5FB337D6")
-  project_types              project_types?              @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__type___60A75C0F")
+  user                       user?                       @relation(fields: [facilitator], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  project_types              project_types?              @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assessment_attributes_map  assessment_attributes_map[]
   assessment_facilitators    assessment_facilitators[]
   assessment_level_notes     assessment_level_notes[]
   assessment_user_responses  assessment_user_responses[]
   assessment_users           assessment_users[]
 
-  @@index([current_progress], map: "ix_assessment_current_progress")
-  @@index([env_progress], map: "ix_assessment_env_progress")
-  @@index([maturity_progress], map: "ix_assessment_maturity_progress")
-  @@index([status], map: "ix_assessment_status")
-  @@index([type_id], map: "ix_assessment_type_id")
 }
 
 model assessment_attributes_map {
-  id            Int         @id(map: "PK__assessme__3213E83FDEF09C35") @default(autoincrement())
-  attribute_id  String?     @db.VarChar(20)
+  id            Int         @id() @default(autoincrement())
+  attribute_id  String?     
   assessment_id Int?
   active        Boolean
-  assessment    assessment? @relation(fields: [assessment_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__asses__7B5B524B")
-  attributes    attributes? @relation(fields: [attribute_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__attri__7C4F7684")
+  assessment    assessment? @relation(fields: [assessment_id], references: [id], onUpdate: NoAction)
+  attributes    attributes? @relation(fields: [attribute_id], references: [id], onUpdate: NoAction)
 
-  @@index([assessment_id], map: "ix_assessment_attributes_map_assessment_id")
-  @@index([attribute_id], map: "ix_assessment_attributes_map_attribute_id")
 }
 
 model assessment_defaults {
-  id                         Int       @id(map: "PK__assessme__3213E83F7A529FCC") @default(autoincrement())
+  id                         Int       @id() @default(autoincrement())
   hide_description           Boolean?
   is_env_anonymous           Boolean?
   factor_facilitator_answers Boolean?
-  last_updated               DateTime? @db.DateTime
+  last_updated               DateTime?
   updated_by                 Int?
 }
 
 model assessment_facilitators {
   user_id       Int
   assessment_id Int
-  assessment    assessment @relation(fields: [assessment_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__asses__662B2B3B")
-  user          user       @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__user___671F4F74")
+  assessment    assessment @relation(fields: [assessment_id], references: [id], onUpdate: NoAction)
+  user          user       @relation(fields: [user_id], references: [id], onUpdate: NoAction)
 
-  @@id([user_id, assessment_id], map: "PK__assessme__C9B5AFCD44DB3A42")
+  @@id([user_id, assessment_id])
 }
 
 model assessment_level_notes {
-  id               Int         @id(map: "PK__assessme__3213E83F9473D013") @default(autoincrement())
+  id               Int         @id() @default(autoincrement())
   assigned_user_id Int?
   assessment_id    Int?
-  notes            String      @db.VarChar(Max)
+  notes            String      
   due_date         BigInt?
-  status           String      @db.VarChar(8)
-  assessment       assessment? @relation(fields: [assessment_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__asses__7F2BE32F")
-  user             user?       @relation(fields: [assigned_user_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__assig__00200768")
+  status           String      
+  assessment       assessment? @relation(fields: [assessment_id], references: [id], onUpdate: NoAction)
+  user             user?       @relation(fields: [assigned_user_id], references: [id], onUpdate: NoAction)
 
-  @@index([assessment_id], map: "ix_assessment_level_notes_assessment_id")
-  @@index([assigned_user_id], map: "ix_assessment_level_notes_assigned_user_id")
-  @@index([status], map: "ix_assessment_level_notes_status")
 }
 
 model assessment_meta {
-  id       Int        @id(map: "PK__assessme__3213E83FE4EF17D2") @default(autoincrement())
-  type     String     @db.VarChar(8)
-  name     String?    @db.VarChar(256)
+  id       Int        @id() @default(autoincrement())
+  type     String     
+  name     String?    
   active   Boolean
   sections sections[]
-
-  @@index([type], map: "ix_assessment_meta_type")
 }
 
 model assessment_user_env_sections_map {
-  id                 Int               @id(map: "PK__assessme__3213E83F2A019462") @default(autoincrement())
+  id                 Int               @id() @default(autoincrement())
   assessment_user_id Int?
-  sections_id        String?           @db.VarChar(20)
+  sections_id        String?          
   active             Boolean
-  assessment_users   assessment_users? @relation(fields: [assessment_user_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__asses__69FBBC1F")
-  sections           sections?         @relation(fields: [sections_id], references: [id], onUpdate: NoAction, map: "FK__assessmen__secti__6AEFE058")
-
-  @@index([assessment_user_id], map: "ix_assessment_user_env_sections_map_assessment_user_id")
-  @@index([sections_id], map: "ix_assessment_user_env_sections_map_sections_id")
+  assessment_users   assessment_users? @relation(fields: [assessment_user_id], references: [id], onUpdate: NoAction)
+  sections           sections?         @relation(fields: [sections_id], references: [id], onUpdate: NoAction)
 }
 
 model assessment_user_responses {
-  id                      Int         @id(map: "PK__assessme__3213E83F2813F923") @default(autoincrement())
+  id                      Int         @id() @default(autoincrement())
   user_id                 Int?
   assessment_id           Int?
-  attribute_id            String?     @db.VarChar(20)
+  attribute_id            String?     
   level_id                Int?
-  notes                   String?     @db.VarChar(Max)
-  section_id              String?     @db.VarChar(20)
-  is_facilitator_response Boolean     @default(false, map: "DF__assessmen__is_fa__6BE40491")
-  assessment              assessment? @relation(fields: [assessment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__asses__0F624AF8")
-  attributes              attributes? @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__attri__10566F31")
-  levels                  levels?     @relation(fields: [level_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__level__114A936A")
-  sections                sections?   @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__secti__123EB7A3")
-  user                    user?       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__user___1332DBDC")
+  notes                   String?     
+  section_id              String?     
+  is_facilitator_response Boolean     @default(false)
+  assessment              assessment? @relation(fields: [assessment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  attributes              attributes? @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  levels                  levels?     @relation(fields: [level_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sections                sections?   @relation(fields: [section_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user                    user?       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([assessment_id], map: "ix_assessment_user_responses_assessment_id")
-  @@index([attribute_id], map: "ix_assessment_user_responses_attribute_id")
-  @@index([level_id], map: "ix_assessment_user_responses_level_id")
-  @@index([section_id], map: "ix_assessment_user_responses_section_id")
-  @@index([user_id], map: "ix_assessment_user_responses_user_id")
 }
 
 model assessment_users {
-  id                               Int                                @id(map: "PK__assessme__3213E83FF8A112A7") @default(autoincrement())
+  id                               Int                                @id() @default(autoincrement())
   user_id                          Int?
   assessment_id                    Int?
   user_project_role                Int?
   user_govt_role                   Int?
-  current_progress                 String?                            @db.VarChar(11)
+  current_progress                 String?                            
   attended_workshop                Boolean?
   expiry                           BigInt?
   active                           Boolean
   assessment_user_env_sections_map assessment_user_env_sections_map[]
-  assessment                       assessment?                        @relation(fields: [assessment_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__asses__02FC7413")
-  govt_roles                       govt_roles?                        @relation(fields: [user_govt_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__user___03F0984C")
-  user                             user?                              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__user___04E4BC85")
-  project_roles                    project_roles?                     @relation(fields: [user_project_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__assessmen__user___05D8E0BE")
+  assessment                       assessment?                        @relation(fields: [assessment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  govt_roles                       govt_roles?                        @relation(fields: [user_govt_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user                             user?                              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  project_roles                    project_roles?                     @relation(fields: [user_project_role], references: [id], onDelete: NoAction)
 
-  @@index([assessment_id], map: "ix_assessment_users_assessment_id")
-  @@index([user_govt_role], map: "ix_assessment_users_user_govt_role")
-  @@index([user_id], map: "ix_assessment_users_user_id")
-  @@index([user_project_role], map: "ix_assessment_users_user_project_role")
 }
 
 model attributes {
-  id                        String                      @id(map: "PK__attribut__3213E83F577905DC") @db.VarChar(20)
-  name                      String?                     @db.VarChar(256)
-  description               String?                     @db.VarChar(Max)
-  section_id                String?                     @db.VarChar(20)
+  id                        String                      @id()
+  name                      String?                     
+  description               String?                     
+  section_id                String?                   
   active                    Boolean
   assessment_attributes_map assessment_attributes_map[]
   assessment_user_responses assessment_user_responses[]
-  sections                  sections?                   @relation(fields: [section_id], references: [id], onUpdate: NoAction, map: "FK__attribute__secti__6383C8BA")
+  sections                  sections?                   @relation(fields: [section_id], references: [id], onUpdate: NoAction)
   levels                    levels[]
 
-  @@index([section_id], map: "ix_attributes_section_id")
 }
 
 model govt_roles {
-  id               Int                @id(map: "PK__govt_rol__3213E83F83A67B24") @default(autoincrement())
-  name             String             @unique(map: "UQ__govt_rol__72E12F1B833C7F9C") @db.VarChar(256)
+  id               Int                @id() @default(autoincrement())
+  name             String             @unique() 
   assessment_users assessment_users[]
   project_roles    project_roles[]
   user_settings    user_settings[]
 }
 
 model levels {
-  id                        Int                         @id(map: "PK__levels__3213E83F9600B122") @default(autoincrement())
-  short_description         String?                     @db.VarChar(Max)
-  long_description          String?                     @db.VarChar(Max)
+  id                        Int                         @id() @default(autoincrement())
+  short_description         String?                     
+  long_description          String?                     
   level_number              Int
   weight                    Int
-  attribute_id              String?                     @db.VarChar(20)
+  attribute_id              String?                     
   active                    Boolean
   assessment_user_responses assessment_user_responses[]
-  attributes                attributes?                 @relation(fields: [attribute_id], references: [id], onUpdate: NoAction, map: "FK__levels__attribut__08B54D69")
+  attributes                attributes?                 @relation(fields: [attribute_id], references: [id], onUpdate: NoAction)
 
-  @@index([attribute_id], map: "ix_levels_attribute_id")
 }
 
 model organization {
-  id                 Int     @id(map: "PK__organiza__3213E83FE7614A77") @default(autoincrement())
-  name               String? @db.VarChar(256)
-  logo               String? @db.VarChar(Max)
-  sign_options       String  @db.VarChar(6)
-  session_expiration String  @db.VarChar(10)
+  id                 Int     @id() @default(autoincrement())
+  name               String? 
+  logo               String? 
+  sign_options       String
+  session_expiration String
 
-  @@index([session_expiration], map: "ix_organization_session_expiration")
-  @@index([sign_options], map: "ix_organization_sign_options")
 }
 
 model project_roles {
-  id               Int                @id(map: "PK__project___3213E83FD3882195") @default(autoincrement())
-  name             String             @db.VarChar(256)
+  id               Int                @id() @default(autoincrement())
+  name             String             
   govt_role_id     Int?
   assessment_users assessment_users[]
-  govt_roles       govt_roles?        @relation(fields: [govt_role_id], references: [id], onUpdate: NoAction, map: "FK__project_r__govt___571DF1D5")
+  govt_roles       govt_roles?        @relation(fields: [govt_role_id], references: [id], onUpdate: NoAction)
   user_settings    user_settings[]
 
-  @@index([govt_role_id], map: "ix_project_roles_govt_role_id")
 }
 
 model project_types {
-  id         Int          @id(map: "PK__project___3213E83FEBE88C1E") @default(autoincrement())
-  name       String       @unique(map: "UQ__project___72E12F1B86967CCF") @db.VarChar(256)
+  id         Int          @id() @default(autoincrement())
+  name       String       @unique() 
   assessment assessment[]
 }
 
 model sections {
-  id                               String                             @id(map: "PK__sections__3213E83F4DED8E6C") @db.VarChar(20)
-  name                             String?                            @db.VarChar(256)
+  id                               String                             @id()
+  name                             String?                            
   active                           Boolean
   assessment_meta_id               Int?
-  description                      String?                            @db.VarChar(Max)
+  description                      String?                            
   assessment_user_env_sections_map assessment_user_env_sections_map[]
   assessment_user_responses        assessment_user_responses[]
   attributes                       attributes[]
-  assessment_meta                  assessment_meta?                   @relation(fields: [assessment_meta_id], references: [id], onUpdate: NoAction, map: "FK__sections__assess__59FA5E80")
+  assessment_meta                  assessment_meta?                   @relation(fields: [assessment_meta_id], references: [id], onUpdate: NoAction)
 
-  @@index([assessment_meta_id], map: "ix_sections_assessment_meta_id")
 }
 
 model settings {
-  id                 Int     @id(map: "PK__settings__3213E83F652DD6E6") @default(autoincrement())
-  value              String? @db.NVarChar(Max)
+  id                 Int     @id() @default(autoincrement())
+  value              String? 
   last_updated_time  BigInt?
   last_updated_by_id Int?
-  user               user?   @relation(fields: [last_updated_by_id], references: [id], onUpdate: NoAction, map: "FK__settings__last_u__70DDC3D8")
+  user               user?   @relation(fields: [last_updated_by_id], references: [id], onUpdate: NoAction)
 }
 
-model sysdiagrams {
-  name         String @db.NVarChar(128)
-  principal_id Int
-  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61B6E7F150") @default(autoincrement())
-  version      Int?
-  definition   Bytes?
-
-  @@unique([principal_id, name], map: "UK_principal_name")
-}
 
 model user {
-  id                        Int                         @id(map: "PK__user__3213E83F74A82BD4") @default(autoincrement())
-  firstname                 String                      @db.VarChar(50)
-  lastname                  String                      @db.VarChar(50)
-  email                     String                      @unique(map: "ix_user_email") @db.VarChar(50)
-  phone_number              String?                     @db.VarChar(50)
-  password                  String?                     @db.VarChar(Max)
+  id                        Int                         @id() @default(autoincrement())
+  firstname                 String                      
+  lastname                  String                      
+  email                     String                      @unique() 
+  phone_number              String?                     
+  password                  String?                     
   role_id                   Int?
   is_google_user            Boolean
   is_okta_user              Boolean
   is_active                 Boolean
   last_seen                 BigInt?
-  status                    String                      @db.VarChar(18)
+  status                    String                     
   expiry_date               BigInt?
-  country                   String?                     @db.VarChar(3)
-  about                     String?                     @db.VarChar(Max)
+  country                   String?                     
+  about                     String?                     
   assessment                assessment[]
   assessment_facilitators   assessment_facilitators[]
   assessment_level_notes    assessment_level_notes[]
   assessment_user_responses assessment_user_responses[]
   assessment_users          assessment_users[]
   settings                  settings[]
-  user_roles                user_roles?                 @relation(fields: [role_id], references: [id], onUpdate: NoAction, map: "FK__user__role_id__5CD6CB2B")
+  user_roles                user_roles?                 @relation(fields: [role_id], references: [id], onUpdate: NoAction)
   user_action_log           user_action_log[]
   user_settings             user_settings[]
 
-  @@index([phone_number], map: "ix_user_phone_number")
-  @@index([role_id], map: "ix_user_role_id")
-  @@index([status], map: "ix_user_status")
 }
 
 model user_action_log {
-  id        Int      @id(map: "PK__user_act__3213E83FCDEF6DF2") @default(autoincrement())
+  id        Int      @id() @default(autoincrement())
   id_user   Int?
-  action    String   @db.VarChar(256)
-  content   String?  @db.VarChar(Max)
-  action_dt DateTime @db.DateTimeOffset
-  user      user?    @relation(fields: [id_user], references: [id], onUpdate: NoAction, map: "FK__user_acti__id_us__73BA3083")
+  action    String   
+  content   String?  
+  action_dt DateTime
+  user      user?    @relation(fields: [id_user], references: [id], onUpdate: NoAction)
 
-  @@index([action], map: "ix_user_action_log_action")
-  @@index([id_user], map: "ix_user_action_log_id_user")
+
 }
 
 model user_roles {
-  id   Int    @id(map: "PK__user_rol__3213E83FAB6CDC56") @default(autoincrement())
-  role String @unique(map: "ix_user_roles_role") @db.VarChar(13)
-  name String @db.VarChar(50)
-  type String @db.VarChar(12)
+  id   Int    @id() @default(autoincrement())
+  role String @unique()
+  name String 
+  type String 
   user user[]
 
-  @@index([type], map: "ix_user_roles_type")
 }
 
 model user_settings {
-  id            Int            @id(map: "PK__user_set__3213E83FAE99285E") @default(autoincrement())
+  id            Int            @id() @default(autoincrement())
   user_id       Int?
   govt_role     Int?
   project_role  Int?
-  govt_roles    govt_roles?    @relation(fields: [govt_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__user_sett__govt___76969D2E")
-  project_roles project_roles? @relation(fields: [project_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__user_sett__proje__778AC167")
-  user          user?          @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__user_sett__user___787EE5A0")
+  govt_roles    govt_roles?    @relation(fields: [govt_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  project_roles project_roles? @relation(fields: [project_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          user?          @relation(fields: [user_id], references: [id], onUpdate: NoAction)
 
-  @@index([govt_role], map: "ix_user_settings_govt_role")
-  @@index([project_role], map: "ix_user_settings_project_role")
-  @@index([user_id], map: "ix_user_settings_user_id")
 }

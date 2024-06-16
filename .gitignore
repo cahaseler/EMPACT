@@ -66,3 +66,6 @@ web_static/public/**/*
 web_static/components/**/*
 web_static/lib/**/*
 /web_backend/target/*
+
+/db/sqlite3.exe
+/db/dev_empact.db
