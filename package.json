@@ -29,7 +29,7 @@
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
-    "@tauri-apps/cli": "1.5.14"
+    "@tauri-apps/cli": "1.6.0"
   },
   "dependencies": {
   },
