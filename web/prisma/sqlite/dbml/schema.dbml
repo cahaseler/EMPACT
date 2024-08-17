@@ -1,0 +1,154 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  firstnName String [not null]
+  lastName String [not null]
+  email String [unique, not null]
+  systemRoles SystemRole [not null]
+  assessmentUser AssessmentUser [not null]
+  assessmentUserResponse AssessmentUserResponse [not null]
+}
+
+Table SystemRole {
+  id Int [pk, increment]
+  name String [unique, not null]
+  users User [not null]
+}
+
+Table Assessment {
+  id Int [pk, increment]
+  projectId String [not null]
+  name String [not null]
+  location String [not null]
+  date DateTime [not null]
+  description String [not null]
+  status String [not null]
+  assessmentUser AssessmentUser [not null]
+  assessmentCollection AssessmentCollection
+  assessmentCollectionId Int
+  scoreSummaries ScoreSummary [not null]
+  assessmentUserResponse AssessmentUserResponse [not null]
+}
+
+Table ScoreSummary {
+  id Int [pk, increment]
+  type String [not null]
+  score Int [not null]
+  assessment Assessment
+  assessmentId Int
+}
+
+Table AssessmentCollection {
+  id Int [pk, increment]
+  name String [unique, not null]
+  assessments Assessment [not null]
+}
+
+Table AssessmentUser {
+  id Int [pk, increment]
+  assessment Assessment [not null]
+  user User [not null]
+  role String [not null]
+  assessmentId Int [not null]
+  userId Int [not null]
+}
+
+Table AssessmentType {
+  id Int [pk, increment]
+  name String [unique, not null]
+  parts Part [not null]
+}
+
+Table Part {
+  id Int [pk, increment]
+  name String [not null]
+  description String [not null]
+  assessmentType AssessmentType [not null]
+  assessmentTypesId Int [not null]
+  sections Section [not null]
+}
+
+Table Section {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  part Part [not null]
+  partId Int [not null]
+  attributes Attribute [not null]
+}
+
+Table Attribute {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  section Section [not null]
+  sectionId String [not null]
+  levels Level [not null]
+  assessmentUserResponse AssessmentUserResponse [not null]
+}
+
+Table Level {
+  id Int [pk, increment]
+  short_description String [not null]
+  long_description String [not null]
+  level Int [not null]
+  weight Int [not null]
+  attribute Attribute [not null]
+  attributeId String [not null]
+  assessmentUserResponse AssessmentUserResponse [not null]
+}
+
+Table AssessmentUserResponse {
+  id Int [pk, increment]
+  user User [not null]
+  userId Int [not null]
+  assessment Assessment [not null]
+  assessmentId Int [not null]
+  attribute Attribute [not null]
+  attributeId String [not null]
+  level Level [not null]
+  levelId Int [not null]
+  notes String [not null]
+}
+
+Table Settings {
+  id Int [pk, increment]
+}
+
+Table WhiteLabeling {
+  id Int [pk, increment]
+  organizationName String [not null]
+  logoUrl String [not null]
+}
+
+Table SystemRoleToUser {
+  systemrolesId Int [ref: > SystemRole.id]
+  usersId Int [ref: > User.id]
+}
+
+Ref: Assessment.assessmentCollectionId > AssessmentCollection.id
+
+Ref: ScoreSummary.assessmentId > Assessment.id
+
+Ref: AssessmentUser.assessmentId > Assessment.id
+
+Ref: AssessmentUser.userId > User.id
+
+Ref: Part.assessmentTypesId > AssessmentType.id
+
+Ref: Section.partId > Part.id
+
+Ref: Attribute.sectionId > Section.id
+
+Ref: Level.attributeId > Attribute.id
+
+Ref: AssessmentUserResponse.userId > User.id
+
+Ref: AssessmentUserResponse.assessmentId > Assessment.id
+
+Ref: AssessmentUserResponse.attributeId > Attribute.id
+
+Ref: AssessmentUserResponse.levelId > Level.id

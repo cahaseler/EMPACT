@@ -20,7 +20,8 @@
     "build": "next build && Xcopy public \".next/standalone/public\" /I && Xcopy \".next/static\" \".next/standalone/.next/static\" /I",
     "build-linux": "next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\"",
     "start": "node .next/standalone/server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma-generate": "npx prisma generate --schema prisma/mssql/schema.prisma && npx prisma generate --schema prisma/postgres/schema.prisma && npx prisma generate --schema prisma/sqlite/schema.prisma"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
@@ -60,6 +61,7 @@
     "input-otp": "1.2.4",
     "lucide-react": "0.427.0",
     "next": "14.2.5",
+    "next-auth": "^5.0.0-beta.20",
     "next-themes": "0.3.0",
     "react": "18.3.1",
     "react-day-picker": "8.10.1",
@@ -86,6 +88,8 @@
     "postcss": "8.4.41",
     "prettier": "3.3.3",
     "prettier-plugin-organize-imports": "3.2.4",
+    "prisma": "^5.18.0",
+    "prisma-dbml-generator": "0.12.0",
     "prompt-confirm": "2.0.4",
     "tailwindcss": "3.4.10",
     "typescript": "5.5.4"
@@ -98,5 +102,9 @@
       "node18-win-x64"
     ],
     "outputPath": "dist"
-  }
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
+  },
+  "packageManager": "yarn@1.22.1"
 }

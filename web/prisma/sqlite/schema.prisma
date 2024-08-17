@@ -1,0 +1,157 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "./generated/client"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:./dev.db"
+}
+
+// Uncomment the following to generate dbml for diagrams
+//generator dbml {
+//provider = "prisma-dbml-generator"
+//}
+
+// Users in the system. Most user data will be passed in via SSO.
+model User {
+    id                     Int                      @id() @default(autoincrement())
+    firstnName             String
+    lastName               String
+    email                  String                   @unique()
+    systemRoles            SystemRole[]
+    assessmentUser         AssessmentUser[]
+    assessmentUserResponse AssessmentUserResponse[]
+}
+
+// System roles that users can be assigned to, such as Admin, Facilitator, etc. This is different from a role on a particular assessment.
+model SystemRole {
+    id    Int    @id() @default(autoincrement())
+    name  String @unique()
+    users User[]
+}
+
+// Represents a specific assessment being done
+model Assessment {
+    id                     Int                      @id() @default(autoincrement())
+    projectId              String //A unique identifier for the project that this assessment belongs to, for example a PARSID
+    name                   String
+    location               String
+    date                   DateTime
+    description            String
+    status                 String
+    assessmentUser         AssessmentUser[]
+    assessmentCollection   AssessmentCollection?    @relation(fields: [assessmentCollectionId], references: [id])
+    assessmentCollectionId Int?
+    scoreSummaries         ScoreSummary[]
+    assessmentUserResponse AssessmentUserResponse[]
+}
+
+// Final / total scores for an assessment. Depending on the type of assessment, there may be multiple. For example, Environment and Maturity for IP2M METRR scores.
+model ScoreSummary {
+    id           Int         @id() @default(autoincrement())
+    type         String
+    score        Int
+    assessment   Assessment? @relation(fields: [assessmentId], references: [id])
+    assessmentId Int?
+}
+
+// A collection of assessments that might be run at the same time, potentially with different groups of users
+// An assessment collection is of a single type, such as IP2M METRR or PDRI
+model AssessmentCollection {
+    id               Int            @id() @default(autoincrement())
+    name             String         @unique()
+    assessmentTypes  AssessmentType @relation(fields: [assessmentTypeId], references: [id])
+    assessments      Assessment[]
+    assessmentTypeId Int
+}
+
+// Users that are assigned to an assessment
+// This is also used to specify the role a given user has on a given assessment
+model AssessmentUser {
+    id           Int        @id() @default(autoincrement())
+    assessment   Assessment @relation(fields: [assessmentId], references: [id])
+    user         User       @relation(fields: [userId], references: [id])
+    role         String
+    assessmentId Int
+    userId       Int
+}
+
+// Types of assessments offered in this tool, for example IP2M METRR, PDRI, etc
+model AssessmentType {
+    id                   Int                    @id() @default(autoincrement())
+    name                 String                 @unique()
+    description          String
+    parts                Part[]
+    AssessmentCollection AssessmentCollection[]
+}
+
+// An assessment itself is broken into Parts (for example, Environment and Maturity). Each part has a set of sections, each containing a series of questions (attributes), and users choose their responses from the list of options (levels)
+
+model Part {
+    id               Int            @id() @default(autoincrement())
+    name             String
+    description      String
+    assessmentType   AssessmentType @relation(fields: [assessmentTypeId], references: [id])
+    assessmentTypeId Int
+    sections         Section[]
+}
+
+// For example, Culture, People, Practices, Resources, Organizing, for Environment assessments in IP2M METRR
+model Section {
+    id          String      @id()
+    name        String
+    description String
+    part        Part        @relation(fields: [partId], references: [id])
+    partId      Int
+    attributes  Attribute[]
+}
+
+// The questions being asked in each section
+model Attribute {
+    id                     String                   @id()
+    name                   String
+    description            String
+    section                Section                  @relation(fields: [sectionId], references: [id])
+    sectionId              String
+    levels                 Level[]
+    assessmentUserResponse AssessmentUserResponse[]
+}
+
+// The answer choices for each attribute
+model Level {
+    id                     Int                      @id() @default(autoincrement())
+    shortDescription       String
+    longDescription        String
+    level                  Int
+    weight                 Int
+    attribute              Attribute                @relation(fields: [attributeId], references: [id])
+    attributeId            String
+    assessmentUserResponse AssessmentUserResponse[]
+}
+
+// The actual responses to the specific survey questions
+model AssessmentUserResponse {
+    id           Int        @id() @default(autoincrement())
+    user         User       @relation(fields: [userId], references: [id])
+    userId       Int
+    assessment   Assessment @relation(fields: [assessmentId], references: [id])
+    assessmentId Int
+    attribute    Attribute  @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    attributeId  String
+    level        Level      @relation(fields: [levelId], references: [id])
+    levelId      Int
+    notes        String
+}
+
+// Settings for the system
+model Settings {
+    id Int @id() @default(autoincrement())
+}
+
+// White label settings to allow for custom branding and labels in various places
+model WhiteLabeling {
+    id               Int    @id() @default(autoincrement())
+    organizationName String
+    logoUrl          String
+}

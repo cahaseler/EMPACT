@@ -1,8 +1,6 @@
 {
   "extends": [
     "eslint:recommended",
-    "prettier",
-    "plugin:prettier/recommended",
     "plugin:tailwindcss/recommended",
     "plugin:react/recommended",
     "next"
@@ -31,7 +29,7 @@
     },
     //Disable tailwindcss/no-custom-classname for the directories where we're not using tailwind
     {
-      "files": ["pages/**", "components/**", "app/(bootstrap)/**"],
+      "files": ["components/**"],
       "rules": {
         "tailwindcss/no-custom-classname": "off"
       }

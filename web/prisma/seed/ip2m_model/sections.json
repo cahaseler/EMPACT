@@ -1,0 +1,86 @@
+[
+  {
+    "id": "1",
+    "name": "Culture",
+    "partId": 1,
+    "description": "The culture category addresses those issues that impact the project/program culture. Culture is, by definition, the display of behaviors. Organizational culture is a system of common assumptions, values and beliefs (or the lack thereof) that governs how people behave in organizations. Organizational values and beliefs should align with the development and outcomes of a successful EVMS. The project/program culture can enable or hinder the effectiveness of the EVMS. "
+  },
+  {
+    "id": "2",
+    "name": "People",
+    "partId": 1,
+    "description": "The people category addresses the individuals who represent the interests of their respective stakeholders (e.g., project business manager, project control analyst, project schedule analyst, acquisitions/subcontracts, control account manager, Integrated Project/Program Team (IPT) or line/resource management) and are adept in the relevant subject matter, in order to contribute to the process that leads to favorable project control outcomes."
+  },
+  {
+    "id": "3",
+    "name": "Practices",
+    "partId": 1,
+    "description": "The practices category addresses internal and external procedures and processes that can positively or negatively influence the outcome of a project or program. Internal business practices and methods are specific to a given organization, including internal standards, requirements and best practices. External business practices, regulations, requirements, procedures and methods are across organizational boundaries (e.g., government to contractor, software provider to contractor, subcontractor to prime, and so forth)."
+  },
+  {
+    "id": "4",
+    "name": "Resources",
+    "partId": 1,
+    "description": "The resources category addresses the availability of key tools, data, funding, time, personnel, and technology/ software to support the EVMS sub-processes."
+  },
+  {
+    "id": "a",
+    "name": "Organizing",
+    "partId": 2,
+    "description": "Organizing is the sub-process that begins at project/program inception and includes preparations for executing the project/program\u2019s technical objectives, such as defining the Work Breakdown Structure and other organizational elements necessary for planning and control. "
+  },
+  {
+    "id": "b",
+    "name": "Planning and Scheduling",
+    "partId": 2,
+    "description": "Planning and Scheduling is the sub-process that aims to develop the project/program\u2019s integrated master schedule, resource requirements, and performance measurement baseline for effective management. "
+  },
+  {
+    "id": "c",
+    "name": "Budgeting and Work Authorization",
+    "partId": 2,
+    "description": "Budgeting and Work Authorization is the sub-process for allocating cost targets to individual segments of authorized work, providing permission only for authorized work to occur, and reflecting the authorized changes to budget.   "
+  },
+  {
+    "id": "d",
+    "name": "Accounting Considerations",
+    "partId": 2,
+    "description": "Accounting Considerations is the sub-process for coordination between the control accounts and the organization\u2019s accounting system for accurate reporting of project/program direct and indirect costs."
+  },
+  {
+    "id": "e",
+    "name": "Indirect Budget and Cost Management",
+    "partId": 2,
+    "description": "Indirect Budget and Cost Management is the sub-process to establish, control, and manage the project/program indirect budgets and costs (e.g., indirect rates, indirect cost variances, indirect account structure). "
+  },
+  {
+    "id": "f",
+    "name": "Analysis and Management Reporting",
+    "partId": 2,
+    "description": "Analysis and Management Reporting is the sub-process for calculating, analyzing, and reporting the cost and schedule variances, along with providing reasons for significant variances, implementing corrective actions, and calculating new Estimates at Completion."
+  },
+  {
+    "id": "g",
+    "name": "Change Control",
+    "partId": 2,
+    "description": "Change Control is the sub-process for systematically controlling, analyzing, communicating, and recording the changes to the project/program baseline (e.g., performance measurement baseline, management reserve, undistributed budget)."
+  },
+  {
+    "id": "h",
+    "name": "Material Management",
+    "partId": 2,
+    "description": "Material Management is the sub-process for planning, controlling, and cost accounting for the acquisition, disbursements, and disposition of material."
+  },
+  {
+    "id": "i",
+    "name": "Subcontract Management",
+    "partId": 2,
+    "description": "Subcontract Management is the sub-process for determining the flow down of EVMS requirements to subcontractors, integrating subcontractor data into the prime contractor\u2019s EVMS, and surveilling the subcontractor(s). "
+  },
+  {
+    "id": "j",
+    "name": "Risk Management",
+    "partId": 2,
+    "description": "Risk Management is the sub-process for identification of risks and opportunities, analysis and mitigation of risks, and integration of risks into the EVMS. "
+  }
+]
