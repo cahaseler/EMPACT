@@ -6,7 +6,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=cahaseler_EMPACT&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=cahaseler_EMPACT)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=cahaseler_EMPACT&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=cahaseler_EMPACT)
 
-**EMPACT: The Environment and Maturity Program Assessment and Control Tool** is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model. The IP2M METRR model was developed by the US Department of Energy in collaboration with Arizona State University. EMPACT is an open source project intended as a collaborative effort by the greater earned value community and is not at this time funded or endorsed by ASU or DOE.
+**EMPACT: The Environment and Maturity Program Assessment and Control Tool** is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model. The IP2M METRR model was developed by the US Department of Energy in collaboration with Arizona State University. EMPACT is an open source project intended as a collaborative effort by the greater earned value community and is not at this time funded or endorsed by ASU.
 
 This tool is based on the originally published research findings in the DOE-funded study but is developed independently from ASU's proprietary IP2M METRR tool and does not reuse any code from that tool. Development priorities and features are derived from practical lessons learned from use of ASU's IP2M METRR tool.
 
@@ -68,6 +68,10 @@ Here is the approach that will be followed:
 
 This is an open source project and intended as a collaborative effort. Especially if you or your organization is using this software to facilitate reviews or otherwise benefit, there is an informal expectation that you give back to the greater earned value community by contributing to the codebase and collaborating on this project.
 
+## Sponsors
+
+This project is sponsored by the United States Department of Energy's Office of Project Management. Specifically, the Office has approved usage of paid contractor development hours towards working on this project.
+
 ## Code Structure
 
 The codebase is organized as follows, with files relating to the whole project at the parent level and subfolders for specific components:
@@ -75,3 +79,65 @@ The codebase is organized as follows, with files relating to the whole project a
 - /src-tauri: The code used for the Tauri local application, including the Rust functions for interacting with the database and configuration for the Tauri app.
 - /web: The NextJS application to be run on the server, containing the UI, API routes, and security layers. The UI is written in a way that works for both platforms, that is to say it calls generically named functions that use API calls in the web version and use Rust functions in the local version.
 - /web_static: A seperate NextJS website containing configuration for the static export required for the Tauri app. UI code in this folder is copied in from the web folder and should not be edited. In general this folder shouldn't need to be edited.
+
+## Database Structure
+
+See the [Prisma Schema](https://github.com/empact/EMPACT/blob/main/prisma/schema.prisma) for more details on the database schema, a diagram is below:
+
+![Database Diagram](database.png)
+
+## Installation
+
+There are several approaches available to use this tool, described below.
+
+### Standalone usage
+
+Simply download and run the application installer provided in the Releases section of the Github Repository here: [https://github.com/empact/EMPACT/releases](https://github.com/empact/EMPACT/releases). The tool can be installed and run offline, with data stored on your local machine. Data can be exported using the export tools to provide it to others.
+
+Advantages to this approach:
+
+- No need for an external server or any database configuration
+- No need for an internet connection after initial installation
+- Simplified interface without user management or other complexity included in a multi-user system
+
+Disadvantages to this approach:
+
+- Single user, no group assessments supported
+- Requires installation rights on your local machine
+- Windows only, no MacOS support at this time (if you are willing to sponsor development costs for MacOS support, please contact us)
+
+### Server installation with external MSSQL or PostGreSQL databases
+
+This is the reccomended approach for a production level application, and involves installing the server Docker container and configuring it to point to an external PostGreSQL or MSSQL database that you own and manage - likely one that you use for other applications already. See the [Installation Guide](https://github.com/cahaseler/EMPACT/INSTALL.md) for more details.
+
+Advantages to this approach:
+
+- Multi-user assessments supported, along with appropriate roll-up reporting
+- Browser based web application that can be accessed from any computer with network access to the server, over the internet or an internal network
+- No operating system installation required, supports MacOS and other non-Windows platforms
+- Data is stored in your existing managed database solutions, making it available to other analytics platforms you may have, and providing your data with existing redundancy and security controls
+- Users can leverage single sign on via your existing authentication solution
+
+Disadvantages to this approach:
+
+- Requires server configuration and setup
+- Requires setting up the external database and opening appropriate connections between the EMPACT server and your database
+- No offline functionality
+
+### Server installation with included PostGreSQL database docker container
+
+This allows you to set up EMPACT as a standalone server running both the EMPACT container and a PostGreSQL database. See the [Installation Guide](https://github.com/cahaseler/EMPACT/INSTALL.md) for more details.
+
+Advantages to this approach:
+
+- Multi-user assessments supported, along with appropriate roll-up reporting
+- Browser based web application that can be accessed from any computer with network access to the server, over the internet or an internal network
+- No operating system installation required, supports MacOS and other non-Windows platforms
+- No existing systems or databased are needed, this is an all-in-one solution that includes both the database and the EMPACT server with no external connections
+- Users can leverage single sign on via your existing authentication solution
+
+Disadvantages to this approach:
+
+- Requires server configuration and setup
+- Database remains on the same server as EMPACT, meaning you will need to configure your own backups and security controls to ensure data retention
+- No offline functionality

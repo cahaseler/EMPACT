@@ -31,7 +31,5 @@
   "devDependencies": {
     "@tauri-apps/cli": "1.5.14"
   },
-  "dependencies": {
-  },
-  "packageManager": "yarn@1.22.22"
+  "packageManager": "yarn@4.4.0"
 }

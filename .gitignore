@@ -67,5 +67,7 @@ web_static/components/**/*
 web_static/lib/**/*
 /web_backend/target/*
 
-/db/sqlite3.exe
-/db/dev_empact.db
+# Exclude generated prisma clients, these are recreated on build
+/web/prisma/**/generated/*
+
+
