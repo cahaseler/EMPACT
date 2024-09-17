@@ -68,10 +68,6 @@ Here is the approach that will be followed:
 
 This is an open source project and intended as a collaborative effort. Especially if you or your organization is using this software to facilitate reviews or otherwise benefit, there is an informal expectation that you give back to the greater earned value community by contributing to the codebase and collaborating on this project.
 
-## Sponsors
-
-This project is sponsored by the United States Department of Energy's Office of Project Management. Specifically, the Office has approved usage of paid contractor development hours towards working on this project.
-
 ## Code Structure
 
 The codebase is organized as follows, with files relating to the whole project at the parent level and subfolders for specific components:
