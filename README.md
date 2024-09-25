@@ -6,7 +6,11 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=cahaseler_EMPACT&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=cahaseler_EMPACT)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=cahaseler_EMPACT&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=cahaseler_EMPACT)
 
-**EMPACT: The Environment and Maturity Program Assessment and Control Tool** is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model. The IP2M METRR model was developed by the US Department of Energy in collaboration with Arizona State University. EMPACT is an open source project intended as a collaborative effort by the greater earned value community and is not at this time funded or endorsed by ASU or DOE.
+**EMPACT: The Environment and Maturity Program Assessment and Control Tool** is an Open Source implementation of the IP2M METRR Environmental and Maturity evaluation model. The IP2M METRR model was developed by the US Department of Energy in collaboration with Arizona State University. EMPACT is an open source project intended as a collaborative effort by the greater earned value community and is not at this time funded or endorsed by ASU. 
+
+![DOE-PM-COLOR_ON_WHITE_600px](https://github.com/user-attachments/assets/8a1cbc2f-f857-45ea-b101-df8eef5274af)
+
+This project is sponsored by the US Department of Energy's Office of Project Management, which is contributing contract developer resources.
 
 This tool is based on the originally published research findings in the DOE-funded study but is developed independently from ASU's proprietary IP2M METRR tool and does not reuse any code from that tool. Development priorities and features are derived from practical lessons learned from use of ASU's IP2M METRR tool.
 
