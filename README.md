@@ -39,6 +39,8 @@ Notices:
 
 No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
 
+Note: Please do not use the EMPACT brand in any derivative works, to avoid confusion. See [Trademark Policy](/TrademarkPolicy) for more information.
+
 ## Development Objectives
 
 - A single codebase that can be run as an offline app or scalable web service with hundreds of users, as simply as possible, avoiding the need for installation of software like Docker on end user systems and without any other dependencies for the end user.
