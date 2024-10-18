@@ -31,5 +31,5 @@ export const customFooter = {
       url: "https://github.com/cahaseler/EMPACT",
     },
   ],
-  copyright: `© ${new Date().getFullYear()} Craig Haseler. Licensed under CC BY 4.0`,
+  copyright: `© ${new Date().getFullYear()} EMPACT. Licensed under CC BY 4.0`,
 }

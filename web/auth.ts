@@ -23,8 +23,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let user = null
 
         if (
-          credentials.password == process.env.SETUP_ADMIN_PASSWORD &&
-          credentials.email == "admin"
+          credentials.password === process.env.SETUP_ADMIN_PASSWORD &&
+          credentials.email === "admin"
         ) {
           user = {
             id: "Admin",
