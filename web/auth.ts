@@ -12,8 +12,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     
     * If you do *really really* want to use credential based authentication, you'll need to rewrite this with security in mind.
     * You can start that here: https://authjs.dev/getting-started/authentication/credentials
-    * But don't.
-    */
+    * But don't. */
+
     Credentials({
       credentials: {
         email: {},
@@ -23,8 +23,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         let user = null
 
         if (
-          credentials.password == process.env.SETUP_ADMIN_PASSWORD &&
-          credentials.email == "admin"
+          credentials.password === process.env.SETUP_ADMIN_PASSWORD &&
+          credentials.email === "admin"
         ) {
           user = {
             id: "Admin",

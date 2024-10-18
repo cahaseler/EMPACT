@@ -1,0 +1,256 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.17">
+  <diagram name="Page-1" id="vMp2rhhD6u5VMkQqknF-">
+    <mxGraphModel dx="1077" dy="583" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-1" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=#e8e8e8;fillColor=#FEFEFE;" parent="1" vertex="1">
+          <mxGeometry x="30" y="160" width="360" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-38" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8E8E8;labelBackgroundColor=default;" parent="1" vertex="1">
+          <mxGeometry x="50" y="199.5" width="160" height="80.5" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-2" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=#E8E8E8;fillColor=#FEFEFE;" parent="1" vertex="1">
+          <mxGeometry x="425" y="160" width="360" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-18" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E6E6E6;labelBackgroundColor=#E6E6E6;" parent="1" vertex="1">
+          <mxGeometry x="432.5" y="200" width="345" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-3" value="EMPACT Web App Code" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="30" y="160" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-4" value="EMPACT Desktop App Code" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="428" y="158" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" parent="1" source="eU9sD8Vdz7qq5emXA4au-5" target="eU9sD8Vdz7qq5emXA4au-18" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-22" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;Copied exactly&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="eU9sD8Vdz7qq5emXA4au-21" vertex="1" connectable="0">
+          <mxGeometry x="-0.0951" y="-2" relative="1" as="geometry">
+            <mxPoint x="55" y="6" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-41" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;dashPattern=1 1;shape=link;" parent="1" source="eU9sD8Vdz7qq5emXA4au-5" target="eU9sD8Vdz7qq5emXA4au-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="290" />
+              <mxPoint x="130" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-5" value="NextJS Pages and UI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="60" y="212" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-7" value="NextJS Pages and UI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="436" y="216" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;exitX=0.585;exitY=1.019;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="eU9sD8Vdz7qq5emXA4au-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="342.9985714285715" y="370" as="sourcePoint" />
+            <mxPoint x="716.9985714285715" y="360" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="343" y="380" />
+              <mxPoint x="717" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-20" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;Copied, change database type&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="eU9sD8Vdz7qq5emXA4au-19" vertex="1" connectable="0">
+          <mxGeometry x="0.2958" relative="1" as="geometry">
+            <mxPoint x="48" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" source="eU9sD8Vdz7qq5emXA4au-8" target="eU9sD8Vdz7qq5emXA4au-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-28" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;Generated via script&lt;/font&gt;&lt;font style=&quot;font-size: 5.83333px;&quot;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="eU9sD8Vdz7qq5emXA4au-24" vertex="1" connectable="0">
+          <mxGeometry x="-0.1133" y="-2" relative="1" as="geometry">
+            <mxPoint y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-8" value="Prisma Database&lt;br&gt;Schema" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry x="290" y="300" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-9" value="NextJS Server Actions&lt;br&gt;Database Functions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="60" y="300" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-10" value="Prisma Database&lt;br&gt;Schema" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="670" y="300" width="87.5" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-11" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="109.71000000000001" y="530" as="sourcePoint" />
+            <mxPoint x="109.71000000000001" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-12" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;exitX=0.077;exitY=1.04;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#82b366;" parent="1" source="eU9sD8Vdz7qq5emXA4au-18" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="460" y="300" as="sourcePoint" />
+            <mxPoint x="460" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-13" value="NextJS Standalone Export" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="40" y="620" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-15" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="109.71000000000001" y="690" as="sourcePoint" />
+            <mxPoint x="109.71000000000001" y="770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-16" value="Docker Container Ready to Deploy to Server" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="40" y="790" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-17" value="NextJS Static Frontend Export" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="425" y="580" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-30" value="Typescript Functions&lt;br&gt;that call Rust Database&lt;br&gt;Functions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="630.5" y="216" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-31" value="Rust Database&lt;br&gt;&amp;nbsp;Functions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+          <mxGeometry x="480" y="300" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="670" y="329.71" as="sourcePoint" />
+            <mxPoint x="580" y="329.71" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-33" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;Generated via script&lt;/font&gt;&lt;font style=&quot;font-size: 5.83333px;&quot;&gt;&lt;sup&gt;4&lt;/sup&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="eU9sD8Vdz7qq5emXA4au-32" vertex="1" connectable="0">
+          <mxGeometry x="-0.1133" y="-2" relative="1" as="geometry">
+            <mxPoint y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="670" y="308" as="sourcePoint" />
+            <mxPoint x="650" y="278" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="650" y="308" />
+              <mxPoint x="650" y="278" />
+              <mxPoint x="650" y="278" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-35" value="&lt;font style=&quot;font-size: 7px;&quot;&gt;Generated via script&lt;sup&gt;4&lt;/sup&gt;&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="eU9sD8Vdz7qq5emXA4au-34" vertex="1" connectable="0">
+          <mxGeometry x="-0.1133" y="-2" relative="1" as="geometry">
+            <mxPoint x="34" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-37" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;NextJS Frontend&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="426" y="190" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-39" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;NextJS Frontend&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="44" y="190" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-42" value="&lt;font style=&quot;font-size: 8px;&quot;&gt;Calls Functions&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="130" y="272" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-43" value="&lt;p style=&quot;line-height: 50%;&quot;&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Calls&lt;br&gt;&amp;nbsp;Functions&lt;/font&gt;&lt;/p&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="573.5" y="209" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-46" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 1;strokeWidth=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;shape=link;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="577" y="246" as="sourcePoint" />
+            <mxPoint x="631.5" y="246" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eU9sD8Vdz7qq5emXA4au-48" value="Desktop Installer&lt;br&gt;Executable" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+          <mxGeometry x="533.5" y="790" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-2" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="306" y="370" as="sourcePoint" />
+            <mxPoint x="306" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-3" value="Database initialization&lt;br&gt;scripts" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="240" y="790" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-4" value="SQLite Database&lt;br&gt;File" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="645" y="580" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-5" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;exitX=0.077;exitY=1.04;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="730" y="370" as="sourcePoint" />
+            <mxPoint x="730" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-6" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="657.81" y="650" as="sourcePoint" />
+            <mxPoint x="658" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-7" value="Tauri Config&lt;br&gt;Files" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="560" y="440" width="90" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-8" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;exitX=0.077;exitY=1.04;exitDx=0;exitDy=0;exitPerimeter=0;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="603.41" y="507" as="sourcePoint" />
+            <mxPoint x="603" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-9" value="Tauri Bundler" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="515" y="700" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-10" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="604.66" y="740" as="sourcePoint" />
+            <mxPoint x="605" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-11" value="&lt;p style=&quot;line-height: 50%;&quot;&gt;&lt;span style=&quot;font-size: 7px;&quot;&gt;Prisma&lt;/span&gt;&lt;br style=&quot;font-size: 7px;&quot;&gt;&lt;span style=&quot;font-size: 7px;&quot;&gt;migrate&lt;/span&gt;&lt;br style=&quot;font-size: 7px;&quot;&gt;&lt;span style=&quot;font-size: 7px;&quot;&gt;scripts&lt;/span&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="727.5" y="420" width="50" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-12" value="&lt;p style=&quot;line-height: 50%;&quot;&gt;&lt;font style=&quot;font-size: 7px;&quot;&gt;Prisma&lt;br&gt;migrate&lt;br&gt;scripts&lt;/font&gt;&lt;/p&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;opacity=50;" vertex="1" parent="1">
+          <mxGeometry x="307" y="419" width="50" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-13" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;EMPACT Architecture&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="30" y="70" width="310" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-14" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Building both a web and local application on a single codebase&amp;nbsp;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;spacing=3;" vertex="1" parent="1">
+          <mxGeometry x="30" y="120" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-15" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="529.66" y="650" as="sourcePoint" />
+            <mxPoint x="529.85" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-16" value="" style="endArrow=none;dashed=1;html=1;dashPattern=1 1;strokeWidth=1;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;shape=link;" edge="1" parent="1" source="eU9sD8Vdz7qq5emXA4au-31">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="587" y="256" as="sourcePoint" />
+            <mxPoint x="630" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-17" value="&lt;p style=&quot;line-height: 50%;&quot;&gt;&lt;font style=&quot;font-size: 8px;&quot;&gt;Calls&lt;br&gt;&amp;nbsp;Functions&lt;/font&gt;&lt;/p&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="575" y="272" width="60" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-18" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="880" width="760" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-21" value="&lt;u&gt;Elements to build:&lt;br&gt;&lt;/u&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;1. NextJS Pages and UI - the majority of the application exists here. This includes pages that are web-only, such as auth and user management.&lt;br&gt;&lt;/font&gt;2. Database design, as a Prisma schema&lt;br&gt;3. Scripts to generate CRUD functions for each database table as NextJS actions that can be called by frontend code to interact with the remote DB&lt;br&gt;4. Scripts to generate CRUD functions for each database table as frontend Typescript, which in turn call Rust functions that interact with SQLite&lt;br&gt;&lt;/font&gt;5. Configuration files for the Tauri Bundler&lt;br&gt;6. Github Actions scripts to automate the various build steps to generate the key build artifacts: Docker container, SQL scripts, and exe.&lt;br&gt;&lt;/font&gt;&lt;div style=&quot;font-size: 11px;&quot;&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="890" width="740" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-22" value="Final Downloadable&lt;br&gt;Artifact" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="401" y="1030" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-23" value="Intermediate element,&lt;div&gt;automatically created&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="231" y="1030" width="149" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-24" value="Source code created by&lt;br&gt;a developer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="1030" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-26" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="565" y="1035" as="sourcePoint" />
+            <mxPoint x="565.34" y="1075" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KuMY_BA1lurEhw5jXW6t-27" value="Github Actions script created by a developer" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="573.5" y="1040" width="175" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,15 +1,9 @@
-import Image from "next/image"
+import { Home } from "./home"
 
-export default function Home() {
+export default function Page() {
   return (
-    <div className="flex h-full flex-col items-center justify-start p-24">
-      <Image
-        src="/empact-logo-transparent-cropped-square.png"
-        alt="Logo"
-        width={300}
-        height={300}
-      />
-      <div>Work in progress - more to come!</div>
+    <div className="flex h-full flex-col items-center justify-start p-10">
+      <Home />
     </div>
   )
 }

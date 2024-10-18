@@ -2,7 +2,7 @@ import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 
 import { cn } from "@/lib/utils"
-import "./globals.css"
+import "../globals.css"
 
 import { colors } from "@/app/(frontend)/branding"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
