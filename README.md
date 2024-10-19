@@ -29,7 +29,7 @@ For detailed information on installation, usage, and contribution, please refer 
 
 ## Project Status
 
-EMPACT is currently in active development. We have established a proof-of-concept framework and are working on expanding functionality. For the latest updates and roadmap, visit our [Project Status](https://github.com/empact/EMPACT/wiki/Project-Status) page.
+EMPACT is currently beginning active development, and is not yet in a usable state. For the latest updates and roadmap, visit our [Project Status](Project-Status) page.
 
 ## Contributing
 
