@@ -18,14 +18,14 @@ EMPACT is an open-source implementation of the IP2M METRR Environmental and Matu
 
 ## Getting Started
 
-For detailed information on installation, usage, and contribution, please refer to our [Wiki](https://github.com/empact/EMPACT/wiki).
+For detailed information on installation, usage, and contribution, please refer to our [Wiki](https://github.com/cahaseler/EMPACT/wiki).
 
-- [Project Status](https://github.com/empact/EMPACT/wiki/Project-Status)
-- [Quick Start Guide](https://github.com/empact/EMPACT/wiki/Quick-Start-Guide)
-- [Installation Instructions](https://github.com/empact/EMPACT/wiki/Installation-Instructions)
-- [User Guide](https://github.com/empact/EMPACT/wiki/User-Guide)
-- [Developer Documentation](https://github.com/empact/EMPACT/wiki/Developer-Documentation)
-- [FAQs](https://github.com/empact/EMPACT/wiki/FAQs)
+- [Project Status](https://github.com/cahaseler/EMPACT/wiki/Project-Status)
+- [Quick Start Guide](https://github.com/cahaseler/EMPACT/wiki/Quick-Start-Guide)
+- [Installation Instructions](https://github.com/cahaseler/EMPACT/wiki/Installation-Instructions)
+- [User Guide](https://github.com/cahaseler/EMPACT/wiki/User-Guide)
+- [Developer Documentation](https://github.com/cahaseler/EMPACT/wiki/Developer-Documentation)
+- [FAQs](https://github.com/cahaseler/EMPACT/wiki/FAQs)
 
 ## Project Status
 
