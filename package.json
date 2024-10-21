@@ -29,7 +29,15 @@
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
-    "@tauri-apps/cli": "1.6.0"
-  },
-  "packageManager": "yarn@4.4.0"
+    "@tauri-apps/cli": "1.6.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-jsdoc": "48.11.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-react": "7.35.0",
+    "eslint-plugin-tailwindcss": "3.17.4",
+    "prettier": "3.3.3",
+    "@ianvs/prettier-plugin-sort-imports": "4.3.1"
+  }
 }

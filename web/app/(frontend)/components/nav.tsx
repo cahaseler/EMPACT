@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 
-import { ModeToggle } from "@/components/ui/mode-toggle"
+import { ModeToggle } from "@/components/mode-toggle"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -10,46 +10,42 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 
-import { Building2, Folder, ListChecks, Settings } from "lucide-react"
+import { Settings } from "lucide-react"
 
 import Link from "next/link"
 
-import { colors, productName } from "@/app/(frontend)/branding"
 import { usePathname } from "next/navigation"
+
+/*
+
+TODO: Build out the navigation menu
+
+Lots of work to be done here to link to key sections of the application, and provide menus for things like admin functions when relevant based on user role
+
+*/
 
 export function Nav() {
   return (
     <NavigationMenu
-      className={cn(
-        colors["nav-bg"],
-        colors["nav-text"],
-        "min-w-full h-12 justify-between"
-      )}
+      className={
+        "bg-zinc-400 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-800 min-w-full h-12 justify-between text-zinc-800 dark:text-zinc-200"
+      }
     >
       <NavigationMenuList className="pt-1 flex flex-row space-x-6">
         <NavigationMenuItem className="mx-5 font-bold font-sans text-3xl">
-          {productName}
+          EMPACT
         </NavigationMenuItem>
-        <NavigationItemLink
-          href="/Sites"
-          label="Sites"
-          icon={<Building2 className="w-5 h-5" />}
-        />
-        <NavigationItemLink
-          href="/Projects"
-          label="Projects"
-          icon={<Folder className="w-5 h-5" />}
-        />
-        <NavigationItemLink
-          href="/Assessments"
-          label="Assessments"
-          icon={<ListChecks className="w-5 h-5" />}
-        />
+        {/* TODO Add more links */}
       </NavigationMenuList>
       <NavigationMenuList className="py-1 flex flex-row space-x-4 mr-4">
         <NavigationItemLink
-          href="/Settings"
+          href="/settings"
           label="Settings"
+          icon={<Settings className="w-5 h-5" />}
+        />
+                <NavigationItemLink
+          href="/admin"
+          label="Admin"
           icon={<Settings className="w-5 h-5" />}
         />
         <ModeToggle />
@@ -69,11 +65,9 @@ function NavigationItemLink({
 }) {
   const pn = usePathname()
 
-  const linkStyle = cn(
-    colors["nav-bg"],
-    colors["nav-text"],
-    "hover:font-bold flex flex-row space-x-1"
-  )
+  const linkStyle = 
+    "bg-zinc-400 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-800 hover:font-bold flex flex-row space-x-1"
+  
 
   return (
     <NavigationMenuItem>

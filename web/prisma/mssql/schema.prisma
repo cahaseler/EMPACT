@@ -16,7 +16,7 @@ datasource db {
 // Users in the system. Most user data will be passed in via SSO.
 model User {
     id                     Int                      @id() @default(autoincrement())
-    firstnName             String
+    firstName              String
     lastName               String
     email                  String                   @unique()
     systemRoles            SystemRole[]
@@ -38,7 +38,7 @@ model Assessment {
     name                   String
     location               String
     date                   DateTime
-    description            String
+    description            String                   @db.VarChar(Max)
     status                 String
     assessmentUser         AssessmentUser[]
     assessmentCollection   AssessmentCollection?    @relation(fields: [assessmentCollectionId], references: [id])
@@ -81,7 +81,7 @@ model AssessmentUser {
 model AssessmentType {
     id                   Int                    @id() @default(autoincrement())
     name                 String                 @unique()
-    description          String
+    description          String                 @db.VarChar(Max)
     parts                Part[]
     AssessmentCollection AssessmentCollection[]
 }
@@ -91,7 +91,7 @@ model AssessmentType {
 model Part {
     id               Int            @id() @default(autoincrement())
     name             String
-    description      String
+    description      String         @db.VarChar(Max)
     assessmentType   AssessmentType @relation(fields: [assessmentTypeId], references: [id])
     assessmentTypeId Int
     sections         Section[]
@@ -101,7 +101,7 @@ model Part {
 model Section {
     id          String      @id()
     name        String
-    description String
+    description String      @db.VarChar(Max)
     part        Part        @relation(fields: [partId], references: [id])
     partId      Int
     attributes  Attribute[]
@@ -111,7 +111,7 @@ model Section {
 model Attribute {
     id                     String                   @id()
     name                   String
-    description            String
+    description            String                   @db.VarChar(Max)
     section                Section                  @relation(fields: [sectionId], references: [id])
     sectionId              String
     levels                 Level[]
@@ -120,9 +120,9 @@ model Attribute {
 
 // The answer choices for each attribute
 model Level {
-    id                     Int                      @id() @default(autoincrement())
-    shortDescription       String
-    longDescription        String
+    id                     Int                      @id()
+    shortDescription       String                   @db.VarChar(Max)
+    longDescription        String                   @db.VarChar(Max)
     level                  Int
     weight                 Int
     attribute              Attribute                @relation(fields: [attributeId], references: [id])
@@ -141,7 +141,7 @@ model AssessmentUserResponse {
     attributeId  String
     level        Level      @relation(fields: [levelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     levelId      Int
-    notes        String
+    notes        String     @db.VarChar(Max)
 }
 
 // Settings for the system

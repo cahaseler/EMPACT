@@ -4,11 +4,10 @@ import type { Metadata } from "next"
 import { cn } from "@/lib/utils"
 import "../globals.css"
 
-import { colors } from "@/app/(frontend)/branding"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Footer } from "./components/footer"
-import { Nav } from "./components/nav"
+import { Footer } from "../components/footer"
+import { Nav } from "../components/nav"
 
 export const metadata: Metadata = {
   title: "EMPACT",
@@ -35,7 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className={cn(colors.background, "flex min-h-screen flex-col")}>
+          <div className={"bg-white dark:bg-zinc-800 flex min-h-screen flex-col"}>
             <header>
               <Nav />
             </header>

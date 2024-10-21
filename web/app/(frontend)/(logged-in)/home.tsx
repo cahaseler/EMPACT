@@ -6,7 +6,10 @@ import {
 } from "@/components/ui/card"
 import Link from "next/link"
 
-export function Home() {
+
+/** Page below is just a placeholder/proof of concept, needs to be replaced **/
+
+export function Home({ data }: Readonly<{data: unknown}>) {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <section className="mb-8">
