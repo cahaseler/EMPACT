@@ -1,0 +1,68 @@
+{
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "plugin:tailwindcss/recommended"
+  ],
+  "plugins": [
+    "tailwindcss",
+    "react",
+    "jsdoc"
+  ],
+  "rules": {
+    //required for NextJS
+    "react/react-in-jsx-scope": "off",
+    "no-extra-semi": "off",
+    "react/display-name": "warn",
+    "react/prefer-read-only-props": "warn",
+    "jsdoc/check-alignment": 1,
+    "jsdoc/no-types": 1
+  },
+  // We don't want to check for undefineds in typescript since typescript already does that better
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ],
+  "settings": {
+    "tailwindcss": {
+      "callees": [
+        "cn",
+        "cva"
+      ],
+      "config": "web/tailwind.config.js",
+      "cssFiles": [
+        "web/app/(frontend)/globals.css"
+      ]
+    }
+  },
+  "globals": {
+    "React": "writable",
+    "JSX": "readonly"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "project": [
+      "web/tsconfig.json"
+    ]
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    "web_static/**",
+    "src-tauri/**",
+    ".next/**",
+    "web/.next/**",
+    "web/node_modules/**",
+    "**/components/ui/**"
+  ]
+}

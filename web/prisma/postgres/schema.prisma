@@ -17,7 +17,7 @@ datasource db {
 // Users in the system. Most user data will be passed in via SSO.
 model User {
     id                     Int                      @id() @default(autoincrement())
-    firstnName             String
+    firstName              String
     lastName               String
     email                  String                   @unique()
     systemRoles            SystemRole[]
@@ -121,7 +121,7 @@ model Attribute {
 
 // The answer choices for each attribute
 model Level {
-    id                     Int                      @id() @default(autoincrement())
+    id                     Int                      @id()
     shortDescription       String
     longDescription        String
     level                  Int
