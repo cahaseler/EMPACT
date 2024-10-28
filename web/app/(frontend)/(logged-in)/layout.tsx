@@ -34,7 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className={"bg-white dark:bg-zinc-800 flex min-h-screen flex-col"}>
+          <div className={"bg-white dark:bg-indigo-600/20 flex min-h-screen flex-col"}>
             <header>
               <Nav />
             </header>

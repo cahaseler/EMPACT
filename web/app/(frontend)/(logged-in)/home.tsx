@@ -15,7 +15,7 @@ export function Home({ data }: Readonly<{data: unknown}>) {
       <section className="mb-8">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tighter">EMPACT</h1>
-          <p className="text-base text-muted-foreground md:text-lg/relaxed lg:text-sm/relaxed xl:text-base/relaxed">
+          <p className="text-base text-muted-foreground dark:text-indigo-300/80 md:text-lg/relaxed lg:text-sm/relaxed xl:text-base/relaxed">
             Environment and Maturity Program Assessment and Control Tool
           </p>
         </div>
@@ -25,7 +25,7 @@ export function Home({ data }: Readonly<{data: unknown}>) {
           <h2 className="text-2xl font-bold">Continue Recent Assessment</h2>
           <Link
             href="#"
-            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-10 items-center justify-center rounded-md bg-indigo-800 px-8 text-sm font-medium text-indigo-50 shadow transition-colors hover:bg-indigo-800/80 hover:bg-indigo-600/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
             LANL Maturity Assessment - Site Leaders
@@ -45,21 +45,21 @@ export function Home({ data }: Readonly<{data: unknown}>) {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     View Report
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Environment
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Maturity
@@ -76,21 +76,21 @@ export function Home({ data }: Readonly<{data: unknown}>) {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     View Report
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Environment
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Maturity
@@ -107,21 +107,21 @@ export function Home({ data }: Readonly<{data: unknown}>) {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     View Report
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Environment
                   </Link>
                   <Link
                     href="#"
-                    className="inline-flex h-8 items-center justify-center rounded-md bg-background px-4 text-sm font-medium text-primary hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-50 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
                     Maturity

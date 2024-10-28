@@ -28,10 +28,10 @@ export function Nav() {
   return (
     <NavigationMenu
       className={
-        "bg-zinc-400 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-800 min-w-full h-12 justify-between text-zinc-800 dark:text-zinc-200"
+        "bg-indigo-800 border-indigo-800 min-w-full h-12 justify-between text-indigo-200"
       }
     >
-      <NavigationMenuList className="pt-1 flex flex-row space-x-6">
+      <NavigationMenuList className="py-1 flex flex-row space-x-6">
         <NavigationMenuItem className="mx-5 font-bold font-sans text-3xl">
           EMPACT
         </NavigationMenuItem>
@@ -66,7 +66,7 @@ function NavigationItemLink({
   const pn = usePathname()
 
   const linkStyle = 
-    "bg-zinc-400 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-800 hover:font-bold flex flex-row space-x-1"
+    "bg-indigo-800 border-indigo-800 hover:font-bold flex flex-row space-x-1"
   
 
   return (
