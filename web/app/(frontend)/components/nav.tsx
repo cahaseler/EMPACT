@@ -10,7 +10,13 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 
-import { Settings } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent
+} from "@/components/ui/dropdown-menu"
+
+import { Settings, LogOut, Menu } from "lucide-react"
 
 import Link from "next/link"
 
@@ -28,29 +34,69 @@ export function Nav() {
   return (
     <NavigationMenu
       className={
-        "bg-indigo-800 border-indigo-800 min-w-full h-12 justify-between text-indigo-200"
+        "bg-indigo-800 border-indigo-800 min-w-full min-h-12 flex-wrap text-indigo-200 justify-between"
       }
     >
-      <NavigationMenuList className="py-1 flex flex-row space-x-6">
-        <NavigationMenuItem className="mx-5 font-bold font-sans text-3xl">
-          EMPACT
-        </NavigationMenuItem>
-        {/* TODO Add more links */}
-      </NavigationMenuList>
-      <NavigationMenuList className="py-1 flex flex-row space-x-4 mr-4">
-        <NavigationItemLink
-          href="/settings"
-          label="Settings"
-          icon={<Settings className="w-5 h-5" />}
-        />
-                <NavigationItemLink
-          href="/admin"
-          label="Admin"
-          icon={<Settings className="w-5 h-5" />}
-        />
-        <ModeToggle />
-      </NavigationMenuList>
+      <NavigationView>
+        <NavigationMenuList className="md:py-1 flex flex-col md:flex-row flex-wrap md:space-x-6 max-md:space-y-4 max-md:mb-4 justify-start items-center">
+          <NavigationMenuItem className="max-md:hidden mx-5 font-bold font-sans text-3xl list-none w-fit">
+            <Link href="/" legacyBehavior>EMPACT</Link>
+          </NavigationMenuItem>
+          <NavigationItemLink
+            href="/assessments"
+            label="Assessments"
+          />
+          {/* TODO Add reports page */}
+          <NavigationItemLink
+            href="/#"
+            label="Reports"
+          />
+          {/* TODO Add more links */}
+        </NavigationMenuList>
+        <NavigationMenuList className="md:py-1 flex flex-col md:flex-row flex-wrap md:space-x-4 max-md:space-y-4 md:mx-4 max-md:mb-4 justify-end">
+          <NavigationItemLink
+            href="/settings"
+            label="Settings"
+            icon={<Settings className="w-5 h-5" />}
+          />
+          <NavigationItemLink
+            href="/admin"
+            label="Admin"
+            icon={<Settings className="w-5 h-5" />}
+          />
+          {/* TODO Add sign-out functionality */}
+          <NavigationItemLink
+            href="#"
+            label="Sign Out"
+            icon={<LogOut className="w-5 h-5" />}
+          />
+          <ModeToggle />
+        </NavigationMenuList>
+      </NavigationView>
     </NavigationMenu>
+  )
+}
+
+function NavigationView({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="w-full items-center">
+      <div className="max-md:hidden flex flex-row justify-between w-full">
+        {children}
+      </div>
+      <div className="md:hidden flex flex-row justify-between w-full items-center">
+        <NavigationMenuItem className="mx-5 font-bold font-sans text-3xl list-none w-fit">
+          <Link href="/" legacyBehavior>EMPACT</Link>
+        </NavigationMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="mx-5">
+            <Menu className="w-7 h-7" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {children}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
   )
 }
 
@@ -61,12 +107,12 @@ function NavigationItemLink({
 }: {
   readonly href: string
   readonly label: string
-  readonly icon: React.ReactNode
+  readonly icon?: React.ReactNode
 }) {
   const pn = usePathname()
 
   const linkStyle = 
-    "bg-indigo-800 border-indigo-800 hover:font-bold flex flex-row space-x-1"
+    "md:bg-indigo-800 md:border-indigo-800 hover:font-bold flex flex-row space-x-1 items-center"
   
 
   return (
