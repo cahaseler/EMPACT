@@ -17,7 +17,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && Xcopy public \".next/standalone/public\" /I && Xcopy \".next/static\" \".next/standalone/.next/static\" /I",
+    "build": "npx prisma generate --schema prisma/mssql/schema.prisma && next build && Xcopy public \".next/standalone/public\" /I && Xcopy \".next/static\" \".next/standalone/.next/static\" /I",
     "build-linux": "next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\"",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
