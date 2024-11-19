@@ -29,6 +29,7 @@
     "build-app": "cd src-tauri && tauri build && cd .."
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "4.3.1",
     "@tauri-apps/cli": "1.6.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
@@ -37,7 +38,6 @@
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-react": "7.35.0",
     "eslint-plugin-tailwindcss": "3.17.4",
-    "prettier": "3.3.3",
-    "@ianvs/prettier-plugin-sort-imports": "4.3.1"
+    "prettier": "3.3.3"
   }
 }
