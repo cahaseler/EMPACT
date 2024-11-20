@@ -1,19 +1,45 @@
 {
-  "branches": ["main"],
+  "branches": [
+    "main"
+  ],
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
       {
         "preset": "angular",
         "releaseRules": [
-          { "type": "docs", "release": false },
-          { "scope": "no-release", "release": false },
-          { "type": "refactor", "release": "patch" },
-          { "type": "chore", "release": "patch" },
-          { "type": "test", "release": false },
-          { "type": "build", "release": "patch" },
-          { "type": "ci", "release": false },
-          { "type": "style", "release": "patch" }
+          {
+            "type": "docs",
+            "release": false
+          },
+          {
+            "scope": "no-release",
+            "release": false
+          },
+          {
+            "type": "refactor",
+            "release": "patch"
+          },
+          {
+            "type": "chore",
+            "release": "patch"
+          },
+          {
+            "type": "test",
+            "release": false
+          },
+          {
+            "type": "build",
+            "release": "patch"
+          },
+          {
+            "type": "ci",
+            "release": false
+          },
+          {
+            "type": "style",
+            "release": "patch"
+          }
         ]
       }
     ],
@@ -47,13 +73,17 @@
             "countMatches": false
           },
           {
-            "files": ["web/app/api/version/route.ts"],
+            "files": [
+              "web/app/api/version/route.ts"
+            ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
             "countMatches": false
           },
           {
-            "files": ["src-tauri/Cargo.toml"],
+            "files": [
+              "src-tauri/Cargo.toml"
+            ],
             "from": "name = \"EMPACT\"\nversion = \"(.*?)\"",
             "to": "name = \"EMPACT\"\nversion = \"${nextRelease.version}\"",
             "countMatches": false
@@ -74,28 +104,6 @@
           "src-tauri/tauri.conf.json"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        "prepareCmd": "yarn install && cd src-tauri && yarn tauri build"
-      }
-    ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "src-tauri/target/release/bundle/nsis/*.exe",
-            "label": "Windows EXE Installer"
-          },
-          {
-            "path": "src-tauri/target/release/bundle/msi/*.msi",
-            "label": "Windows MSI Installer"
-          }
-        ],
-        "addReleases": "bottom"
       }
     ]
   ]
