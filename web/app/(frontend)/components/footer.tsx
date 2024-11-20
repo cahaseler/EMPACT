@@ -7,7 +7,7 @@ export function Footer() {
     <div className="static inset-x-0 bottom-0 z-20">
       <div
         className={
-          "bg-zinc-400 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-800 w-full h-10 flex justify-center items-center text-xs flex-col"
+          "bg-indigo-800 border-indigo-800 text-indigo-200 w-full h-10 flex justify-center items-center text-xs flex-col"
         }
       >
         <div className="flex flex-row space-x-20">

@@ -1,5 +1,13 @@
+import { dummyData } from "@/app/utils/dummyData"
 import * as assessment from "@/app/utils/assessment"
 
+import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import { DataTable } from "./data-table"
+
+// TODO: Fetch actual data based on user role/permissions
+async function fetchPageData() {
+  return dummyData()
+}
 
 async function fetchAssessments(assessmentCollectionId: string) {
 
@@ -13,12 +21,29 @@ async function fetchAssessments(assessmentCollectionId: string) {
   return await assessment.findMany({ where: { assessmentCollectionId: idAsInteger } })
 }
 
-// TODO create a landing page for a collection of assessments, populate it with the list of assessments for the current collection
-// If it's just a static page with links, we can build it here, or if we need something interactive we can write a client component and use that inside Page below.
-
-
-export default async function Page({ params }: Readonly<{ params: { assessmentCollectionId: string } }>) {
-  const assessments = await fetchAssessments(params.assessmentCollectionId)
+export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string } }>) {
+  const links = [{url: `/assessments`, name: "Assessments"}]
+  // const assessments = await fetchAssessments(params.assessmentCollectionId)
+  const data = await fetchPageData()
+  const assessmentCollection = data.assessmentCollections.filter(
+    (collection: any) => collection.id === parseInt(params.assessmentGroupId, 10))[0]
+  const assessments = assessmentCollection.assessments
   
-  return <div >{assessments.map((assessment) => <div key={assessment.id}>{assessment.name}</div>)}</div>
+  return (
+    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
+      <div className="w-full max-w-6xl mx-auto">
+        <section className="mb-8">
+          <div className="space-y-4 ml-2">
+            <Breadcrumbs links={links} currentPage={assessmentCollection.name} />
+            <h1 className="text-3xl font-bold tracking-tighter">{assessmentCollection.name}</h1>
+          </div>
+        </section>
+        <section className="mb-16">
+            <div className="space-y-4">
+              <DataTable assessments={assessments} assessmentCollectionId={assessmentCollection.id} />
+            </div>
+        </section>
+      </div>
+    </div>
+  )
 }

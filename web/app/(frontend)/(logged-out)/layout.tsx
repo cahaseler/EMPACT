@@ -8,7 +8,6 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Footer } from "../components/footer"
 import { Nav } from "../components/nav"
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "EMPACT",
@@ -46,7 +45,6 @@ export default function RootLayout({
             </footer>
           </div>
         </ThemeProvider>
-        <SpeedInsights/>
       </body>
     </html>
   )

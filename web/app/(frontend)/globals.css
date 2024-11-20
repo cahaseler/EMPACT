@@ -74,3 +74,16 @@
       @apply bg-background text-foreground;
     }
   }
+
+  .text-description {
+    p {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style-type: disc;
+      margin-left: 2rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+  }
