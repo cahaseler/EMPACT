@@ -1,4 +1,4 @@
 export function VersionIndicator() {
-  let version = { version: "1.1.4" };
+  let version = { version: "1.2.0" };
   return <div>{"v" + version.version}</div>;
 }
