@@ -108,5 +108,6 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd web
+          yarn build
           docker build --tag cahaseler/empact:latest --tag cahaseler/empact:${{ needs.build_and_release.outputs.version }} .
           docker push --all-tags cahaseler/empact
