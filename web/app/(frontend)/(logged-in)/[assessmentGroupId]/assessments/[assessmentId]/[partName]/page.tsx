@@ -35,12 +35,8 @@ export default async function Page({ params }: Readonly<{ params: {
   const sections = params.partName === "maturity" ? assessment.subprocesses : assessment.categories
   const links = [
     {
-      url: `/assessments`, 
-      name: "Assessments"
-    }, 
-    {
-      url: `/${params.assessmentGroupId}`
-      , name: assessmentCollection.name
+      url: `/${params.assessmentGroupId}/assessments`, 
+      name: assessmentCollection.name + " Assessments"
     },
     {
       url: `/${params.assessmentGroupId}/${params.assessmentId}`
@@ -63,7 +59,7 @@ export default async function Page({ params }: Readonly<{ params: {
               {sections.map((section) => {
                 return(
                   <Link
-                    href={`/${params.assessmentGroupId}/${params.assessmentId}/${params.partName}/${section.id}`}
+                    href={`/${params.assessmentGroupId}/assessments/${params.assessmentId}/${params.partName}/${section.id}`}
                     className={"flex min-h-40 items-center justify-center rounded-md px-8 py-3 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                       + (section.status === "Completed" ? " bg-indigo-700/70 hover:bg-indigo-700/90" : " bg-indigo-700/90 hover:bg-indigo-700/70")
                     }

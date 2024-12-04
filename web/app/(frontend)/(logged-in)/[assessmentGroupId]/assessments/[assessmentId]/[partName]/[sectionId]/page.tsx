@@ -41,12 +41,8 @@ export default async function Page({ params }: Readonly<{ params: {
   const sectionDescription = sectionDescriptions.filter((description: any) => description.name === section.name)[0]
   const links = [
     {
-      url: `/assessments`, 
-      name: "Assessments"
-    }, 
-    {
-      url: `/${params.assessmentGroupId}`
-      , name: assessmentCollection.name
+      url: `/${params.assessmentGroupId}/assessments`, 
+      name: assessmentCollection.name + " Assessments"
     },
     {
       url: `/${params.assessmentGroupId}/${params.assessmentId}`

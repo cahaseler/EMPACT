@@ -4,12 +4,14 @@ export function dummyData() {
           assessmentCollections: [
             {
               id: 1,
-              name: "Assessment Collection 1",
+              name: "IP2M METRR",
+              description: "Integrated Project/Program Management Maturity and Environment Total Risk Rating",
               assessments: [
                 {
                   id: 1,
                   name: "Q4 2023 Assessment",
                   type: "Maturity & Environment",
+                  types: ["Maturity", "Environment"],
                   status: "Completed",
                   maturityStatus: "Completed",
                   environmentStatus: "Completed",
@@ -340,6 +342,7 @@ export function dummyData() {
                   id: 2,
                   name: "Q3 2023 Assessment",
                   type: "Maturity & Environment",
+                  types: ["Maturity", "Environment"],
                   status: "Completed",
                   maturityStatus: "Completed",
                   environmentStatus: "Completed",
@@ -439,6 +442,7 @@ export function dummyData() {
                   id: 3,
                   name: "LANL Maturity Assessment - Site Leaders",
                   type: "Maturity",
+                  types: ["Maturity"],
                   status: "In Progress",
                   maturityStatus: "In Progress",
                   environmentStatus: null,
@@ -495,6 +499,7 @@ export function dummyData() {
                   id: 4,
                   name: "Q2 2023 Maturity Assessment",
                   type: "Maturity",
+                  types: ["Maturity"],
                   status: "Completed",
                   maturityStatus: "Completed",
                   environmentStatus: null,
@@ -551,6 +556,7 @@ export function dummyData() {
                   id: 5,
                   name: "Q1 2023 Environment Assessment",
                   type: "Environment",
+                  types: ["Environment"],
                   status: "Completed",
                   maturityStatus: null,
                   environmentStatus: "Completed",
@@ -607,12 +613,14 @@ export function dummyData() {
             },
             {
                 id: 2,
-                name: "Assessment Collection 2",
+                name: "PDRI",
+                description: "Project Definition Rating Index",
                 assessments: []
             },
             {
                 id: 3,
-                name: "Assessment Collection 3",
+                name: "ASSMT3",
+                description: "Assessment 3 Description",
                 assessments: []
             }
           ],

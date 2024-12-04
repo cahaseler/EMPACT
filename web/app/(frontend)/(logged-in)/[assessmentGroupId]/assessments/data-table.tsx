@@ -35,7 +35,7 @@ export function DataTable({
             <TableBody>
                 {assessments.map((assessment, key) => (
                 <TableRow key={key} onClick={() =>
-                    router.push(`/${assessmentCollectionId}/${assessment.id}`)
+                    router.push(`/${assessmentCollectionId}/assessments/${assessment.id}`)
                 }>
                     <TableCell>{assessment.name}</TableCell>
                     <TableCell>{assessment.status}</TableCell>

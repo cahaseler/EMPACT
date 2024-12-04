@@ -30,13 +30,9 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
     (assessment: any) => assessment.id === parseInt(params.assessmentId, 10))[0]
   const links = [
     {
-      url: `/assessments`, 
-      name: "Assessments"
-    }, 
-    {
-      url: `/${params.assessmentGroupId}`
-      , name: assessmentCollection.name
-    }
+      url: `/${params.assessmentGroupId}/assessments`, 
+      name: assessmentCollection.name + " Assessments"
+    },
   ]
   
   return (
@@ -51,7 +47,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
         <section className="mb-16">
             <div className="w-full flex flex-row space-x-2 sm:space-x-4">
               {assessment.type !== "Environment" && <Link
-                  href={`/${params.assessmentGroupId}/${params.assessmentId}/maturity`}
+                  href={`/${params.assessmentGroupId}/assessments/${params.assessmentId}/maturity`}
                   className={"w-1/2 flex h-40 items-center justify-center rounded-md px-8 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     + (assessment.maturityStatus === "Completed" ? " bg-indigo-700/70 hover:bg-indigo-700/90" : " bg-indigo-700/90 hover:bg-indigo-700/70")
                   }
@@ -67,7 +63,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
                   </div>
               </Link>}
               {assessment.type !== "Maturity" && <Link
-                  href={`/${params.assessmentGroupId}/${params.assessmentId}/environment`}
+                  href={`/${params.assessmentGroupId}/assessments/${params.assessmentId}/environment`}
                   className={"w-1/2 flex h-40 items-center justify-center rounded-md px-8 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     + (assessment.environmentStatus === "Completed" ? " bg-indigo-700/70 hover:bg-indigo-700/90" : " bg-indigo-700/90 hover:bg-indigo-700/70")
                   }
