@@ -1,26 +1,55 @@
-import { dummyData } from "@/app/utils/dummyData"
+import { AssessmentType, Assessment, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
+import * as assessment from "@/app/utils/assessment"
+import * as assessmentType from "@/app/utils/assessmentType"
 import * as part from "@/app/utils/part"
-import { assessmentDescriptions } from "@/app/utils/assessmentDescriptions"
+import * as section from "@/app/utils/section"
+import * as attribute from "@/app/utils/attribute"
 
-import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
-import Link from "next/link"
 import { DataTable } from "./data-table"
 
-// TODO: Fetch actual data based on user role/permissions
-async function fetchPageData() {
-  return dummyData()
-}
-
-async function fetchPart(partId: string) {
-
+async function fetchAssessmentType(typeid: string): Promise<AssessmentType | null> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
-  const idAsInteger = parseInt(partId, 10)
+  const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
   if(isNaN(idAsInteger)) {
-    return []
+    return null
   }
 
-  return await part.findUnique({ where: { id: idAsInteger } })
+  return await assessmentType.findUnique({ where: { id: idAsInteger } })
+}
+
+async function fetchAssessment(assessmentId: string): Promise<Assessment | null> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return null
+  }
+
+  return await assessment.findUnique({ where: { id: idAsInteger } })
+}
+
+async function fetchPart(typeid: string, partName: string): Promise<Part | null> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(typeid, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return null
+  }
+  const parts = await part.findMany({ where: { assessmentTypeId: idAsInteger } })
+  const uniquePart = parts.find(part => part.name === partName)
+  if (uniquePart === undefined) {
+    return null
+  }
+  return uniquePart
+}
+
+async function fetchSection(sectionId: string): Promise<Section | null> {
+  return await section.findUnique({ where: { id: sectionId } })
+}
+
+async function fetchAttributes(sectionId: string ): Promise<Attribute[]> {
+  return await attribute.findMany({ where: { sectionId: sectionId } })
 }
 
 export default async function Page({ params }: Readonly<{ params: { 
@@ -29,45 +58,15 @@ export default async function Page({ params }: Readonly<{ params: {
     partName: string,
     sectionId: string 
   } }>) {
-  // const part = await fetchPart(params.partId)
-  const data = await fetchPageData()
-  const assessmentCollection = data.assessmentCollections.filter(
-    (collection: any) => collection.id === parseInt(params.assessmentGroupId, 10))[0]
-  const assessment = assessmentCollection.assessments.filter(
-    (assessment: any) => assessment.id === parseInt(params.assessmentId, 10))[0]
-  const sections = params.partName === "maturity" ? assessment.subprocesses : assessment.categories
-  const sectionDescriptions = params.partName === "maturity" ? assessmentDescriptions().subprocesses : assessmentDescriptions().categories
-  const section = sections.filter((section: any) => section.id === parseInt(params.sectionId, 10))[0]
-  const sectionDescription = sectionDescriptions.filter((description: any) => description.name === section.name)[0]
-  const links = [
-    {
-      url: `/${params.assessmentGroupId}/assessments`, 
-      name: assessmentCollection.name + " Assessments"
-    },
-    {
-      url: `/${params.assessmentGroupId}/${params.assessmentId}`
-      , name: assessment.name
-    },
-    {
-      url: `/${params.assessmentGroupId}/${params.assessmentId}/${params.partName}`
-      , name: params.partName.charAt(0).toUpperCase() + params.partName.slice(1)
-    }
-  ]
+  const assessment = await fetchAssessment(params.assessmentId)
+  const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const part = await fetchPart(params.assessmentGroupId, params.partName)
+  const section = await fetchSection(params.sectionId)
+  const attributes = await fetchAttributes(params.sectionId)
   
   return (
     <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
-      <div className="w-full max-w-6xl mx-auto">
-        <section className="mb-8">
-          <div className="space-y-4 ml-2">
-            <Breadcrumbs links={links} currentPage={section.name} />
-            <h1 className="text-3xl font-bold tracking-tighter">{section.name}</h1>
-            <p className="text-md">{sectionDescription.description}</p>
-          </div>
-        </section>
-        <section className="mb-16">
-            <DataTable attributes={section.attributes} url={`/${params.assessmentGroupId}/${params.assessmentId}/${params.partName}/${section.id}`} />
-        </section>
-      </div>
+      <DataTable assessment={assessment} assessmentType={assessmentType} part={part} section={section} attributes={attributes} />
     </div>
   )
 }

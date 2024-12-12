@@ -14,7 +14,7 @@ export function SignIn() {
   return (
     <div className="flex flex-col w-full mx-auto justify-between">
       <section className="mb-8">
-        <div className="space-y-2 ml-2">
+        <div className="space-y-2 max-lg:ml-2">
           <h1 className="text-3xl font-bold tracking-tighter">Welcome to EMPACT</h1>
           <p className="text-base text-muted-foreground dark:text-indigo-300/80 md:text-lg/relaxed lg:text-sm/relaxed xl:text-base/relaxed">
             Environment and Maturity Program Assessment and Control Tool

@@ -7,19 +7,22 @@ import {
     BreadcrumbSeparator
   } from "@/components/ui/breadcrumb"
 
-  type links = Array<{url: string, name: string}>
+  type link = {
+    url: string,
+    name: string
+  }
 
   export default function Breadcrumbs({
     links, 
     currentPage
   }: {
-    readonly links: links,
+    readonly links: link[],
     readonly currentPage: string
   }) {
     return (
       <Breadcrumb>
         <BreadcrumbList>
-            {links.map((link) => {
+            {links.map((link: link) => {
                 return (
                     <>
                         <BreadcrumbItem>

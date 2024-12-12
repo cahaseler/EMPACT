@@ -46,6 +46,10 @@ export function Nav() {
           {!Number.isNaN(parseInt(pn.split("/")[1])) && 
           <>
             <NavigationItemLink
+              href={"/" + pn.split("/")[1]}
+              label="Home"
+            />
+            <NavigationItemLink
               href={"/" + pn.split("/")[1] + "/assessments"}
               label="Assessments"
             />
