@@ -1,5 +1,6 @@
 import { AssessmentType, Assessment, Part, Section } from "@/prisma/mssql/generated/client"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotFound from "@/app/(frontend)/components/notFound"
 import Link from "next/link"
 
 export default function PartContent({
@@ -68,41 +69,9 @@ export default function PartContent({
           </div>
         )
       }
-      return (
-        <div className="w-full max-w-4xl mx-auto">
-            <section className="mb-8">
-                <div className="space-y-8 max-lg:ml-2">
-                    <Breadcrumbs links={links} currentPage="Part Not Found" />
-                    <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-                        The assessment part could not be found.
-                    </p>
-                </div>
-            </section>
-        </div>
-      )
+      return <NotFound links={links} pageType="part" />
     }
-    return (
-      <div className="w-full max-w-4xl mx-auto">
-          <section className="mb-8">
-              <div className="space-y-8 max-lg:ml-2">
-                  <Breadcrumbs links={links} currentPage="Assessment Not Found" />
-                  <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-                      The assessment could not be found.
-                  </p>
-              </div>
-          </section>
-      </div>
-    )
+    return <NotFound links={links} pageType="assessment" />
   }
-  return (
-    <div className="w-full max-w-4xl mx-auto">
-        <section className="mb-8">
-            <div className="space-y-8 max-lg:ml-2">
-                <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-                    The assessment type could not be found.
-                </p>
-            </div>
-        </section>
-    </div>
-  )
+  return <NotFound pageType="type" />
 }
