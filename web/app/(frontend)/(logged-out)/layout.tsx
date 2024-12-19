@@ -2,12 +2,12 @@ import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 
 import { cn } from "@/lib/utils"
-import "./globals.css"
+import "../globals.css"
 
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Footer } from "./components/footer"
-import { Nav } from "./components/nav"
+import { Footer } from "../components/footer"
+import { Nav } from "../components/nav"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {

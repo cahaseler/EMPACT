@@ -43,32 +43,6 @@ export function Nav() {
           <NavigationMenuItem className="max-md:hidden mx-5 font-bold font-sans text-3xl list-none w-fit">
             <Link href="/" legacyBehavior>EMPACT</Link>
           </NavigationMenuItem>
-          {!Number.isNaN(parseInt(pn.split("/")[1])) && 
-          <>
-            <NavigationItemLink
-              href={"/" + pn.split("/")[1]}
-              label="Home"
-            />
-            <NavigationItemLink
-              href={"/" + pn.split("/")[1] + "/assessments"}
-              label="Assessments"
-            />
-            {/* TODO Add reports page */}
-            <NavigationItemLink
-              href={"/" + pn.split("/")[1] + "/reports"}
-              label="Reports"
-            />
-            {/* TODO Add users page */}
-            <NavigationItemLink
-              href={"/" + pn.split("/")[1] + "/users"}
-              label="Users"
-            />
-            {/* TODO Add resources page */}
-            <NavigationItemLink
-              href={"/" + pn.split("/")[1] + "/resources"}
-              label="Resources"
-            />
-          </>}
         </NavigationMenuList>
         <NavigationMenuList className="md:py-1 flex flex-col md:flex-row flex-wrap md:space-x-4 max-md:space-y-4 md:mx-4 max-md:mb-4 justify-end">
           {pn !== "/login" && 
