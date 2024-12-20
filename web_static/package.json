@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@types/node": "20.14.15",
-    "@types/react": "18.3.16",
+    "@types/react": "18.3.17",
     "@types/react-dom": "18.3.5",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.5",
