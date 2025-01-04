@@ -6,5 +6,5 @@ import { NextResponse } from "next/server";
  * NOTE: This file is automatically updated by a script. You don't need to increment this version manually.
  */
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json({ version: "1.2.10" });
+  return NextResponse.json({ version: "1.2.11" });
 }
