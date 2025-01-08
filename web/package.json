@@ -21,7 +21,15 @@
     "build-linux": "npx prisma generate --schema prisma/mssql/schema.prisma && npx prisma generate --schema prisma/postgres/schema.prisma && npx prisma generate --schema prisma/sqlite/schema.prisma && next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\"",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
-    "prisma-generate": "npx prisma generate --schema prisma/mssql/schema.prisma"
+    "prisma-generate": "npx prisma generate --schema prisma/mssql/schema.prisma",
+    "test": "yarn build && playwright test",
+    "test:ui": "yarn build && playwright test --ui",
+    "test:debug": "yarn build && playwright test --debug",
+    "test:headless": "yarn build && playwright test --reporter=list",
+    "test:ui:dev": "cross-env PLAYWRIGHT_SERVER_COMMAND=\"yarn dev\" playwright test --ui",
+    "test:ci": "playwright test --reporter=list",
+    "test:nobuild:ui": "playwright test --ui",
+    "test:nobuild": "playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "3.9.0",
@@ -85,7 +93,9 @@
     "@types/node": "20.14.15",
     "@types/react": "18.3.18",
     "@types/react-dom": "18.3.5",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "@playwright/test": "1.49.1",
+    "cross-env": "7.0.3"
   },
   "pkg": {
     "scripts": ".next/standalone/**/*.*",

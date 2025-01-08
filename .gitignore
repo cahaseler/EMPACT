@@ -70,4 +70,6 @@ web_static/lib/**/*
 # Exclude generated prisma clients, these are recreated on build
 /web/prisma/**/generated/*
 
-
+web/.env
+web/.env.local
+web/.env.test
