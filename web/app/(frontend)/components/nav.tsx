@@ -30,7 +30,7 @@ Lots of work to be done here to link to key sections of the application, and pro
 
 */
 
-export function Nav() {
+export function Nav({isAdmin}: Readonly<{isAdmin: boolean}>) {
   const pn = usePathname()
   return (
     <NavigationMenu
@@ -52,11 +52,11 @@ export function Nav() {
                 label="Settings"
                 icon={<Settings className="w-5 h-5" />}
               />
-              <NavigationItemLink
+              { isAdmin && <NavigationItemLink
                 href="/admin"
                 label="Admin"
                 icon={<Settings className="w-5 h-5" />}
-              />
+              />}
               {/* TODO Add sign-out functionality */}
               <NavigationItemLink
                 href="/login"
@@ -72,7 +72,7 @@ export function Nav() {
   )
 }
 
-function NavigationView({ children }: { children: React.ReactNode }) {
+function NavigationView({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="w-full items-center">
       <div className="max-md:hidden flex flex-row justify-between w-full">
