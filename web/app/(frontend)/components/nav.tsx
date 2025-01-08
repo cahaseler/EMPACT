@@ -72,7 +72,7 @@ export function Nav({isAdmin}: Readonly<{isAdmin: boolean}>) {
   )
 }
 
-function NavigationView({ children }: { children: React.ReactNode }) {
+function NavigationView({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="w-full items-center">
       <div className="max-md:hidden flex flex-row justify-between w-full">

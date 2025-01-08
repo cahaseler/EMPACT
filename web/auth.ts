@@ -1,5 +1,5 @@
 import type { User } from "next-auth"
-import type { User as PrismaUser, SystemRole, AssessmentUser, AssessmentCollectionUser } from "./prisma/mssql/generated/client"
+import type { SystemRole, AssessmentUser, AssessmentCollectionUser } from "./prisma/mssql/generated/client"
 import { db } from "./lib/db"
 
 // Extend the built-in session types

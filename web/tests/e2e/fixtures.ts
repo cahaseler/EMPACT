@@ -1,4 +1,4 @@
-import { test as base, type Browser, type BrowserContext, type TestFixture } from "@playwright/test"
+import { test as base, type Browser, type BrowserContext } from "@playwright/test"
 
 type TestFixtures = {
     context: BrowserContext

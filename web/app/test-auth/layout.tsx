@@ -1,10 +1,11 @@
 import { ThemeProvider } from "@/components/theme-provider"
+import "@/styles/globals.css"
 
 export default function TestAuthLayout({
     children,
-}: {
+}: Readonly<{
     children: React.ReactNode
-}) {
+}>) {
     return (
         <html lang="en" suppressHydrationWarning>
             <head />

@@ -25,12 +25,10 @@ export async function middleware(request: NextRequest) {
             url.searchParams.set("callbackUrl", request.url)
             return NextResponse.redirect(url)
         }
-    } else {
-        // If authenticated and trying to access login page
-        if (request.nextUrl.pathname.startsWith(loginPath)) {
-            return NextResponse.redirect(new URL("/", request.url))
-        }
+    } else if (request.nextUrl.pathname.startsWith(loginPath)) {
+        return NextResponse.redirect(new URL("/", request.url))
     }
+
 
     return NextResponse.next()
 }
