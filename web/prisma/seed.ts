@@ -3,7 +3,6 @@ import { PrismaClient as MssqlPrismaClient } from "./mssql/generated/client"
 //import { PrismaClient as PostgresPrismaClient } from "./postgres/generated/client"
 import { PrismaClient as SqlitePrismaClient } from "./sqlite/generated/client"
 import { testAccounts } from "../tests/e2e/test-accounts"
-import type { Prisma } from "./mssql/generated/client"
 
 const prismaMssql = new MssqlPrismaClient({
   log: ["info", "warn", "error"],
