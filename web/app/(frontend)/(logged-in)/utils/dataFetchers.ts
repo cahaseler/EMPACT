@@ -15,6 +15,10 @@ import * as section from "@/app/utils/section"
 import * as attribute from "@/app/utils/attribute"
 import * as level from "@/app/utils/level"
 
+export async function fetchAssessmentTypes(): Promise<AssessmentType[]> {
+  return await assessmentType.findMany({})
+}
+
 export async function fetchAssessmentType(typeid: string): Promise<AssessmentType | null> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
@@ -38,9 +42,9 @@ export async function fetchAssessmentCollections(typeid: string): Promise<Assess
 }
 
 // Returns assessments in collections of given type
-export async function fetchAssessments(typeid: string ): Promise<Assessment[]> {
+export async function fetchAssessments(typeid: string): Promise<Assessment[]> {
   const collections = await fetchAssessmentCollections(typeid)
-  const collectionIds = collections.map((collection: any) => collection.id)
+  const collectionIds = collections.map((collection: AssessmentCollection) => collection.id)
 
   return await assessment.findMany({ where: { assessmentCollectionId: { in: collectionIds } } })
 }
@@ -56,7 +60,7 @@ export async function fetchAssessment(assessmentId: string): Promise<Assessment 
     return await assessment.findUnique({ where: { id: idAsInteger } })
   }
 
-export async function fetchParts(typeid: string ): Promise<Part[]> {
+export async function fetchParts(typeid: string): Promise<Part[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -101,14 +105,14 @@ export async function fetchPart(typeid: string, partName: string): Promise<Part 
     return await section.findUnique({ where: { id: sectionId } })
   }
   
-  export async function fetchAttributes(sectionId: string ): Promise<Attribute[]> {
+  export async function fetchAttributes(sectionId: string): Promise<Attribute[]> {
     return await attribute.findMany({ where: { sectionId: sectionId } })
   }
 
-  export async function fetchAttribute(attributeId: string ): Promise<Attribute | null> {
+  export async function fetchAttribute(attributeId: string): Promise<Attribute | null> {
     return await attribute.findUnique({ where: { id: attributeId } })
   }
   
-  export async function fetchLevels(attributeId: string ): Promise<Level[]> {
+  export async function fetchLevels(attributeId: string): Promise<Level[]> {
     return await level.findMany({ where: { attributeId: attributeId } })
   }

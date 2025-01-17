@@ -9,17 +9,19 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Footer } from "../components/footer"
 import { Nav } from "../components/nav"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { auth } from "@/auth"
 
 export const metadata: Metadata = {
   title: "EMPACT",
   description: "Environmental and Maturity Program Assessment and Control Tool",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await auth()
   return (
     <html lang="en">
       <head />

@@ -24,6 +24,18 @@ declare module "next-auth" {
     }
   }
 }
+
+export interface Session {
+  user: User & {
+    id: string
+    email: string
+    name: string
+    systemRoles: SystemRole[]
+    assessmentUser: AssessmentUser[]
+    assessmentCollectionUser: AssessmentCollectionUser[]
+  }
+}
+
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { z } from "zod"
@@ -113,6 +125,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
      * You can start that here: https://authjs.dev/getting-started/authentication/credentials
      * But don't. */
     Credentials({
+      id: "admin-credentials",
+      name: "Admin Credentials",
       credentials: {
         email: {},
         password: {},
@@ -120,14 +134,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         let user = null
 
+        const { email, password } = await signInSchema.parseAsync(credentials)
+
         if (
-          credentials.password === process.env.SETUP_ADMIN_PASSWORD &&
-          credentials.email === "admin"
+          password === process.env.AUTH_ADMIN_PASSWORD &&
+          email === process.env.AUTH_ADMIN_EMAIL
         ) {
           user = {
-            id: "Admin",
-            name: "Admin",
-            email: "",
+            id: email,
+            email,
+            name:
+              email
+                .split("@")[0]
+                .split("_")[0]
+                .toUpperCase() +
+              " " +
+              email
+                .split("@")[0]
+                .split("_")[1]
+                .toUpperCase(),
           } as User
         }
 

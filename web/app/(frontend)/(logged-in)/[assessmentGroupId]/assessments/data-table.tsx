@@ -1,5 +1,6 @@
 "use client"
 import { AssessmentType, Assessment } from "@/prisma/mssql/generated/client"
+import Link from "next/link"
 import {
     Table,
     TableBody,
@@ -17,10 +18,12 @@ import { useRouter } from "next/navigation"
 
 export function DataTable({
     assessments, 
-    assessmentType
+    assessmentType,
+    canAdd
 }: {
     readonly assessments: Assessment[], 
-    readonly assessmentType: AssessmentType | null
+    readonly assessmentType: AssessmentType | null,
+    readonly canAdd: boolean
 }) {
     const router = useRouter()
 
@@ -34,6 +37,22 @@ export function DataTable({
                 </section>
                 <section className="mb-16">
                     <div className="space-y-4">
+                        {canAdd && <div className="flex w-full justify-end space-x-2">
+                            <Link
+                                href={`/${assessmentType.id}/assessments/add-collection`}
+                                className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                                prefetch={false}
+                            >
+                                Add Assessment Collection
+                            </Link>
+                            <Link
+                                href={`/${assessmentType.id}/assessments/add-assessment`}
+                                className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                                prefetch={false}
+                            >
+                                Add Assessment
+                            </Link>
+                        </div>}
                         <Table className="cursor-pointer dark:bg-transparent">
                             <TableHeader>
                                 <TableRow>

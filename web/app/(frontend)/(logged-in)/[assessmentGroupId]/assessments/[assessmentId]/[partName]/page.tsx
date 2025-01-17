@@ -3,7 +3,7 @@ import {
   fetchAssessment, 
   fetchPart, 
   fetchSections
-} from "../../../utils/dataFetchers"
+} from "../../../../utils/dataFetchers"
 
 import PartContent from "./part"
 

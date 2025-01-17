@@ -1,4 +1,4 @@
-import { fetchAssessmentType, fetchAssessments, fetchParts } from "./utils/dataFetchers"
+import { fetchAssessmentType, fetchAssessments, fetchParts } from "../utils/dataFetchers"
 
 import { Home } from "./home"
 

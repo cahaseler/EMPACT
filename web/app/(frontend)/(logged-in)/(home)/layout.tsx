@@ -10,6 +10,7 @@ import { Footer } from "../../components/footer"
 import { Nav } from "../../components/nav"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { auth } from "@/auth"
+import { isAdmin } from "../utils/permissions"
 
 export const metadata: Metadata = {
   title: "EMPACT",
@@ -40,7 +41,7 @@ export default async function RootLayout({
         >
           <div className={"bg-white dark:bg-indigo-600/20 flex min-h-screen flex-col"}>
             <header>
-              <Nav isAdmin={session?.user?.systemRoles.find(role => role.name === "Admin") !== undefined}/>
+              <Nav isAdmin={isAdmin(session)} name={session?.user?.name}/>
             </header>
             <main className="flex h-full grow flex-col">{children}</main>
             <footer>

@@ -5,7 +5,7 @@ import {
   fetchSection, 
   fetchAttribute,
   fetchLevels
-} from "../../../../../utils/dataFetchers"
+} from "../../../../../../utils/dataFetchers"
 
 import AttributeContent from "./attributeContent"
 

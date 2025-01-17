@@ -4,7 +4,7 @@ import {
   fetchPart, 
   fetchSection, 
   fetchAttributes
-} from "../../../../utils/dataFetchers"
+} from "../../../../../utils/dataFetchers"
 
 import { DataTable } from "./data-table"
 
