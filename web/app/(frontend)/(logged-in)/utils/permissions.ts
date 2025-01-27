@@ -1,6 +1,6 @@
 import { Session } from "@/auth"
-import { Assessment } from "@/prisma/mssql/generated/client"
-import { fetchAssessments } from "./dataFetchers"
+import { Assessment, AssessmentUser, Permission } from "@/prisma/mssql/generated/client"
+import { fetchAssessments, fetchAssessmentUsersWithPermissions, fetchAssessmentUserWithPermissions } from "./dataFetchers"
 
 export function isAdmin(session: Session | null): boolean { 
     return session?.user?.systemRoles.find(role => role.name === "Admin") !== undefined 
@@ -8,6 +8,51 @@ export function isAdmin(session: Session | null): boolean {
 
 export function isCollectionManager(session: Session | null): boolean { 
     return session?.user?.systemRoles.find(role => role.name === "Collection Manager") !== undefined 
+}
+
+export function isManagerForCollection(session: Session | null, assessmentCollectionId: number | null | undefined): boolean { 
+    const assessmentUser = session?.user?.assessmentCollectionUser.find(uc => uc.assessmentCollectionId === assessmentCollectionId)
+    return assessmentUser?.role === "Collection Manager"
+}
+
+export function isLeadForAssessment(session: Session | null, assessmentId: string): boolean { 
+    // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+    const idAsInteger = parseInt(assessmentId, 10)
+    // Technically, users could put anything into a URL, so we need to make sure it's a number
+    if(isNaN(idAsInteger)) {
+      return false
+    }
+    const assessmentUser = session?.user?.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
+    return assessmentUser?.role === "Lead Facilitator"
+}
+
+export function isFacForAssessment(session: Session | null, assessmentId: string): boolean { 
+    // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+    const idAsInteger = parseInt(assessmentId, 10)
+    // Technically, users could put anything into a URL, so we need to make sure it's a number
+    if(isNaN(idAsInteger)) {
+      return false
+    }
+    const assessmentUser = session?.user?.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
+    return assessmentUser?.role === "Facilitator"
+}
+
+export async function getAssessmentUsersWithPermissions(session: Session | null): Promise<(AssessmentUser & { permissions: Permission[] })[]> { 
+    if(!session || !session.user) return []
+    return await fetchAssessmentUsersWithPermissions(session.user.id)
+}
+
+export async function getAssessmentUserPermissions(session: Session | null, assessmentId: string): Promise<Permission[]> { 
+    // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+    const idAsInteger = parseInt(assessmentId, 10)
+    // Technically, users could put anything into a URL, so we need to make sure it's a number
+    if(isNaN(idAsInteger)) {
+      return []
+    }
+    const assessmentUser = session?.user?.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
+    if(!assessmentUser) return []
+    const assessmentUserWithPermissions = await fetchAssessmentUserWithPermissions(assessmentUser.id)
+    return assessmentUserWithPermissions?.permissions || []
 }
 
 // User can view Users tab in navbar if they are any role but a participant

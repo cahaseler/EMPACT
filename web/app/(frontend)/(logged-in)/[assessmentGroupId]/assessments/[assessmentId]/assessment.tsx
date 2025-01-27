@@ -7,11 +7,13 @@ import Link from "next/link"
 export default function AssessmentContent({
   assessment, 
   assessmentType,
-  parts
+  parts,
+  canEdit
 }: Readonly<{
   assessment: Assessment | null, 
   assessmentType: AssessmentType | null,
-  parts: Part[]
+  parts: Part[],
+  canEdit: boolean
 }>) {
   if(assessmentType) {
     const links = [
@@ -34,11 +36,15 @@ export default function AssessmentContent({
                   </p>
                 </div>
                 {/* TODO: Edit assessment functionality */}
-                <div>
-                  <button className="w-fit bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded disabled:bg-indigo-700/70" disabled={assessment.status === "Completed"}>
+                {canEdit && <div>
+                  <Link
+                    href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
+                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    prefetch={false}
+                  >
                     Edit Assessment
-                  </button>
-                </div>
+                  </Link>
+                </div>}
               </div>
             </div>
           </section>
