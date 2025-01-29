@@ -107,6 +107,25 @@ export async function fetchAssessmentUserWithPermissions(assessmentUserId: numbe
   return await db.assessmentUser.findUnique({ where: { id: assessmentUserId }, include: { permissions: true } })
 }
 
+export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(typeid, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return []
+  }
+
+  return await db.part.findMany({ where: { 
+    assessmentTypeId: idAsInteger
+  }, include: {
+    sections: {
+      include: {
+        attributes: true
+      }
+    }
+  } })
+}
+
 export async function fetchParts(typeid: string): Promise<Part[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)

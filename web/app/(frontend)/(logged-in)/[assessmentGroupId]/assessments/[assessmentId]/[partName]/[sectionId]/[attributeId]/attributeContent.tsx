@@ -77,7 +77,7 @@ export default function AttributeContent({
                   <Accordion type="single" collapsible={true} className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border border-indigo-100 dark:border-indigo-900">
                     {levels.map((level: Level, key: number) => (
                       <AccordionItem key={key} value={level.level.toString()} className="last:border-b-0 group">
-                        <AccordionTrigger className="text-base md:text-lg text-left font-bold mx-4 hover:no-underline">
+                        <AccordionTrigger className="text-indigo-950 dark:text-indigo-200 md:text-lg text-left font-bold mx-4 hover:no-underline">
                           {level.level} - {level.shortDescription}
                         </AccordionTrigger>
                         <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">

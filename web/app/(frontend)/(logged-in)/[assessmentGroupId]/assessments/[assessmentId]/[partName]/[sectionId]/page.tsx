@@ -21,7 +21,7 @@ export default async function Page({ params }: Readonly<{ params: {
   const attributes = await fetchAttributes(params.sectionId)
   
   return (
-    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
+    <div className="flex h-full w-full flex-col items-center justify-start pt-3 pb-10">
       <DataTable assessment={assessment} assessmentType={assessmentType} part={part} section={section} attributes={attributes} />
     </div>
   )

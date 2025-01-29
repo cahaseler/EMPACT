@@ -25,7 +25,7 @@ export default async function Page({ params }: Readonly<{ params: {
   const levels = await fetchLevels(params.attributeId)
   
   return (
-    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
+    <div className="flex h-full w-full flex-col items-center justify-start pt-3 pb-10">
       <AttributeContent assessment={assessment} assessmentType={assessmentType} part={part} section={section} attribute={attribute} levels={levels} />
     </div>
   )

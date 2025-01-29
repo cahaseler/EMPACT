@@ -18,7 +18,7 @@ export default async function Page({ params }: Readonly<{ params: {
   const sections = await fetchSections(params.assessmentGroupId, params.partName)
   
   return (
-    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
+    <div className="flex h-full w-full flex-col items-center justify-start pt-3 pb-10">
       <PartContent assessment={assessment} assessmentType={assessmentType} part={part} sections={sections} />
     </div>
   )

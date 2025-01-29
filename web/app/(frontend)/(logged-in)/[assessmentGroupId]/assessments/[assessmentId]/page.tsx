@@ -19,7 +19,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
     permissions?.find(permission => permission.name === "Edit assessments") !== undefined
   
   return (
-    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
+    <div className="flex h-full w-full flex-col items-center justify-start pt-3 pb-10">
       <AssessmentContent assessment={assessment} assessmentType={assessmentType} parts={parts} canEdit={canEdit} />
     </div>
   )
