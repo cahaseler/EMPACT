@@ -118,6 +118,7 @@ model Part {
     id               Int            @id() @default(autoincrement())
     name             String
     description      String         @db.VarChar(Max)
+    attributeType    String
     assessmentType   AssessmentType @relation(fields: [assessmentTypeId], references: [id])
     assessmentTypeId Int
     sections         Section[]

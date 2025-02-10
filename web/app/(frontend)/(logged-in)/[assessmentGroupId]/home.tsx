@@ -1,4 +1,12 @@
-import { AssessmentType, Assessment, Part } from "@/prisma/mssql/generated/client"
+import { 
+  AssessmentType, 
+  Assessment, 
+  Part,
+  Section,
+  Attribute,
+  AssessmentUserResponse
+} from "@/prisma/mssql/generated/client"
+
 import {
   Card,
   CardDescription,
@@ -7,23 +15,39 @@ import {
 } from "@/components/ui/card"
 import Link from "next/link"
 
-export function Home({ 
+export default function Home({ 
   assessmentType, 
   assessments,
-  parts 
+  parts,
+  userResponses
 }: Readonly<{
     assessmentType: AssessmentType | null, 
     assessments: Assessment[],
-    parts: Part[]
+    parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
+    userResponses: AssessmentUserResponse[]
   }>) {
   if (assessmentType) {
-    // TODO: Functionality for getting most recent assessment
+
     const mostRecentAssessment = assessments.filter(
-      (assessment: Assessment) => assessment.status === "In Progress"
+      (assessment: Assessment) => assessment.status === "Active"
+    ).sort(
+      (a: Assessment, b: Assessment) => b.date.valueOf() - a.date.valueOf()
     )[0]
+    const mostRecentResponseAttributeIds = userResponses.filter(
+      (userResponse: AssessmentUserResponse) => userResponse.assessmentId === mostRecentAssessment.id
+    ).sort(
+      (a: AssessmentUserResponse, b: AssessmentUserResponse) => a.levelId - b.levelId
+    ).map(
+      (userResponse: AssessmentUserResponse) => userResponse.attributeId
+    )
+    const nextPart = parts.find(part => part.sections.find(section => section.attributes.find(attribute => !mostRecentResponseAttributeIds.includes(attribute.id))))
+    const nextSection = nextPart?.sections.find(section => section.attributes.find(attribute => !mostRecentResponseAttributeIds.includes(attribute.id)))
+    const nextAttribute = nextSection?.attributes.find(attribute => !mostRecentResponseAttributeIds.includes(attribute.id))
+
     const completedAssessments = assessments.filter(
       (assessment: Assessment) => assessment.status === "Completed"
     )
+
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -38,7 +62,7 @@ export function Home({
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Continue Recent Assessment</h2>
             <Link
-              href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}`}
+              href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}` }
               className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               prefetch={false}
             >
@@ -50,7 +74,7 @@ export function Home({
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Previous Assessments</h2>
             <div className="grid gap-4">
-              {completedAssessments.map((assessment: Assessment, key: number) => {
+              {completedAssessments.length > 0 ? completedAssessments.map((assessment: Assessment, key: number) => {
                   return (
                     <AssessmentCard
                       key={key}
@@ -60,7 +84,10 @@ export function Home({
                       date={`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
                       parts={parts}
                     />
-                  )})
+                  )}) : (
+                    <p className="text-md text-muted-foreground dark:text-indigo-300/80">
+                      No completed assessments.
+                    </p>)
               }
             </div>
           </div>

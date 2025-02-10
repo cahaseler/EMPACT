@@ -43,7 +43,7 @@ export default function DataTable({
   assessment: Assessment | null, 
   assessmentType: AssessmentType | null,
   readonly session: Session | null,
-  readonly permissions: Permission[]
+  readonly permissions: Permission[] | undefined
 }>) {   
   const router = useRouter()
 
@@ -64,7 +64,7 @@ export default function DataTable({
         isAdmin(session) || 
         isManagerForCollection(session, assessment?.assessmentCollectionId) || 
         isLeadForAssessment(session, assessment.id.toString()) || 
-        permissions.find(permission => permission.name === "Regroup users") !== undefined
+        permissions?.find(permission => permission.name === "Regroup users") !== undefined
       return (
         <div className="w-full max-w-4xl mx-auto">
           <section className="mb-8">

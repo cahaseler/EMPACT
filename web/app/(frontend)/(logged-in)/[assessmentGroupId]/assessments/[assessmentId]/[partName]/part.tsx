@@ -1,4 +1,11 @@
-import { AssessmentType, Assessment, Part, Section } from "@/prisma/mssql/generated/client"
+import { 
+  AssessmentType, 
+  Assessment, 
+  AssessmentUserResponse, 
+  Part, 
+  Section, 
+  Attribute 
+} from "@/prisma/mssql/generated/client"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
 import Link from "next/link"
@@ -7,12 +14,14 @@ export default function PartContent({
     assessment, 
     assessmentType,
     part,
-    sections
+    numAssessmentUsers,
+    userResponses
 }: {
     assessment: Assessment | null, 
     assessmentType: AssessmentType | null,
-    part: Part | null,
-    sections: Section[]
+    part: Part & { sections: (Section & { attributes: Attribute[] })[] } | null,
+    numAssessmentUsers: number,
+    userResponses: AssessmentUserResponse[]
 }) {
   if(assessmentType) {
     const links = [
@@ -27,6 +36,7 @@ export default function PartContent({
         name: assessment.name
       });
       if (part) {
+        const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
         return (
           <div className="w-full max-w-4xl mx-auto">
             <section className="mb-8">
@@ -34,33 +44,35 @@ export default function PartContent({
                 <Breadcrumbs links={links} currentPage={part.name} />
                 <div className="flex flex-row justify-between">
                   <div className="space-y-2">
-                      <h1 className="text-3xl font-bold tracking-tighter">{part.name} Assessment</h1>
+                      <h1 className="text-3xl font-bold tracking-tighter">{part.name}</h1>
                       <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                         {part.description}
                       </p>
-                  </div>
-                  {/* TODO: Submit assessment functionality */}
-                  <div>
-                    <button className="w-fit bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded disabled:bg-indigo-700/70" disabled={assessment.status === "Completed"}>
-                      Submit Assessment
-                    </button>
                   </div>
                 </div>
               </div>
             </section>
             <section className="mb-16">
                 <div className="flex flex-col space-y-2">
-                  {sections.map((section: Section, key: number) => {
-                    return(
+                  {part.sections.map((section: Section & { attributes: Attribute[] }, key: number) => {
+                    const sectionAttributeIds = section.attributes.map(attribute => attribute.id)
+                    const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
+                    const unfinishedSection = sectionAttributeIds.length * numAssessmentUsers !== sectionResponseAttributeIds.length * numAssessmentUsers
+                    return (
                       <Link
                         key={key}
                         href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}`}
-                        className="flex min-h-20 items-center rounded-md px-8 py-3 bg-indigo-700/90 hover:bg-indigo-700/70 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        className="flex min-h-28 items-center rounded-md px-8 py-3 bg-indigo-700/90 hover:bg-indigo-700/70 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                         prefetch={false}
                       >
-                        <h2 className="text-xl font-bold text-indigo-50">
-                            {section.id.toString().toUpperCase()}. {section.name}
-                        </h2>
+                        <div className="flex flex-col space-y-2">
+                          <h2 className="text-xl font-bold text-indigo-50">
+                              {section.id.toString().toUpperCase()}. {section.name}
+                          </h2>
+                          <h3 className="text-lg font-semibold text-indigo-200">
+                            Status: {unfinishedSection ? "In Progress" : "Completed"}
+                          </h3>
+                        </div>
                       </Link>
                     )
                   })}

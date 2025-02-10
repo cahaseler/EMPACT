@@ -1,6 +1,7 @@
 import { 
     AssessmentType, 
     Assessment,
+    AssessmentUserResponse,
     Part, 
     Section, 
     Attribute 
@@ -21,17 +22,22 @@ import {
   SidebarMenuSubItem,
   SidebarTrigger
 } from "@/components/ui/sidebar"
-import { ChevronRight, Menu } from "lucide-react"
+import { ChevronRight, TriangleAlert, CircleCheckBig } from "lucide-react"
 
 export function AssessmentSidebar ({ 
     assessmentType,
     assessment,
-    parts 
+    parts,
+    numAssessmentUsers,
+    userResponses
 }: Readonly<{ 
     assessmentType: AssessmentType | null
     assessment: Assessment | null 
     parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
+    numAssessmentUsers: number
+    userResponses: AssessmentUserResponse[]
 }>) {
+  const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
   return (
     <Sidebar 
         variant="floating" 
@@ -50,13 +56,21 @@ export function AssessmentSidebar ({
         </div>
       </SidebarHeader>
       <SidebarContent className="group-data-[collapsible=icon]:hidden">
-        {parts.map((part) => ( 
+        {parts.map((part) => {
+            const partAttributeIds = part.sections.flatMap(section => section.attributes.map(attribute => attribute.id))
+            const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributeIds.includes(responseAttributeId))
+            const unfinishedPart = partAttributeIds.length * numAssessmentUsers !== partResponseAttributeIds.length * numAssessmentUsers
+            return ( 
             <Collapsible className="group/collapsible">
                 <SidebarGroup>
                     <div className="flex flex-row justify-between items-center">
                         <SidebarGroupLabel asChild>
                             <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}` : "/"}>
-                                <span>{part.name}</span>
+                                {unfinishedPart ? 
+                                    <TriangleAlert className="h-4 w-4 mr-2" /> : 
+                                    <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
+                                }
+                                <span className={unfinishedPart ? "" : "opacity-50"}>{part.name}</span>
                             </a>
                         </SidebarGroupLabel>
                         <div className="ml-1 cursor-pointer">
@@ -68,13 +82,21 @@ export function AssessmentSidebar ({
                     <CollapsibleContent>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                            {part.sections.map((section) => (
+                            {part.sections.map((section) => {
+                                const sectionAttributeIds = section.attributes.map(attribute => attribute.id)
+                                const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
+                                const unfinishedSection = sectionAttributeIds.length * numAssessmentUsers !== sectionResponseAttributeIds.length * numAssessmentUsers
+                                return (
                                 <Collapsible className="group/collapsible-2">
                                     <SidebarMenuItem key={section.name}>
                                         <div className="flex flex-row justify-between items-center">
                                             <SidebarMenuButton asChild>
                                                 <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}` : "/"}>
-                                                    <span>{section.name}</span>
+                                                    {unfinishedSection ? 
+                                                        <TriangleAlert className="h-4 w-4 mr-2" /> : 
+                                                        <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
+                                                    }
+                                                    <span className={unfinishedSection ? "" : "opacity-50"}>{section.name}</span>
                                                 </a>
                                             </SidebarMenuButton>
                                             <div className="ml-1 py-2 px-1 cursor-pointer rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-700 hover:text-sidebar-accent-foreground">
@@ -85,26 +107,30 @@ export function AssessmentSidebar ({
                                         </div>
                                         <CollapsibleContent>
                                             <SidebarMenuSub>
-                                                {section.attributes.map((attribute) => (
+                                                {section.attributes.map((attribute) => {
+                                                    const attributeResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => attribute.id === responseAttributeId)
+                                                    const unfinishedAttribute = attributeResponseAttributeIds.length !== numAssessmentUsers
+                                                    return (
                                                     <SidebarMenuSubItem key={attribute.name}>
                                                         <SidebarMenuButton asChild>
                                                             <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${attribute.id}` : "/"}>
-                                                                <span>{attribute.id.toUpperCase()}. {attribute.name}</span>
+                                                                {!unfinishedAttribute && <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />}
+                                                                <span className={unfinishedAttribute ? "" : "opacity-50"}>{attribute.id.toUpperCase()}. {attribute.name}</span>
                                                             </a>
                                                         </SidebarMenuButton>
                                                     </SidebarMenuSubItem>
-                                                ))}
+                                                )})}
                                             </SidebarMenuSub>
                                         </CollapsibleContent>
                                     </SidebarMenuItem>
                                 </Collapsible>
-                            ))}
+                            )})}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </CollapsibleContent>
                 </SidebarGroup>
             </Collapsible>
-        ))}
+        )})}
       </SidebarContent>
     </Sidebar>
   )

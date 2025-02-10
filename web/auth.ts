@@ -1,5 +1,5 @@
 import type { User } from "next-auth"
-import type { SystemRole, AssessmentUser, AssessmentCollectionUser } from "./prisma/mssql/generated/client"
+import type { SystemRole, AssessmentUser, AssessmentCollectionUser, Permission } from "./prisma/mssql/generated/client"
 import { db } from "./lib/db"
 
 // Extend the built-in session types
@@ -9,7 +9,7 @@ declare module "next-auth" {
     email?: string | null
     name?: string | null
     systemRoles?: SystemRole[]
-    assessmentUser?: AssessmentUser[]
+    assessmentUser?: (AssessmentUser & { permissions: Permission[] })[]
     assessmentCollectionUser?: AssessmentCollectionUser[]
   }
 
@@ -19,7 +19,7 @@ declare module "next-auth" {
       email: string
       name: string
       systemRoles: SystemRole[]
-      assessmentUser: AssessmentUser[]
+      assessmentUser: (AssessmentUser & { permissions: Permission[] })[]
       assessmentCollectionUser: AssessmentCollectionUser[]
     }
   }
@@ -31,7 +31,7 @@ export interface Session {
     email: string
     name: string
     systemRoles: SystemRole[]
-    assessmentUser: AssessmentUser[]
+    assessmentUser: (AssessmentUser & { permissions: Permission[] })[]
     assessmentCollectionUser: AssessmentCollectionUser[]
   }
 }
@@ -74,7 +74,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: user.email ?? undefined },
           include: {
             systemRoles: true,
-            assessmentUser: true,
+            assessmentUser: {
+              include: {
+                permissions: true
+              }
+            },
             assessmentCollectionUser: true,
           },
         })
@@ -103,7 +107,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.email = token.email as string
         session.user.name = token.name as string
         session.user.systemRoles = (token.systemRoles as SystemRole[]) ?? []
-        session.user.assessmentUser = (token.assessmentUser as AssessmentUser[]) ?? []
+        session.user.assessmentUser = (token.assessmentUser as (AssessmentUser & { permissions: Permission[] })[]) ?? []
         session.user.assessmentCollectionUser = (token.assessmentCollectionUser as AssessmentCollectionUser[]) ?? []
       }
       return session

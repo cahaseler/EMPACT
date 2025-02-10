@@ -3,7 +3,6 @@ import { Session } from "@/auth"
 import { 
     AssessmentType, 
     Assessment,
-    AssessmentUser,
     Permission
 } from "@/prisma/mssql/generated/client"
 import { 
@@ -36,16 +35,14 @@ import { useRouter } from "next/navigation"
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
 
-export function DataTable({
+export default function DataTable({
     assessments, 
     assessmentType,
-    session,
-    assessmentUsersWithPermissions
+    session
 }: {
     readonly assessments: Assessment[], 
     readonly assessmentType: AssessmentType | null,
-    readonly session: Session | null,
-    readonly assessmentUsersWithPermissions: (AssessmentUser & { permissions: Permission[] })[]
+    readonly session: Session | null
 }) {
     const router = useRouter()
     const canAdd = isAdmin(session) || isCollectionManager(session)
@@ -89,7 +86,9 @@ export function DataTable({
                             </TableHeader>
                             <TableBody>
                                 {assessments.map((assessment: Assessment, key: number) => {
-                                const permissions = assessmentUsersWithPermissions.filter(assessmentUser => assessmentUser.assessmentId === assessment.id)[0]?.permissions
+                                const permissions = session?.user?.assessmentUser.find(assessmentUser => 
+                                    assessmentUser.assessmentId === assessment.id
+                                )?.permissions
                                 return(
                                     <TableRow key={key} onClick={() =>
                                         router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
@@ -101,7 +100,7 @@ export function DataTable({
                                         <TableCell>
                                             <AssessmentActions 
                                                 assessmentTypeId={assessmentType.id} 
-                                                assessmentId={assessment.id} 
+                                                assessment={assessment} 
                                                 session={session}
                                                 permissions={permissions}
                                             />
@@ -120,47 +119,47 @@ export function DataTable({
 
 function AssessmentActions({ 
     assessmentTypeId, 
-    assessmentId,
+    assessment,
     session,
     permissions
 }: { 
     assessmentTypeId: number, 
-    assessmentId: number,
+    assessment: Assessment,
     session: Session | null,
-    permissions: Permission[]
+    permissions: Permission[] | undefined
 }) {
     const canEdit = 
         isAdmin(session) || 
-        isManagerForCollection(session, null) || 
-        isLeadForAssessment(session, assessmentId.toString()) || 
-        permissions.find(permission => permission.name === "Edit assessments") !== undefined
+        isManagerForCollection(session, assessment.assessmentCollectionId) || 
+        isLeadForAssessment(session, assessment.id.toString()) || 
+        permissions?.find(permission => permission.name === "Edit assessments") !== undefined
     const canView = canViewUsers(session)
     const canDelete = 
         isAdmin(session) || 
-        isManagerForCollection(session, null) || 
-        permissions.find(permission => permission.name === "Delete assessments") !== undefined
+        isManagerForCollection(session, assessment.assessmentCollectionId) || 
+        permissions?.find(permission => permission.name === "Delete assessments") !== undefined
     return (
         <div className="grid grid-cols-2 gap-2 w-20">
             {canEdit && <Link 
-                href={`/${assessmentTypeId}/assessments/${assessmentId}/edit-assessment`} 
+                href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`} 
                 className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
             >
                 <SquarePen className="w-5 h-5 text-white" />
             </Link>}
             <Link 
-                href={`/${assessmentTypeId}/reports/${assessmentId}`} 
+                href={`/${assessmentTypeId}/reports/${assessment.id}`} 
                 className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
             >
                 <FileChartColumn className="w-5 h-5 text-white" />
             </Link>
             {canView && <Link 
-                href={`/${assessmentTypeId}/users/${assessmentId}`} 
+                href={`/${assessmentTypeId}/users/${assessment.id}`} 
                 className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
             >
                 <Users className="w-5 h-5 text-white" />
             </Link>}
             {canDelete && <Link 
-                href={`/${assessmentTypeId}/assessments/${assessmentId}/edit-assessment`} 
+                href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`} 
                 className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
             >
                 <Trash2 className="w-5 h-5 text-white" />

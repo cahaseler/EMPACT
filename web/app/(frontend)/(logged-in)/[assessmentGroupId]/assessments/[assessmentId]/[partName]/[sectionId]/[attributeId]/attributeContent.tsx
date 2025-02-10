@@ -1,4 +1,13 @@
-import { AssessmentType, Assessment, Part, Section, Attribute, Level } from "@/prisma/mssql/generated/client"
+import { 
+  User,
+  AssessmentType, 
+  Assessment, 
+  Part, 
+  Section, 
+  Attribute, 
+  Level, 
+  AssessmentUserResponse 
+} from "@/prisma/mssql/generated/client"
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
@@ -9,13 +18,11 @@ import {
   AccordionTrigger, 
   AccordionContent
 } from "@/components/ui/accordion"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from "@/components/ui/select"
+
+import Link from "next/link"
+
+import AttributeUserResponse from "./attributeUserResponse"
+import AttributeResponseTable from "./attributeResponseTable"
 
 export default function AttributeContent({
   assessment, 
@@ -23,14 +30,24 @@ export default function AttributeContent({
   part,
   section,
   attribute,
-  levels
+  prevAttribute,
+  nextAttribute,
+  levels,
+  userId,
+  isParticipant,
+  userResponses
 }: {
   assessment: Assessment | null, 
   assessmentType: AssessmentType | null,
   part: Part | null,
   section: Section | null,
   attribute: Attribute | null,
-  levels: Level[]
+  prevAttribute: Attribute | null,
+  nextAttribute: Attribute | null,
+  levels: Level[],
+  userId: string | undefined,
+  isParticipant: boolean,
+  userResponses: (AssessmentUserResponse & { user?: User })[]
 }) {
   if(assessmentType) {
     const links = [
@@ -59,7 +76,7 @@ export default function AttributeContent({
               <div className="w-full max-w-4xl mx-auto">
                 <section className="mb-8">
                   <div className="space-y-4 max-lg:ml-2">
-                    <Breadcrumbs links={links} currentPage={"Attribute " + attribute.id.toString().toUpperCase()} />
+                    <Breadcrumbs links={links} currentPage={part.attributeType + " " + attribute.id.toString().toUpperCase()} />
                     <h1 
                       className="text-3xl font-bold tracking-tighter" 
                       dangerouslySetInnerHTML={{ __html: attribute.id.toString().toUpperCase() + ". " + attribute.name }} 
@@ -73,7 +90,7 @@ export default function AttributeContent({
                   </div>
                 </section>
                 <section className="mb-8 space-y-4">
-                <h2 className="text-2xl font-bold max-lg:ml-2">Levels</h2>
+                  <h2 className="text-2xl font-bold max-lg:ml-2">Levels</h2>
                   <Accordion type="single" collapsible={true} className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border border-indigo-100 dark:border-indigo-900">
                     {levels.map((level: Level, key: number) => (
                       <AccordionItem key={key} value={level.level.toString()} className="last:border-b-0 group">
@@ -87,39 +104,35 @@ export default function AttributeContent({
                     ))}
                   </Accordion>
                 </section>
-                {/* TODO: Connect to a form */}
-                {/* TODO: Get attribute rating from AssessmentUserResponse */}
-                <section className="mb-8 flex flex-col space-y-4 justify-center">
-                  <h2 className="text-2xl font-bold max-lg:ml-2">Rating</h2>
-                  <div className="w-1/3 sm:w-1/4 lg:w-1/6">
-                    <Select>
-                      <SelectTrigger className="h-fit min-h-[32px] focus:ring-offset-indigo-400 focus:ring-transparent">
-                        <SelectValue placeholder={"Select Rating"} defaultValue={"N/A"}/>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {levels.map((level: Level) => (
-                          <SelectItem value={level.level.toString()} key={level.level}>
-                            {level.level.toString()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </section>
-                <section className="mb-8 flex flex-col space-y-4 justify-center">
-                  <h2 className="text-2xl font-bold max-lg:ml-2">Comments</h2>
-                  {/* TODO: Convert to WYSIWYG */}
-                  {/* TODO: Get attribute comments from AssessmentUserResponse */}
-                  <textarea 
-                    className="w-full h-40 border border-indigo-100 dark:border-indigo-900 focus-visible:outline-indigo-400 dark:focus-visible:ring-indigo-400 rounded-lg p-4 placeholder:text-indigo-900/50 dark:placeholder:text-indigo-400/40 resize-none" 
-                    placeholder="Notes for rating (optional for rating 4 and 5)"
-                  >
-                  </textarea>
-                </section>
-                <section className="mb-16 flex justify-center">
-                  <button className="w-fit bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
-                    Save Response
-                  </button>
+                {isParticipant ? 
+                  <AttributeUserResponse 
+                    assessment={assessment} 
+                    userId={userId}
+                    attributeId={attribute.id} 
+                    levels={levels} 
+                    userResponse={userResponses[0]} 
+                  /> :
+                  <AttributeResponseTable userResponses={userResponses} levels={levels} />
+                }
+                <section className="mb-8 space-y-4">
+                  <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
+                    {prevAttribute && (
+                      <Link 
+                        href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${prevAttribute.id}`} 
+                        className="w-fit rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        Previous
+                      </Link>
+                    )}
+                    {nextAttribute && (
+                      <Link 
+                        href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${nextAttribute.id}`} 
+                        className="w-fit rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        Next
+                      </Link>
+                    )}
+                    </div>
                 </section>
               </div>
             )

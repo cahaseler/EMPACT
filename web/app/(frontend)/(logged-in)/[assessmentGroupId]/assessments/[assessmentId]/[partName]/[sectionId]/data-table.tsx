@@ -1,5 +1,13 @@
 "use client"
-import { AssessmentType, Assessment, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
+import { 
+  AssessmentType, 
+  Assessment, 
+  Part, 
+  Section, 
+  Attribute, 
+  Level,
+  AssessmentUserResponse 
+} from "@/prisma/mssql/generated/client"
 import {
     Table,
     TableBody,
@@ -17,18 +25,22 @@ import { useRouter } from "next/navigation"
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
 
-export function DataTable({
+export default function DataTable({
     assessment, 
     assessmentType,
     part,
     section,
     attributes,
+    userResponses,
+    isParticipant
 }: {
     assessment: Assessment | null, 
     assessmentType: AssessmentType | null,
     part: Part | null,
     section: Section | null,
-    attributes: Attribute[]
+    attributes: (Attribute & { levels: Level[] })[],
+    userResponses: AssessmentUserResponse[],
+    isParticipant: boolean
 }) {
   const router = useRouter()
   if(assessmentType) {
@@ -66,23 +78,34 @@ export function DataTable({
                   <Table className="dark:bg-transparent">
                       <TableHeader>
                           <TableRow>
-                              <TableHead>Name</TableHead>
-                              <TableHead>Rating</TableHead>
-                              <TableHead>Comments</TableHead>
+                              <TableHead>{part.attributeType}</TableHead>
+                              {isParticipant ? 
+                                <>
+                                  <TableHead>Rating</TableHead>
+                                  <TableHead>Comments</TableHead>
+                                </> : 
+                                <TableHead>Number of Submitted Responses</TableHead>
+                              }
                           </TableRow>
                       </TableHeader>
                       <TableBody className="cursor-pointer">
-                          {attributes.map((attribute: Attribute, key: number) => (
-                          <TableRow key={key} onClick={() =>
-                              router.push(`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${attribute.id}`)
-                          }>
-                              <TableCell>{attribute.id.toString().toUpperCase()}. {attribute.name}</TableCell>
-                              {/* TODO: Get attribute rating from AssessmentUserResponse */}
-                              <TableCell></TableCell>
-                              {/* TODO: Get attribute comments from AssessmentUserResponse */}
-                              <TableCell></TableCell>
-                          </TableRow>
-                          ))}
+                          {attributes.map((attribute: Attribute & { levels: Level[] }, key: number) => {
+                          const attributeResponses = userResponses.filter((userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id)
+                          const level = attributeResponses.length > 0 ? attribute.levels.find((level: Level) => level.id === attributeResponses[0].levelId) : undefined
+                          return (
+                            <TableRow key={key} onClick={() =>
+                                router.push(`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${attribute.id}`)
+                            }>
+                                <TableCell>{attribute.id.toString().toUpperCase()}. {attribute.name}</TableCell>
+                                {isParticipant ? 
+                                  <>
+                                    <TableCell>{level?.level}</TableCell>
+                                    <TableCell>{attributeResponses.length > 0 && attributeResponses[0].notes}</TableCell>
+                                  </> : 
+                                  <TableCell>{attributeResponses.length}</TableCell>
+                                }
+                            </TableRow>
+                          )})}
                       </TableBody>
                   </Table>
               </section>
