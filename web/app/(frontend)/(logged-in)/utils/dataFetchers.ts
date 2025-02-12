@@ -50,7 +50,7 @@ export async function fetchAssessmentType(typeid: string): Promise<AssessmentTyp
   return await assessmentType.findUnique({ where: { id: idAsInteger } })
 }
 
-export async function fetchAssessmentCollections(typeid: string): Promise<AssessmentCollection[]> {
+export async function fetchAssessmentCollections(typeid: string): Promise<(AssessmentCollection & { assessments: Assessment[] } )[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -58,7 +58,7 @@ export async function fetchAssessmentCollections(typeid: string): Promise<Assess
     return []
   }
 
-  return await assessmentCollection.findMany({ where: { assessmentTypeId: idAsInteger } })
+  return await db.assessmentCollection.findMany({ where: { assessmentTypeId: idAsInteger }, include: { assessments: true } })
 }
 
 export async function fetchAllAssessments(): Promise<Assessment[]> {
@@ -68,9 +68,7 @@ export async function fetchAllAssessments(): Promise<Assessment[]> {
 // Returns assessments in collections of given type
 export async function fetchAssessments(typeid: string): Promise<Assessment[]> {
   const collections = await fetchAssessmentCollections(typeid)
-  const collectionIds = collections.map((collection: AssessmentCollection) => collection.id)
-
-  return await assessment.findMany({ where: { assessmentCollectionId: { in: collectionIds } } })
+  return collections.flatMap(collection => collection.assessments)
 }
 
 export async function fetchAssessment(assessmentId: string): Promise<Assessment | null> {

@@ -1,3 +1,4 @@
+import { Session } from "next-auth"
 import { 
   AssessmentType, 
   Assessment, 
@@ -6,6 +7,8 @@ import {
   Attribute,
   AssessmentUserResponse
 } from "@/prisma/mssql/generated/client"
+
+import { isParticipantForAssessment } from "../utils/permissions"
 
 import {
   Card,
@@ -19,12 +22,14 @@ export default function Home({
   assessmentType, 
   assessments,
   parts,
-  userResponses
+  userResponses,
+  session
 }: Readonly<{
     assessmentType: AssessmentType | null, 
     assessments: Assessment[],
     parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
-    userResponses: AssessmentUserResponse[]
+    userResponses: AssessmentUserResponse[],
+    session: Session | null
   }>) {
   if (assessmentType) {
 
@@ -58,7 +63,7 @@ export default function Home({
             </p>
           </div>
         </section>
-        {mostRecentAssessment && <section className="mb-16">
+        {(mostRecentAssessment && isParticipantForAssessment(session, mostRecentAssessment.id.toString())) && <section className="mb-16">
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Continue Recent Assessment</h2>
             <Link

@@ -14,7 +14,13 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
   
   return (
     <div className="flex h-full flex-col items-center justify-start p-2 sm:p-10">
-      <Home assessmentType={assessmentType} assessments={assessments} parts={parts} userResponses={userResponses} />
+      <Home 
+        assessmentType={assessmentType} 
+        assessments={assessments} 
+        parts={parts} 
+        userResponses={userResponses} 
+        session={session} 
+      />
     </div>
   )
 }

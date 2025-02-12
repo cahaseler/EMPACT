@@ -1,6 +1,12 @@
 import { Session } from "@/auth"
-import { User, Assessment, AssessmentUserResponse } from "@/prisma/mssql/generated/client"
 import { 
+    User, 
+    AssessmentCollection, 
+    Assessment, 
+    AssessmentUserResponse 
+} from "@/prisma/mssql/generated/client"
+import { 
+    fetchAssessmentCollections,
     fetchAssessments, 
     fetchAllResponsesForAssessment, 
     fetchUserResponsesForAssessment,
@@ -57,6 +63,20 @@ export function isParticipantForAssessment(session: Session | null, assessmentId
 // User can view Users tab in navbar if they are any role but a participant
 export function canViewUsers(session: Session | null): boolean { 
     return session?.user?.systemRoles.length !== undefined && session?.user?.systemRoles.length > 0 
+}
+
+export async function viewableCollections(session: Session | null, assessmentGroupId: string): Promise<(AssessmentCollection & { assessments: Assessment[] } )[]> { 
+    if (session) {
+        const assessmentCollections = await fetchAssessmentCollections(assessmentGroupId)
+        if (isAdmin(session)) return assessmentCollections
+        else {
+            const assessmentCollectionIds = session.user.assessmentCollectionUser.map(uc => uc.assessmentCollectionId)
+            return assessmentCollections.filter(collection => 
+                assessmentCollectionIds.find(id => id === collection.id)
+            )
+        }
+    }
+    return []
 }
 
 export async function viewableAssessments(session: Session | null, assessmentGroupId: string): Promise<Assessment[]> { 

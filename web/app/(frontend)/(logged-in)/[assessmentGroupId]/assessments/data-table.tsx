@@ -51,19 +51,19 @@ export default function DataTable({
             <div className="w-full max-w-4xl mx-auto">
                 <section className="mb-8">
                     <div className="space-y-4 max-lg:ml-2">
-                        <div className="flex flex-row justify-between">
+                        <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
                             <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name}</h1>
-                            {canAdd && <div className="flex justify-end space-x-2">
+                            {canAdd && <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">
                                 <Link
-                                    href={`/${assessmentType.id}/assessments/add-collection`}
-                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                                    href={`/${assessmentType.id}/assessments/manage-collections`}
+                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-4 text-sm text-center font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                     prefetch={false}
                                 >
-                                    Add Assessment Collection
+                                    Manage Assessment Collections
                                 </Link>
                                 <Link
                                     href={`/${assessmentType.id}/assessments/add-assessment`}
-                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-4 text-sm text-center font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                     prefetch={false}
                                 >
                                     Add Assessment
