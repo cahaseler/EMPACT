@@ -50,18 +50,23 @@ export default function DataTable({
                         <Breadcrumbs links={links} currentPage="Manage Assessment Collections" />
                         <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-between">
                             <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name} Collections</h1>
-                            {!isAdding ? <Button 
-                                onClick={() => setIsAdding(true)} 
-                                className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-6 text-wrap text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            >
-                                Add Assessment Collection
-                            </Button>
-                            : <Button 
-                                onClick={() => setIsAdding(false)} 
-                                className="inline-flex items-center justify-center rounded-md border-indigo-700/90 bg-transparent hover:bg-transparent border-2 hover:border-indigo-700/70 text-indigo-700/90 hover:text-indigo-700/70 px-8 py-6 text-wrap text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                            >
-                                Cancel
-                            </Button>}
+                            {!isAdding ? 
+                                <Button 
+                                    onClick={() => setIsAdding(true)} 
+                                    variant="default" 
+                                    size="default"
+                                >
+                                    Add Assessment Collection
+                                </Button>
+                            : 
+                                <Button 
+                                    onClick={() => setIsAdding(false)} 
+                                    variant="outline" 
+                                    size="default"
+                                >
+                                    Cancel
+                                </Button>
+                            }
                         </div>
                     </div>
                 </section>

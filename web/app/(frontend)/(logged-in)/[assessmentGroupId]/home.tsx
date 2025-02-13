@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default function Home({ 
@@ -64,14 +65,13 @@ export default function Home({
           </div>
         </section>
         {(mostRecentAssessment && isParticipantForAssessment(session, mostRecentAssessment.id.toString())) && <section className="mb-16">
-          <div className="space-y-4">
+          <div className="flex flex-col space-y-4">
             <h2 className="text-2xl font-bold">Continue Recent Assessment</h2>
             <Link
               href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}` }
-              className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
               prefetch={false}
             >
-              {mostRecentAssessment.name}
+              <Button>{mostRecentAssessment.name}</Button>
             </Link>
           </div>
         </section>}

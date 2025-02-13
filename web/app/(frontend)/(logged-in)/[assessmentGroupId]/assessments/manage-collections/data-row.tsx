@@ -34,6 +34,7 @@ import {
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { toast } from "@/components/ui/use-toast"
 
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
@@ -60,6 +61,9 @@ export default function DataTable({
             await updateAssessmentCollection(collection.id, name, assessmentType.id).then(() => {
                 setSaving(false)
                 router.refresh()
+                toast({
+                    title: "Assessment collection updated successfully."
+                })
             })
         }
     }
@@ -74,7 +78,6 @@ export default function DataTable({
                         placeholder="Collection Name" 
                         value={name} 
                         onChange={(e) => setName(e.target.value)} 
-                        className="border-indigo-100 dark:border-indigo-900 focus-visible:outline-indigo-400 dark:focus-visible:ring-indigo-400 rounded-lg p-4 placeholder:text-indigo-900/50 dark:placeholder:text-indigo-400/40"
                     /> 
                     : collection.name
                 }
@@ -91,7 +94,7 @@ export default function DataTable({
                     {!isEditing ? <>
                         <Button 
                             onClick={() => setIsEditing(true)}
-                            className="flex items-center justify-center w-9 h-9 p-0 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
+                            size="icon"
                         >
                             <SquarePen className="w-5 h-5 text-white" />
                         </Button>
@@ -102,14 +105,16 @@ export default function DataTable({
                                 setIsEditing(false)
                                 setName(collection.name)
                             }}
-                            className="flex items-center justify-center w-9 h-9 p-0 rounded-md border-indigo-700/90 bg-transparent hover:bg-transparent border-[3px] hover:border-indigo-700/70 text-indigo-700/90 hover:text-indigo-700/70"
+                            variant="outline"
+                            size="icon"
+                            className="border-[3px]"
                         >
                             <X className="w-5 h-5 stroke-[3px]" />
                         </Button>
                         {isAdmin && 
                             <Button 
                                 onClick={(e: React.FormEvent) => handleUpdate(e)}
-                                className="flex items-center justify-center w-9 h-9 p-0 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
+                                size="icon"
                             >
                                 {saving ? <Loader className="h-5 w-5 animate-spin"/> : <Save className="w-5 h-5 text-white" />}
                             </Button>
@@ -129,6 +134,9 @@ function DeleteModule({collection} : {collection: AssessmentCollection & {assess
         e.preventDefault()
         await deleteAssessmentCollection(collection.id)
         router.refresh()
+        toast({
+            title: "Assessment collection deleted successfully."
+        })
     }
 
     return (
@@ -136,9 +144,7 @@ function DeleteModule({collection} : {collection: AssessmentCollection & {assess
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button 
-                            className="flex items-center justify-center w-9 h-9 p-0 rounded-md cursor-auto bg-indigo-700/50 hover:bg-indigo-700/50"
-                        >
+                        <Button variant="default" size="icon" className="cursor-default opacity-50">
                             <Trash2 className="w-5 h-5 text-white" />
                         </Button>
                     </TooltipTrigger>
@@ -150,9 +156,7 @@ function DeleteModule({collection} : {collection: AssessmentCollection & {assess
         : 
             <AlertDialog>
                 <AlertDialogTrigger asChild>
-                    <Button 
-                        className="flex items-center justify-center w-9 h-9 p-0 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-                    >
+                    <Button size="icon">
                         <Trash2 className="w-5 h-5 text-white" />
                     </Button>
                 </AlertDialogTrigger>
@@ -163,17 +167,12 @@ function DeleteModule({collection} : {collection: AssessmentCollection & {assess
                             <p>Are you sure you want to delete this assessment collection?</p>
                             <div className="flex flex-row space-x-2 justify-end">
                                 <AlertDialogCancel asChild>
-                                    <Button 
-                                        className="inline-flex items-center justify-center rounded-md border-indigo-700/90 bg-transparent hover:bg-transparent border-2 hover:border-indigo-700/70 text-indigo-700/90 hover:text-indigo-700/70 px-8 py-4 text-wrap text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                    >
+                                    <Button variant="outline">
                                         Cancel
                                     </Button>
                                 </AlertDialogCancel>
                                 <AlertDialogAction asChild>
-                                    <Button 
-                                        onClick={(e: React.FormEvent) => handleDelete(e)} 
-                                        className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-4 text-wrap text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                    >
+                                    <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
                                         Delete
                                     </Button>
                                 </AlertDialogAction>

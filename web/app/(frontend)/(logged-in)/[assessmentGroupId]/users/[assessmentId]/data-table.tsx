@@ -15,6 +15,7 @@ import {
 } from "../../../utils/permissions"
 
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import {
     Table,
     TableBody,
@@ -70,39 +71,41 @@ export default function DataTable({
           <section className="mb-8">
             <div className="space-y-4 max-lg:ml-2">
               <Breadcrumbs links={links} currentPage={`${assessment.name} Users`} />
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter">{assessment.name} Users</h1>
                   <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                     {assessment.description}
                   </p>
                 </div>
-                <div className="flex flex-row space-x-2">
-                  {canAddEdit && <div>
-                      <Link
-                          href={`/${assessmentType.id}/users/${assessment.id}/add-assessment-users`}
-                          className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                          prefetch={false}
-                      >
-                          Add Users to Assessment
-                      </Link>
-                  </div>}
-                  {canRegroup && <div>
-                      <Link
-                          href={`/${assessmentType.id}/users/${assessment.id}/regroup-assessment-users`}
-                          className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                          prefetch={false}
-                      >
-                          Regroup Users
-                      </Link>
-                  </div>}
+                <div className="flex flex-row space-x-2 justify-end">
+                  {canRegroup && 
+                    <Link
+                      href={`/${assessmentType.id}/users/${assessment.id}/regroup-assessment-users`}
+                      prefetch={false}
+                    >
+                      <Button>
+                        Manage User Groups
+                      </Button>
+                    </Link>
+                  }
+                  {canAddEdit && 
+                    <Link
+                      href={`/${assessmentType.id}/users/${assessment.id}/add-assessment-users`}
+                      prefetch={false}
+                    >
+                      <Button>
+                        Add Users to Assessment
+                      </Button>
+                    </Link>
+                  }
                 </div>
               </div>
             </div>
           </section>
           <section className="mb-16">
             <div className="space-y-4">
-                <Table className="cursor-pointer dark:bg-transparent">
+                <Table className="dark:bg-transparent">
                     <TableHeader>
                         <TableRow>
                             <TableHead>User ID</TableHead>
@@ -114,9 +117,7 @@ export default function DataTable({
                     </TableHeader>
                     <TableBody>
                         {users.map((user: AssessmentUser & { user: User }, key: number) => (
-                        <TableRow key={key} onClick={() =>
-                            router.push(`/${assessmentType.id}/users/${assessment.id}/${user.user.id}`)
-                        }>
+                        <TableRow key={key}>
                             <TableCell>{user.user.id}</TableCell>
                             <TableCell>{user.user.lastName}, {user.user.firstName}</TableCell>
                             <TableCell>{user.user.email}</TableCell>
@@ -153,18 +154,14 @@ function UserActions({
 }) {
   return (
       <div className="grid grid-cols-2 gap-2 w-20">
-          <Link 
-              href={`/${assessmentTypeId}/users/${assessmentId}/edit-user/${assessmentUserId}`} 
-              className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-          >
-              <SquarePen className="w-5 h-5 text-white" />
-          </Link>
-          <Link 
-              href={`/${assessmentTypeId}/users/${assessmentId}/remove-user/${assessmentUserId}`} 
-              className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-          >
-              <Trash2 className="w-5 h-5 text-white" />
-          </Link>
+        <Link href={`/${assessmentTypeId}/users/${assessmentId}/edit-user/${assessmentUserId}`} >
+          <Button size="icon">
+            <SquarePen className="w-5 h-5 text-white" />
+          </Button>
+        </Link>
+        <Button size="icon">
+          <Trash2 className="w-5 h-5 text-white" />
+        </Button>
       </div>
   )
 }

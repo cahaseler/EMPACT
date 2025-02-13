@@ -11,6 +11,7 @@ import { Loader } from "lucide-react"
 import { AssessmentCollection } from "@/prisma/mssql/generated/client"
 
 import { useRouter } from "next/navigation"
+import { toast } from "@/components/ui/use-toast"
 
 export default function AddCollection({
     assessmentTypeId,
@@ -34,11 +35,17 @@ export default function AddCollection({
                         setName("")
                         setSaving(false)
                         router.refresh()
+                        toast({
+                            title: "Assessment collection added successfully."
+                        })
                     })
                 } else {
                     setName("")
                     setSaving(false)
                     router.refresh()
+                    toast({
+                        title: "Assessment collection added successfully."
+                    })
                 }
             })
         }
@@ -53,13 +60,9 @@ export default function AddCollection({
                         placeholder="Collection Name" 
                         value={name} 
                         onChange={(e) => setName(e.target.value)} 
-                        className="md:w-1/2 border-indigo-100 dark:border-indigo-900 focus-visible:outline-indigo-400 dark:focus-visible:ring-indigo-400 rounded-lg p-4 placeholder:text-indigo-900/50 dark:placeholder:text-indigo-400/40"
+                        className="md:w-1/2"
                     />
-                    <Button 
-                        type="submit" 
-                        disabled={saving || name === ""} 
-                        className="w-fit rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                    >
+                    <Button type="submit" disabled={saving || name === ""}>
                         {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Add
                     </Button>
                 </div>

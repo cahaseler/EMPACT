@@ -14,6 +14,7 @@ import {
 } from "../../utils/permissions"
 
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import {
     Table,
     TableBody,
@@ -56,17 +57,15 @@ export default function DataTable({
                             {canAdd && <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">
                                 <Link
                                     href={`/${assessmentType.id}/assessments/manage-collections`}
-                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-4 text-sm text-center font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                     prefetch={false}
                                 >
-                                    Manage Assessment Collections
+                                    <Button>Manage Assessment Collections</Button>
                                 </Link>
                                 <Link
                                     href={`/${assessmentType.id}/assessments/add-assessment`}
-                                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-4 text-sm text-center font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                                     prefetch={false}
                                 >
-                                    Add Assessment
+                                    <Button>Add Assessment</Button>
                                 </Link>
                             </div>}
                         </div>
@@ -90,13 +89,27 @@ export default function DataTable({
                                     assessmentUser.assessmentId === assessment.id
                                 )?.permissions
                                 return(
-                                    <TableRow key={key} onClick={() =>
-                                        router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                                    }>
-                                        <TableCell>{assessment.projectId}</TableCell>
-                                        <TableCell>{assessment.name}</TableCell>
-                                        <TableCell>{assessment.status}</TableCell>
-                                        <TableCell>{`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}</TableCell>
+                                    <TableRow key={key}>
+                                        <TableCell onClick={() =>
+                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                                        }>
+                                            {assessment.projectId}
+                                        </TableCell>
+                                        <TableCell onClick={() =>
+                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                                        }>
+                                            {assessment.name}
+                                        </TableCell>
+                                        <TableCell onClick={() =>
+                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                                        }>
+                                            {assessment.status}
+                                        </TableCell>
+                                        <TableCell onClick={() =>
+                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                                        }>
+                                            {`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
+                                        </TableCell>
                                         <TableCell>
                                             <AssessmentActions 
                                                 assessmentTypeId={assessmentType.id} 
@@ -140,30 +153,30 @@ function AssessmentActions({
         permissions?.find(permission => permission.name === "Delete assessments") !== undefined
     return (
         <div className="grid grid-cols-2 gap-2 w-20">
-            {canEdit && <Link 
-                href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`} 
-                className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-            >
-                <SquarePen className="w-5 h-5 text-white" />
-            </Link>}
-            <Link 
-                href={`/${assessmentTypeId}/reports/${assessment.id}`} 
-                className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-            >
-                <FileChartColumn className="w-5 h-5 text-white" />
+            {canEdit && 
+                <Link href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`}>
+                    <Button size="icon">
+                        <SquarePen className="w-5 h-5 text-white" />
+                    </Button>
+                </Link>
+            }
+            <Link href={`/${assessmentTypeId}/reports/${assessment.id}`}>
+                <Button size="icon">
+                    <FileChartColumn className="w-5 h-5 text-white" />
+                </Button>
             </Link>
-            {canView && <Link 
-                href={`/${assessmentTypeId}/users/${assessment.id}`} 
-                className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-            >
-                <Users className="w-5 h-5 text-white" />
-            </Link>}
-            {canDelete && <Link 
-                href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`} 
-                className="flex items-center justify-center w-9 h-9 rounded-md bg-indigo-700/90 hover:bg-indigo-700/70"
-            >
-                <Trash2 className="w-5 h-5 text-white" />
-            </Link>}
+            {canView && 
+                <Link href={`/${assessmentTypeId}/users/${assessment.id}`}>
+                    <Button size="icon">
+                        <Users className="w-5 h-5 text-white" />
+                    </Button>
+                </Link>
+            }
+            {canDelete && 
+                <Button size="icon">
+                    <Trash2 className="w-5 h-5 text-white" />
+                </Button>
+            }
         </div>
     )
 }

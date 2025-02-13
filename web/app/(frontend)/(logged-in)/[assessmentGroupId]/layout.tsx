@@ -10,6 +10,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Footer } from "../../components/footer"
 import { Nav } from "../../components/nav"
+import { Toaster } from "@/components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { auth } from "@/auth"
 import { isAdmin, canViewUsers } from "../utils/permissions"
@@ -55,6 +56,7 @@ export default async function RootLayout({
             <main className="flex h-full grow flex-col">{children}</main>
             <footer>
               <TailwindIndicator />
+              <Toaster />
               <Footer />
             </footer>
           </div>

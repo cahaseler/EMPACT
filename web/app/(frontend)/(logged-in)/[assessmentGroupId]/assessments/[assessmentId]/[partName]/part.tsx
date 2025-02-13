@@ -6,6 +6,7 @@ import {
   Section, 
   Attribute 
 } from "@/prisma/mssql/generated/client"
+import { Button } from "@/components/ui/button"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
 import Link from "next/link"
@@ -62,17 +63,18 @@ export default function PartContent({
                       <Link
                         key={key}
                         href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}`}
-                        className="flex min-h-28 items-center rounded-md px-8 py-3 bg-indigo-700/90 hover:bg-indigo-700/70 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                         prefetch={false}
                       >
-                        <div className="flex flex-col space-y-2">
-                          <h2 className="text-xl font-bold text-indigo-50">
-                              {section.id.toString().toUpperCase()}. {section.name}
-                          </h2>
-                          <h3 className="text-lg font-semibold text-indigo-200">
-                            Status: {unfinishedSection ? "In Progress" : "Completed"}
-                          </h3>
-                        </div>
+                        <Button size="xl">
+                          <div className="w-full flex flex-col space-y-2">
+                            <h2 className="text-xl font-bold text-indigo-50">
+                                {section.id.toString().toUpperCase()}. {section.name}
+                            </h2>
+                            <h3 className="text-lg font-semibold text-indigo-200">
+                              Status: {unfinishedSection ? "In Progress" : "Completed"}
+                            </h3>
+                          </div>
+                        </Button>
                       </Link>
                     )
                   })}

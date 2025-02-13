@@ -6,7 +6,7 @@ import {
   Section, 
   Attribute 
 } from "@/prisma/mssql/generated/client"
-
+import { Button } from "@/components/ui/button"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
 import Link from "next/link"
@@ -51,10 +51,11 @@ export default function AssessmentContent({
                 {canEdit && <div>
                   <Link
                     href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
-                    className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
-                    Edit Assessment
+                    <Button>
+                      Edit Assessment
+                    </Button>
                   </Link>
                 </div>}
               </div>
@@ -70,17 +71,18 @@ export default function AssessmentContent({
                   <Link
                     key={key}
                     href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}`}
-                    className="w-full flex h-28 items-center rounded-md px-8 bg-indigo-700/90 hover:bg-indigo-700/70 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                     prefetch={false}
                   >
-                    <div className="flex flex-col space-y-2">
-                      <h2 className="text-xl font-bold text-indigo-50">
-                        {part.name}
-                      </h2>
-                      <h3 className="text-lg font-semibold text-indigo-200">
-                        Status: {unfinishedPart ? "In Progress" : "Completed"}
-                      </h3>
-                    </div>
+                    <Button size="xl">
+                      <div className="flex flex-col w-full space-y-2">
+                        <h2 className="text-xl font-bold text-indigo-50">
+                          {part.name}
+                        </h2>
+                        <h3 className="text-lg font-semibold text-indigo-200">
+                          Status: {unfinishedPart ? "In Progress" : "Completed"}
+                        </h3>
+                      </div>
+                    </Button>
                   </Link>
                 )
               })}

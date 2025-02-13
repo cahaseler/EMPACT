@@ -1,5 +1,6 @@
 import { AssessmentType } from "@/prisma/mssql/generated/client"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export function Types({ data }: Readonly<{data: AssessmentType[]}>) {
   return (
@@ -20,18 +21,13 @@ export function Types({ data }: Readonly<{data: AssessmentType[]}>) {
             </p>
     </section>
     <section className="mb-16">
-        <div className="space-y-4">
+        <div className="flex flex-col space-y-4">
             {data.map((type: AssessmentType, key: number) => {
                 return (
-                    <Link
-                        key={key}
-                        href={`/${type.id}`}
-                        className="flex h-fit items-center rounded-md bg-indigo-700/90 p-8 text-md font-medium text-indigo-50 shadow transition-colors hover:bg-indigo-700/70 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        prefetch={false}
-                    >
-                        <div className="flex flex-col space-y-4">
-                            <h1 className="text-2xl font-semibold leading-none tracking-tight">{type.name}</h1>
-                        </div>
+                    <Link key={key} href={`/${type.id}`} prefetch={false}>
+                        <Button size="xl">
+                            <h1 className="w-full text-2xl font-semibold leading-none tracking-tight">{type.name}</h1>
+                        </Button>
                     </Link>
                 )
             })}

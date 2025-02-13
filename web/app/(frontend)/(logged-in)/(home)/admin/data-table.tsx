@@ -8,6 +8,7 @@ import {
 } from "@/prisma/mssql/generated/client"
 
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import {
     Table,
     TableBody,
@@ -16,6 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { SquarePen, Trash2 } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
@@ -47,20 +49,18 @@ export default function DataTable({
                   <h1 className="text-3xl font-bold tracking-tighter">Admin Settings</h1>
                 </div>
                 <div className="flex flex-row space-x-2">
-                    <Link
-                        href={`/admin/add-users`}
-                        className="inline-flex items-center justify-center rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                        prefetch={false}
-                    >
-                        Add Users
+                  <Button>
+                    <Link href={`/admin/add-users`} prefetch={false}>
+                      Add Users
                     </Link>
+                  </Button>
                 </div>
               </div>
             </div>
           </section>
           <section className="mb-16">
             <div className="space-y-4">
-                <Table className="cursor-pointer dark:bg-transparent">
+                <Table className="dark:bg-transparent">
                     <TableHeader>
                         <TableRow>
                             <TableHead>User ID</TableHead>
@@ -68,6 +68,7 @@ export default function DataTable({
                             <TableHead>Email</TableHead>
                             <TableHead>System Role(s)</TableHead>
                             <TableHead>Assigned Assessment(s)</TableHead>
+                            <TableHead />
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -76,14 +77,17 @@ export default function DataTable({
                             assessmentUser: AssessmentUser[],
                             assessmentCollectionUser: AssessmentCollectionUser[]
                         }, key: number) => (
-                        <TableRow key={key} onClick={() =>
-                            router.push(`/admin/edit-user/${user.id}`)
-                        }>
+                        <TableRow key={key}>
                             <TableCell>{user.id}</TableCell>
                             <TableCell>{user.lastName}, {user.firstName}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.systemRoles.length > 0 ? user.systemRoles.map((role) => role.name).join(", ") : "Participant"}</TableCell>
-                            <TableCell><UserAssessments user={user} assessments={assessments} /></TableCell>
+                            <TableCell>
+                              <UserAssessments user={user} assessments={assessments} />
+                            </TableCell>
+                            <TableCell>
+                              <UserActions userId={user.id} />
+                            </TableCell>
                         </TableRow>
                         ))}
                     </TableBody>
@@ -133,5 +137,20 @@ function UserAssessments ({
       const assessment = assessments.find(assessment => assessment.id === user.assessmentId)
       return assessment?.name
     }).join(", ")
+  )
+}
+
+function UserActions({ userId }: { userId: number }) {
+  return (
+      <div className="grid grid-cols-2 gap-2 w-20">
+        <Button size="icon">
+          <Link href={`/admin/edit-user/${userId}`} >
+            <SquarePen className="w-5 h-5 text-white" />
+          </Link>
+        </Button>
+        <Button size="icon">
+          <Trash2 className="w-5 h-5 text-white" />
+        </Button>
+      </div>
   )
 }

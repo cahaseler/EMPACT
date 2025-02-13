@@ -9,8 +9,6 @@ import {
   AssessmentUserResponse 
 } from "@/prisma/mssql/generated/client"
 
-import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
-import NotFound from "@/app/(frontend)/components/notFound"
 import { Card } from "@/components/ui/card"
 import {
   Accordion, 
@@ -18,11 +16,14 @@ import {
   AccordionTrigger, 
   AccordionContent
 } from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
 
 import Link from "next/link"
 
 import AttributeUserResponse from "./attributeUserResponse"
 import AttributeResponseTable from "./attributeResponseTable"
+import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotFound from "@/app/(frontend)/components/notFound"
 
 export default function AttributeContent({
   assessment, 
@@ -116,22 +117,24 @@ export default function AttributeContent({
                 }
                 <section className="mb-8 space-y-4">
                   <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
-                    {prevAttribute && (
-                      <Link 
-                        href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${prevAttribute.id}`} 
-                        className="w-fit rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      >
-                        Previous
+                    {prevAttribute && 
+                      <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${prevAttribute.id}`}>
+                        <Button>Previous</Button>
                       </Link>
-                    )}
+                    }
                     {nextAttribute && (
-                      <Link 
-                        href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${nextAttribute.id}`} 
-                        className="w-fit rounded-md bg-indigo-700/90 hover:bg-indigo-700/70 px-8 py-3 text-sm font-medium text-indigo-50 shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                      >
-                        Next
-                      </Link>
-                    )}
+                      isParticipant && userResponses.length === 0 ?
+                        <Button disabled={true}>
+                          Next
+                        </Button> 
+                      :
+                        <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${nextAttribute.id}`}>
+                          <Button>
+                            Next
+                          </Button>
+                        </Link>
+                      )
+                    }
                     </div>
                 </section>
               </div>

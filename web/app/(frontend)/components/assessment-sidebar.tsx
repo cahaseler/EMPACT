@@ -22,7 +22,7 @@ import {
   SidebarMenuSubItem,
   SidebarTrigger
 } from "@/components/ui/sidebar"
-import { ChevronRight, TriangleAlert, CircleCheckBig } from "lucide-react"
+import { ChevronRight, CircleCheckBig } from "lucide-react"
 
 export function AssessmentSidebar ({ 
     assessmentType,
@@ -66,9 +66,7 @@ export function AssessmentSidebar ({
                     <div className="flex flex-row justify-between items-center">
                         <SidebarGroupLabel asChild>
                             <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}` : "/"}>
-                                {unfinishedPart ? 
-                                    <TriangleAlert className="h-4 w-4 mr-2" /> : 
-                                    <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
+                                {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
                                 }
                                 <span className={unfinishedPart ? "" : "opacity-50"}>{part.name}</span>
                             </a>
@@ -92,11 +90,9 @@ export function AssessmentSidebar ({
                                         <div className="flex flex-row justify-between items-center">
                                             <SidebarMenuButton asChild>
                                                 <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}` : "/"}>
-                                                    {unfinishedSection ? 
-                                                        <TriangleAlert className="h-4 w-4 mr-2" /> : 
-                                                        <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
+                                                    {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
                                                     }
-                                                    <span className={unfinishedSection ? "" : "opacity-50"}>{section.name}</span>
+                                                    <span className={unfinishedSection ? "" : "opacity-50"}>{section.id.toUpperCase()}. {section.name}</span>
                                                 </a>
                                             </SidebarMenuButton>
                                             <div className="ml-1 py-2 px-1 cursor-pointer rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-700 hover:text-sidebar-accent-foreground">
