@@ -1,14 +1,38 @@
 import { fetchAssessmentType, fetchAssessment } from "../../../utils/dataFetchers"
 
+import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import AssessmentReport from "./report"
 
 export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string, assessmentId: string } }>) {
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   
-  return (
-    <div className="flex h-full flex-col items-center justify-start pt-3 pb-10">
-      <AssessmentReport assessment={assessment} assessmentType={assessmentType} />
-    </div>
-  )
+  if (assessmentType && assessment) {
+    const links = [
+      {
+        url: `/${assessmentType.id}/reports`, 
+        name: `${assessmentType.name} Reports`
+      },
+    ]
+    return (
+        <div className="w-full max-w-4xl mx-auto">
+          <section className="mb-8">
+            <div className="space-y-4 max-lg:ml-2">
+              <Breadcrumbs links={links} currentPage={`${assessment.name} Report`} />
+              <div className="flex flex-row justify-between">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold tracking-tighter">{assessment.name} Report</h1>
+                  <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+                    {assessment.description}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section className="mb-16">
+            <AssessmentReport assessment={assessment} />
+          </section>
+        </div>
+      )
+  }
 }

@@ -9,6 +9,7 @@ import { isParticipantForAssessment, viewableResponses } from "../../../utils/pe
 
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AssessmentSidebar } from "@/app/(frontend)/components/assessment-sidebar"
+import NotFound from "@/app/(frontend)/components/notFound"
 
 export default async function RootLayout({
   children,
@@ -31,16 +32,28 @@ export default async function RootLayout({
   const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
   const userResponses = await viewableResponses(session, params.assessmentId)
 
-  return (
-    <SidebarProvider defaultOpen={false}>
-        <AssessmentSidebar 
-          assessmentType={assessmentType} 
-          assessment={assessment} 
-          parts={parts} 
-          numAssessmentUsers={numAssessmentUsers}
-          userResponses={userResponses} 
-        />
-        {children}
-    </SidebarProvider>
-  )
+  if (assessmentType) {
+    const links = [
+      {
+        url: `/${assessmentType.id}/assessments`, 
+        name: assessmentType.name
+      },
+    ]
+    if (assessment) {
+      return (
+        <SidebarProvider defaultOpen={false}>
+          <AssessmentSidebar 
+            assessmentType={assessmentType} 
+            assessment={assessment} 
+            parts={parts} 
+            numAssessmentUsers={numAssessmentUsers}
+            userResponses={userResponses} 
+          />
+          {children}
+        </SidebarProvider>
+      )
+    }
+    return <NotFound links={links} pageType="assessment" />
+  }
+  
 }

@@ -43,7 +43,11 @@ export default async function RootLayout({
             <header>
               <Nav isAdmin={isAdmin(session)} name={session?.user?.name}/>
             </header>
-            <main className="flex h-full grow flex-col">{children}</main>
+            <main className="flex h-full grow flex-col">
+              <div className="flex h-full flex-col items-center justify-start p-2 sm:p-10">
+                {children}
+              </div>
+            </main>
             <footer>
               <TailwindIndicator />
               <Footer />

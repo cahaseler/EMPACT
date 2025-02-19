@@ -7,7 +7,6 @@ import {
 } from "@/prisma/mssql/generated/client"
 import { 
   isAdmin, 
-  isCollectionManager, 
   isManagerForCollection,
   isLeadForAssessment,
   canViewUsers
@@ -29,7 +28,6 @@ import {
     Users,
     Trash2
   } from "lucide-react"
-import NotFound from "@/app/(frontend)/components/notFound"
 
 import { useRouter } from "next/navigation"
 
@@ -42,92 +40,61 @@ export default function DataTable({
     session
 }: {
     readonly assessments: Assessment[], 
-    readonly assessmentType: AssessmentType | null,
+    readonly assessmentType: AssessmentType,
     readonly session: Session | null
 }) {
     const router = useRouter()
-    const canAdd = isAdmin(session) || isCollectionManager(session)
-    if(assessmentType) {
-        return (
-            <div className="w-full max-w-4xl mx-auto">
-                <section className="mb-8">
-                    <div className="space-y-4 max-lg:ml-2">
-                        <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
-                            <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name}</h1>
-                            {canAdd && <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">
-                                <Link
-                                    href={`/${assessmentType.id}/assessments/manage-collections`}
-                                    prefetch={false}
-                                >
-                                    <Button>Manage Assessment Collections</Button>
-                                </Link>
-                                <Link
-                                    href={`/${assessmentType.id}/assessments/add-assessment`}
-                                    prefetch={false}
-                                >
-                                    <Button>Add Assessment</Button>
-                                </Link>
-                            </div>}
-                        </div>
-                    </div>
-                </section>
-                <section className="mb-16">
-                    <div className="space-y-4">
-                        <Table className="cursor-pointer dark:bg-transparent">
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Project ID</TableHead>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {assessments.map((assessment: Assessment, key: number) => {
-                                const permissions = session?.user?.assessmentUser.find(assessmentUser => 
-                                    assessmentUser.assessmentId === assessment.id
-                                )?.permissions
-                                return(
-                                    <TableRow key={key}>
-                                        <TableCell onClick={() =>
-                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                                        }>
-                                            {assessment.projectId}
-                                        </TableCell>
-                                        <TableCell onClick={() =>
-                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                                        }>
-                                            {assessment.name}
-                                        </TableCell>
-                                        <TableCell onClick={() =>
-                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                                        }>
-                                            {assessment.status}
-                                        </TableCell>
-                                        <TableCell onClick={() =>
-                                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                                        }>
-                                            {`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
-                                        </TableCell>
-                                        <TableCell>
-                                            <AssessmentActions 
-                                                assessmentTypeId={assessmentType.id} 
-                                                assessment={assessment} 
-                                                session={session}
-                                                permissions={permissions}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                )})}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </section>
-            </div>
-        )
-    }
-    return <NotFound pageType="type" />
+    return (
+        <Table className="cursor-pointer dark:bg-transparent">
+            <TableHeader>
+                <TableRow>
+                    <TableHead>Project ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Actions</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {assessments.map((assessment: Assessment, key: number) => {
+                const permissions = session?.user?.assessmentUser.find(assessmentUser => 
+                    assessmentUser.assessmentId === assessment.id
+                )?.permissions
+                return(
+                    <TableRow key={key}>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {assessment.projectId}
+                        </TableCell>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {assessment.name}
+                        </TableCell>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {assessment.status}
+                        </TableCell>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
+                        </TableCell>
+                        <TableCell>
+                            <AssessmentActions 
+                                assessmentTypeId={assessmentType.id} 
+                                assessment={assessment} 
+                                session={session}
+                                permissions={permissions}
+                            />
+                        </TableCell>
+                    </TableRow>
+                )})}
+            </TableBody>
+        </Table>
+    )
 }
 
 function AssessmentActions({ 

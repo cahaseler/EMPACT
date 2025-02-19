@@ -48,7 +48,7 @@ export function Nav({
   isAdmin,
   canViewUsers 
 }: Readonly<{ 
-  assessmentType?: AssessmentType | null, 
+  assessmentType?: AssessmentType, 
   name?: string,
   isAdmin?: boolean,
   canViewUsers?: boolean 
