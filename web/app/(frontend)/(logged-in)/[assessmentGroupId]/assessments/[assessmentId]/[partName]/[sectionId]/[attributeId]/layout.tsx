@@ -46,9 +46,7 @@ import {
           }
       ]
       if (attribute) {
-        return (
-            {children}
-        )
+        return children
       }
       return <NotFound links={links} pageType="attribute" />
     }

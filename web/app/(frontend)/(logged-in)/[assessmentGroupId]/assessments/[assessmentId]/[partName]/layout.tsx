@@ -32,9 +32,7 @@ import {
           },
       ]
       if (part) {
-        return (
-            {children}
-        )
+        return children
       }
       return <NotFound links={links} pageType="part" />
     }

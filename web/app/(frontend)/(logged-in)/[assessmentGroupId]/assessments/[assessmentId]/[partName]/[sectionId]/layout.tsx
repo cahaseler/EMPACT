@@ -39,9 +39,7 @@ import {
         },
       ]
       if (section) {
-        return (
-            {children}
-        )
+        return children
       }
       return <NotFound links={links} pageType="section" />
     }
