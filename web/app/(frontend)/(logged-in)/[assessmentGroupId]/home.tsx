@@ -88,6 +88,7 @@ export default function Home({
                       name={assessment.name}
                       date={`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
                       parts={parts}
+                      session={session}
                     />
                   )}) : (
                     <p className="text-md text-muted-foreground dark:text-indigo-300/80">
@@ -107,14 +108,17 @@ function AssessmentCard({
   id,
   name,
   date,
-  parts
+  parts,
+  session
 }: {
   readonly groupId: number
   readonly id: number
   readonly name: string
   readonly date: string
   readonly parts: any[]
+  readonly session: Session | null
 }) {
+  const role = isParticipantForAssessment(session, id.toString()) ? "Participant" : "Facilitator"
   return (
     <Card className="w-auto">
       <CardHeader className="flex justify-between">
@@ -129,19 +133,21 @@ function AssessmentCard({
         <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
           <Link
             href={`/${groupId}/reports/${id}`}
-            className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-100 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
             prefetch={false}
           >
-            View Report
+            <Button variant="secondary">
+              View Report
+            </Button>
           </Link>
           {parts.map((part : Part) => {
             return (
               <Link
-                href={`/${groupId}/assessments/${id}/${part.name}`}
-                className="inline-flex h-8 items-center justify-center rounded-md bg-transparent px-4 text-sm font-medium text-primary hover:bg-indigo-100 dark:hover:bg-indigo-400/30 hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                href={`/${groupId}/assessments/${id}/${role}/${part.name}`}
                 prefetch={false}
               >
-                {part.name}
+                <Button variant="secondary">
+                  {part.name}
+                </Button>
               </Link>
             )
           })}

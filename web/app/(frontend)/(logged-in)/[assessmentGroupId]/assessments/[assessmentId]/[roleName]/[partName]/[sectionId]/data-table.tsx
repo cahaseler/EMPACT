@@ -17,9 +17,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
-import NotFound from "@/app/(frontend)/components/notFound"
-
 import { useRouter } from "next/navigation"
 
 // TODO: Convert to React-Table
@@ -28,6 +25,7 @@ import { useRouter } from "next/navigation"
 export default function DataTable({
     assessment, 
     assessmentType,
+    role,
     part,
     section,
     attributes,
@@ -36,6 +34,7 @@ export default function DataTable({
 }: {
     assessment: Assessment, 
     assessmentType: AssessmentType,
+    role: string,
     part: Part,
     section: Section,
     attributes: (Attribute & { levels: Level[] })[],
@@ -64,7 +63,7 @@ export default function DataTable({
           const level = attributeResponses.length > 0 ? attribute.levels.find((level: Level) => level.id === attributeResponses[0].levelId) : undefined
           return (
             <TableRow key={key} onClick={() =>
-                router.push(`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${attribute.id}`)
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`)
             }>
                 <TableCell>{attribute.id.toString().toUpperCase()}. {attribute.name}</TableCell>
                 {isParticipant ? 

@@ -27,12 +27,14 @@ import { ChevronRight, CircleCheckBig } from "lucide-react"
 export function AssessmentSidebar ({ 
     assessmentType,
     assessment,
+    role,
     parts,
     numAssessmentUsers,
     userResponses
 }: Readonly<{ 
-    assessmentType: AssessmentType | null
-    assessment: Assessment | null 
+    assessmentType: AssessmentType
+    assessment: Assessment
+    role: string
     parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
     numAssessmentUsers: number
     userResponses: AssessmentUserResponse[]
@@ -45,14 +47,17 @@ export function AssessmentSidebar ({
         collapsible="icon"
     >
       <SidebarHeader>
-        <div className="flex flex-row justify-between items-center p-2">
-            <a 
-            href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}` : "/"}
-            className="font-bold group-data-[collapsible=icon]:hidden text-indigo-900 dark:text-indigo-50"
-            >
-                <span>{assessment?.name}</span>
-            </a>
-            <SidebarTrigger className="hover:bg-transparent" />
+        <div className="flex flex-row justify-between p-2">
+            <div className="group-data-[collapsible=icon]:hidden flex flex-col space-y-2">
+                <a 
+                    href={`/${assessmentType.id}/assessments/${assessment.id}`}
+                    className="font-bold text-indigo-900 dark:text-indigo-50"
+                >
+                    {assessment.name}
+                </a>
+                <span className="text-[15px] font-semibold text-indigo-900/80 dark:text-indigo-50/80">{role}</span>
+            </div>
+            <SidebarTrigger className="hover:bg-transparent -ml-[3px]" />
         </div>
       </SidebarHeader>
       <SidebarContent className="group-data-[collapsible=icon]:hidden">
@@ -65,9 +70,8 @@ export function AssessmentSidebar ({
                 <SidebarGroup>
                     <div className="flex flex-row justify-between items-center">
                         <SidebarGroupLabel asChild>
-                            <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}` : "/"}>
-                                {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
-                                }
+                            <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}`}>
+                                {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
                                 <span className={unfinishedPart ? "" : "opacity-50"}>{part.name}</span>
                             </a>
                         </SidebarGroupLabel>
@@ -89,9 +93,8 @@ export function AssessmentSidebar ({
                                     <SidebarMenuItem key={section.name}>
                                         <div className="flex flex-row justify-between items-center">
                                             <SidebarMenuButton asChild>
-                                                <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}` : "/"}>
-                                                    {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
-                                                    }
+                                                <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}>
+                                                    {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
                                                     <span className={unfinishedSection ? "" : "opacity-50"}>{section.id.toUpperCase()}. {section.name}</span>
                                                 </a>
                                             </SidebarMenuButton>
@@ -109,7 +112,7 @@ export function AssessmentSidebar ({
                                                     return (
                                                     <SidebarMenuSubItem key={attribute.name}>
                                                         <SidebarMenuButton asChild>
-                                                            <a href={assessmentType && assessment ? `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${attribute.id}` : "/"}>
+                                                            <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
                                                                 {!unfinishedAttribute && <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />}
                                                                 <span className={unfinishedAttribute ? "" : "opacity-50"}>{attribute.id.toUpperCase()}. {attribute.name}</span>
                                                             </a>

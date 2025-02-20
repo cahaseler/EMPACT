@@ -3,11 +3,15 @@ import {
     User, 
     AssessmentCollection, 
     Assessment, 
-    AssessmentUserResponse 
+    AssessmentUserResponse,
+    Part,
+    Section,
+    Attribute
 } from "@/prisma/mssql/generated/client"
 import { 
     fetchAssessmentCollections,
     fetchAssessments, 
+    fetchPartsSectionsAttributes,
     fetchAllResponsesForAssessment, 
     fetchUserResponsesForAssessment,
     fetchAllResponsesForAssessmentAttribute,
@@ -47,6 +51,18 @@ export function isFacForAssessment(session: Session | null, assessmentId: string
     }
     const assessmentUser = session?.user?.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
     return assessmentUser?.role === "Facilitator"
+}
+
+export function canUserParticipateInPart(session: Session | null, assessmentId: string, partId: number): boolean { 
+    // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+    const idAsInteger = parseInt(assessmentId, 10)
+    // Technically, users could put anything into a URL, so we need to make sure it's a number
+    if(isNaN(idAsInteger)) {
+      return false
+    }
+    const assessmentUser = session?.user?.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
+    const participantPart = assessmentUser?.participantParts.find(part => part.id === partId)
+    return participantPart !== undefined
 }
 
 export function isParticipantForAssessment(session: Session | null, assessmentId: string): boolean { 
@@ -102,9 +118,40 @@ export async function viewableAssessments(session: Session | null, assessmentGro
     return []
 }
 
-export async function viewableResponses(session: Session | null, assessmentId: string): Promise<AssessmentUserResponse[]> {
+export async function viewableParts(
+    session: Session | null, 
+    assessmentGroupId: string, 
+    assessmentId: string,
+    role: string
+): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
+    // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+    const idAsInteger = parseInt(assessmentId, 10)
+    // Technically, users could put anything into a URL, so we need to make sure it's a number
+    if(isNaN(idAsInteger)) {
+      return []
+    }
     if (session) {
-        if (isParticipantForAssessment(session, assessmentId)) {
+        const parts = await fetchPartsSectionsAttributes(assessmentGroupId)
+        if (role === "Participant") {
+            const assessmentUser = session.user.assessmentUser.find(uc => uc.assessmentId === idAsInteger)
+            const participantPartIds = assessmentUser?.participantParts.map(part => part.partId)
+            const viewableParts = parts.filter(part => participantPartIds?.includes(part.id))
+            return viewableParts
+        }
+        else {
+            return parts
+        }
+    }
+    return []
+}
+
+export async function viewableResponses(
+    session: Session | null, 
+    assessmentId: string, 
+    role: string
+): Promise<AssessmentUserResponse[]> {
+    if (session) {
+        if (role === "Participant") {
             return await fetchUserResponsesForAssessment(session.user.id, assessmentId)
         }
         else {
@@ -117,10 +164,11 @@ export async function viewableResponses(session: Session | null, assessmentId: s
 export async function viewableAttributeResponses(
     session: Session | null, 
     assessmentId: string,
-    attributeId: string
+    attributeId: string,
+    role: string
 ): Promise<(AssessmentUserResponse & { user?: User })[]> {
     if (session) {
-        if (isParticipantForAssessment(session, assessmentId)) {
+        if (role === "Participant") {
             const response = await fetchUserResponseForAssessmentAttribute(session.user.id, assessmentId, attributeId)
             return response ? [response] : []
         }

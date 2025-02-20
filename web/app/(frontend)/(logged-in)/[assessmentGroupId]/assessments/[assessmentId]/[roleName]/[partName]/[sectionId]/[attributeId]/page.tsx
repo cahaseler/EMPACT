@@ -7,9 +7,9 @@ import {
   fetchPreviousAttribute,
   fetchNextAttribute,
   fetchLevels
-} from "../../../../../../utils/dataFetchers"
+} from "../../../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
-import { isParticipantForAssessment, viewableAttributeResponses } from "../../../../../../utils/permissions"
+import { viewableAttributeResponses } from "../../../../../../../utils/permissions"
 
 import { Card } from "@/components/ui/card"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
@@ -18,6 +18,7 @@ import AttributeContent from "./attributeContent"
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string, 
     assessmentId: string, 
+    roleName: string,
     partName: string,
     sectionId: string,
     attributeId: string 
@@ -33,8 +34,8 @@ export default async function Page({ params }: Readonly<{ params: {
   const prevAttribute = await fetchPreviousAttribute(params.assessmentGroupId, params.attributeId)
   const nextAttribute = await fetchNextAttribute(params.assessmentGroupId, params.attributeId)
   const levels = await fetchLevels(params.attributeId)
-  const isParticipant = isParticipantForAssessment(session, params.assessmentId)
-  const userResponses = await viewableAttributeResponses(session, params.assessmentId, params.attributeId)
+  const isParticipant = params.roleName === "Participant"
+  const userResponses = await viewableAttributeResponses(session, params.assessmentId, params.attributeId, params.roleName)
 
   if (assessmentType && assessment && part && section && attribute) {
     const links = [
@@ -47,11 +48,11 @@ export default async function Page({ params }: Readonly<{ params: {
           name: assessment.name
       },
       {
-          url: `/${assessmentType.id}/assessments/${assessment.id}/${part.name}`, 
+          url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`, 
           name: part.name
       },
       {
-          url: `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}`,
+          url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}/${section.id}`,
           name: `${section.id.toString().toUpperCase()}. ${section.name}`
         }
     ]
@@ -75,6 +76,7 @@ export default async function Page({ params }: Readonly<{ params: {
         <AttributeContent 
           assessment={assessment} 
           assessmentType={assessmentType} 
+          role={params.roleName}
           part={part} 
           section={section} 
           attribute={attribute}

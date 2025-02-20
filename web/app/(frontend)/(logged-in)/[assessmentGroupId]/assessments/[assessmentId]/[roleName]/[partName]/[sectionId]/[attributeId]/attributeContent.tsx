@@ -25,6 +25,7 @@ import AttributeResponseTable from "./attributeResponseTable"
 export default function AttributeContent({
   assessment, 
   assessmentType,
+  role,
   part,
   section,
   attribute,
@@ -37,6 +38,7 @@ export default function AttributeContent({
 }: {
   assessment: Assessment, 
   assessmentType: AssessmentType,
+  role: string,
   part: Part,
   section: Section,
   attribute: Attribute,
@@ -77,7 +79,7 @@ export default function AttributeContent({
       <section className="mb-8 space-y-4">
         <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
           {prevAttribute && 
-            <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${prevAttribute.id}`}>
+            <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${prevAttribute.id}`}>
               <Button>Previous</Button>
             </Link>
           }
@@ -87,7 +89,7 @@ export default function AttributeContent({
                 Next
               </Button> 
             :
-              <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}/${nextAttribute.id}`}>
+              <Link href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${nextAttribute.id}`}>
                 <Button>
                   Next
                 </Button>

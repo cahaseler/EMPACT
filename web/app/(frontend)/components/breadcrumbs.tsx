@@ -21,7 +21,7 @@ import {
   }) {
     return (
       <Breadcrumb>
-        <BreadcrumbList>
+        <BreadcrumbList className="sm:mt-[-25px]">
             {links.map((link: link) => {
                 return (
                     <>

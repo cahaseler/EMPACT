@@ -4,9 +4,9 @@ import {
   fetchPart, 
   fetchSection, 
   fetchAttributes
-} from "../../../../../utils/dataFetchers"
+} from "../../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
-import { isParticipantForAssessment, viewableResponses } from "../../../../../utils/permissions"
+import { viewableResponses } from "../../../../../../utils/permissions"
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import DataTable from "./data-table"
@@ -14,6 +14,7 @@ import DataTable from "./data-table"
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string, 
     assessmentId: string, 
+    roleName: string,
     partName: string,
     sectionId: string 
   } 
@@ -26,8 +27,8 @@ export default async function Page({ params }: Readonly<{ params: {
   const section = await fetchSection(params.sectionId)
   const attributes = await fetchAttributes(params.sectionId)
 
-  const isParticipant = isParticipantForAssessment(session, params.assessmentId)
-  const userResponses = await viewableResponses(session, params.assessmentId)
+  const isParticipant = params.roleName === "Participant"
+  const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
 
   if (assessmentType && assessment && part && section) {
     const links = [
@@ -40,7 +41,7 @@ export default async function Page({ params }: Readonly<{ params: {
           name: assessment.name
       },
       {
-          url: `/${assessmentType.id}/assessments/${assessment.id}/${part.name}`, 
+          url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`, 
           name: part.name
       },
     ]
@@ -61,7 +62,9 @@ export default async function Page({ params }: Readonly<{ params: {
         <DataTable 
           assessment={assessment} 
           assessmentType={assessmentType} 
-          part={part} section={section} 
+          role={params.roleName}
+          part={part} 
+          section={section} 
           attributes={attributes} 
           userResponses={userResponses}
           isParticipant={isParticipant}

@@ -61,7 +61,7 @@ export function Nav({
       }
     >
       <NavigationView>
-        <NavigationMenuList className="md:py-1 flex flex-col md:flex-row md:space-x-6 max-md:space-y-4 max-md:mb-4 justify-start">
+        <NavigationMenuList className="md:py-0.5 flex flex-col md:flex-row md:space-x-6 max-md:space-y-4 max-md:mb-4 justify-start">
           <NavigationMenuItem className="max-md:hidden ml-5 font-bold font-sans text-3xl list-none w-fit">
             <Link href="/" legacyBehavior>EMPACT</Link>
           </NavigationMenuItem>

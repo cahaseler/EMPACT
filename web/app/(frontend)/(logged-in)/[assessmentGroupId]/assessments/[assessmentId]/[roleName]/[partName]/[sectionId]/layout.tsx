@@ -2,8 +2,7 @@ import {
     fetchAssessmentType, 
     fetchAssessment,
     fetchPart,
-    fetchSection,
-    fetchAttribute
+    fetchSection
   } from "../../../../../../utils/dataFetchers"
   import NotFound from "@/app/(frontend)/components/notFound"
   
@@ -15,18 +14,17 @@ import {
     params: { 
       assessmentGroupId: string,
       assessmentId: string,
+      roleName: string,
       partName: string,
-      sectionId: string,
-      attributeId: string
+      sectionId: string
     }
   }>) {
     const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
     const assessment = await fetchAssessment(params.assessmentId)
     const part = await fetchPart(params.assessmentGroupId, params.partName)
     const section = await fetchSection(params.sectionId)
-    const attribute = await fetchAttribute(params.attributeId)
   
-    if (assessmentType && assessment && part && section) {
+    if (assessmentType && assessment && part) {
       const links = [
         {
             url: `/${assessmentType.id}/assessments`, 
@@ -37,18 +35,14 @@ import {
             name: assessment.name
         },
         {
-            url: `/${assessmentType.id}/assessments/${assessment.id}/${part.name}`, 
+            url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`, 
             name: part.name
         },
-        {
-            url: `/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}`,
-            name: `${section.id.toString().toUpperCase()}. ${section.name}`
-          }
       ]
-      if (attribute) {
+      if (section) {
         return children
       }
-      return <NotFound links={links} pageType="attribute" />
+      return <NotFound links={links} pageType="section" />
     }
     
   }

@@ -3,9 +3,9 @@ import {
   fetchAssessment, 
   fetchPart,
   fetchAssessmentParticipants
-} from "../../../../utils/dataFetchers"
+} from "../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
-import { isParticipantForAssessment, viewableResponses } from "../../../../utils/permissions"
+import { viewableResponses } from "../../../../../utils/permissions"
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import PartContent from "./part"
@@ -13,6 +13,7 @@ import PartContent from "./part"
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string, 
     assessmentId: string, 
+    roleName: string,
     partName: string 
   } }>) {
   const session = await auth()
@@ -22,9 +23,9 @@ export default async function Page({ params }: Readonly<{ params: {
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
 
-  const isParticipant = isParticipantForAssessment(session, params.assessmentId)
+  const isParticipant = params.roleName === "Participant"
   const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
-  const userResponses = await viewableResponses(session, params.assessmentId)
+  const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
 
   if (assessmentType && assessment) {
     const links = [
@@ -58,6 +59,7 @@ export default async function Page({ params }: Readonly<{ params: {
               assessment={assessment} 
               assessmentType={assessmentType} 
               part={part} 
+              role={params.roleName}
               numAssessmentUsers={numAssessmentUsers}
               userResponses={userResponses} 
             />

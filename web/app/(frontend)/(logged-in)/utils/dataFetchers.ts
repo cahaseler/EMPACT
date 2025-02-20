@@ -9,16 +9,15 @@ import {
   Assessment, 
   AssessmentUser, 
   AssessmentUserResponse,
+  AssessmentPart,
   Part, 
   Section, 
   Attribute, 
   Level
 } from "@/prisma/mssql/generated/client"
 import * as assessmentType from "@/app/utils/assessmentType"
-import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
-import * as part from "@/app/utils/part"
 import * as section from "@/app/utils/section"
 import * as attribute from "@/app/utils/attribute"
 import * as level from "@/app/utils/level"
@@ -160,6 +159,16 @@ export async function fetchUserResponseForAssessmentAttribute(
     assessmentId: idAsInteger
   } })
   return userResponses.find(userResponse => userResponse.attributeId === attributeId)
+}
+
+export async function fetchAssessmentParts(assessmentId: string): Promise<(AssessmentPart & { part: Part })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentPart.findMany({ where: { assessmentId: idAsInteger }, include: { part: true } })
 }
 
 export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {

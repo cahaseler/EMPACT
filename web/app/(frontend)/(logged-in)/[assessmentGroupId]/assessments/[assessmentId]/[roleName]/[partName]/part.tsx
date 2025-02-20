@@ -12,12 +12,14 @@ import Link from "next/link"
 export default function PartContent({
     assessment, 
     assessmentType,
+    role,
     part,
     numAssessmentUsers,
     userResponses
 }: {
     assessment: Assessment, 
     assessmentType: AssessmentType,
+    role: string,
     part: Part & { sections: (Section & { attributes: Attribute[] })[] },
     numAssessmentUsers: number,
     userResponses: AssessmentUserResponse[]
@@ -32,7 +34,7 @@ export default function PartContent({
         return (
           <Link
             key={key}
-            href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}/${section.id}`}
+            href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}
             prefetch={false}
           >
             <Button size="xl">

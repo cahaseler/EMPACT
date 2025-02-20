@@ -1,11 +1,24 @@
+import { Session } from "@/auth"
 import { 
   AssessmentType, 
   Assessment, 
-  AssessmentUserResponse, 
-  Part, 
-  Section, 
-  Attribute 
+  AssessmentPart,
+  Part
 } from "@/prisma/mssql/generated/client"
+import { 
+  isAdmin, 
+  isManagerForCollection, 
+  isLeadForAssessment, 
+  isFacForAssessment,
+  canUserParticipateInPart
+} from "../../../utils/permissions"
+
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -13,39 +26,54 @@ export default function AssessmentContent({
   assessment, 
   assessmentType,
   parts,
-  numAssessmentUsers,
-  userResponses
+  session
 }: Readonly<{
   assessment: Assessment, 
   assessmentType: AssessmentType,
-  parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[],
-  numAssessmentUsers: number,
-  userResponses: AssessmentUserResponse[]
+  parts: (AssessmentPart & { part: Part })[],
+  session: Session | null
 }>) {
-  const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
+  const canEnterAsFac = 
+    isAdmin(session) || 
+    isManagerForCollection(session, assessment.assessmentCollectionId) || 
+    isLeadForAssessment(session, assessment.id.toString()) ||
+    isFacForAssessment(session, assessment.id.toString())
+
   return (
     <div className="w-full flex flex-col space-y-4">
-      {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }, key: number) => {
-        const partAttributeIds = part.sections.flatMap(section => section.attributes.map(attribute => attribute.id))
-        const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributeIds.includes(responseAttributeId))
-        const unfinishedPart = partAttributeIds.length * numAssessmentUsers !== partResponseAttributeIds.length * numAssessmentUsers
+      {parts.map((part: AssessmentPart & { part: Part }, key: number) => {
+        const canEnterAsParticipant = canUserParticipateInPart(session, assessment.id.toString(), part.id)
         return (
-          <Link
-            key={key}
-            href={`/${assessmentType.id}/assessments/${assessment.id}/${part.name}`}
-            prefetch={false}
-          >
-            <Button size="xl">
-              <div className="flex flex-col w-full space-y-2">
-                <h2 className="text-xl font-bold text-indigo-50">
-                  {part.name}
-                </h2>
-                <h3 className="text-lg font-semibold text-indigo-200">
-                  Status: {unfinishedPart ? "In Progress" : "Completed"}
-                </h3>
+          <Card className="w-auto" key={key}>
+            <CardHeader className="flex justify-between space-y-4 ml-2">
+              <div className="flex flex-col space-y-2 max-sm:items-center">
+                <CardTitle>
+                  {part.part.name}
+                </CardTitle>
+                <CardDescription>
+                  Status: {part.status}
+                </CardDescription>
               </div>
-            </Button>
-          </Link>
+              <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
+                {canEnterAsFac && <Link
+                  href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
+                  prefetch={false}
+                >
+                  <Button variant="secondary">
+                    Enter as Facilitator
+                  </Button>
+                </Link>}
+                {canEnterAsParticipant && <Link
+                  href={`/${assessmentType.id}/assessments/${assessment.id}/Participant/${part.part.name}`}
+                  prefetch={false}
+                >
+                  <Button variant="secondary">
+                    Enter as Participant
+                  </Button>
+                </Link>}
+              </div>
+            </CardHeader>
+          </Card>
         )
       })}
     </div>
