@@ -70,7 +70,7 @@ export async function fetchAssessments(typeid: string): Promise<Assessment[]> {
   return collections.flatMap(collection => collection.assessments)
 }
 
-export async function fetchAssessment(assessmentId: string): Promise<Assessment | null> {
+export async function fetchAssessment(assessmentId: string): Promise<(Assessment & { assessmentParts: (AssessmentPart & { part: Part })[] }) | null> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -78,7 +78,7 @@ export async function fetchAssessment(assessmentId: string): Promise<Assessment 
     return null
   }
 
-  return await assessment.findUnique({ where: { id: idAsInteger } })
+  return await db.assessment.findUnique({ where: { id: idAsInteger }, include: { assessmentParts: { include: { part: true } } } })
 }
 
 export async function fetchAssessmentUsers(assessmentId: string): Promise<(AssessmentUser & { user: User })[]> {
@@ -161,14 +161,24 @@ export async function fetchUserResponseForAssessmentAttribute(
   return userResponses.find(userResponse => userResponse.attributeId === attributeId)
 }
 
-export async function fetchAssessmentParts(assessmentId: string): Promise<(AssessmentPart & { part: Part })[]> {
+export async function fetchAssessmentParts(assessmentId: string): Promise<(AssessmentPart & { part: Part & { sections: (Section & { attributes: Attribute[] })[] } })[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
   if(isNaN(idAsInteger)) {
     return []
   }
-  return await db.assessmentPart.findMany({ where: { assessmentId: idAsInteger }, include: { part: true } })
+  return await db.assessmentPart.findMany({ where: { assessmentId: idAsInteger }, include: { 
+    part: {
+      include: {
+        sections: {
+          include: {
+            attributes: true
+          }
+        }
+      }
+    } 
+  } })
 }
 
 export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {

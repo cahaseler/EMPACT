@@ -65,13 +65,21 @@ export default function DataTable({
             <TableRow key={key} onClick={() =>
                 router.push(`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`)
             }>
-                <TableCell>{attribute.id.toString().toUpperCase()}. {attribute.name}</TableCell>
+                <TableCell className="w-1/2">
+                  {attribute.id.toString().toUpperCase()}. {attribute.name}
+                </TableCell>
                 {isParticipant ? 
                   <>
-                    <TableCell>{level?.level}</TableCell>
-                    <TableCell>{attributeResponses.length > 0 && attributeResponses[0].notes}</TableCell>
+                    <TableCell className="w-20">
+                      {level ? level.level : "---"}
+                    </TableCell>
+                    <TableCell>
+                      {attributeResponses.length > 0 ? attributeResponses[0].notes : "---"}
+                    </TableCell>
                   </> : 
-                  <TableCell>{attributeResponses.length}</TableCell>
+                  <TableCell className="w-20">
+                    {attributeResponses.length}
+                  </TableCell>
                 }
             </TableRow>
           )})}

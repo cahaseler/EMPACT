@@ -2,7 +2,6 @@ import {
   fetchAssessmentType, 
   fetchAssessment,
   fetchPart,
-  fetchPartsSectionsAttributes,
   fetchAssessmentParticipants
 } from "../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
@@ -63,8 +62,9 @@ export default async function RootLayout({
         isLeadForAssessment(session, params.assessmentId) ||
         isFacForAssessment(session, params.assessmentId)
       const canViewAsParticipant = canUserParticipateInPart(session, params.assessmentId, part.id)
-      const authorized = params.roleName === "Facilitator" ? canViewAsFac : canViewAsParticipant
-      if (authorized) {
+      const facAuthorized = params.roleName === "Facilitator" && canViewAsFac
+      const participantAuthorized = params.roleName === "Participant" && canViewAsParticipant
+      if (facAuthorized || participantAuthorized) {
         return (
           <SidebarProvider defaultOpen={false}>
             <AssessmentSidebar 

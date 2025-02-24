@@ -51,6 +51,7 @@ export default function DataTable({
                     <TableHead>Project ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Location</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
@@ -76,6 +77,11 @@ export default function DataTable({
                             router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
                         }>
                             {assessment.status}
+                        </TableCell>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {assessment.location}
                         </TableCell>
                         <TableCell onClick={() =>
                             router.push(`/${assessmentType.id}/assessments/${assessment.id}`)

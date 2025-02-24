@@ -14,6 +14,8 @@ const buttonVariants = cva(
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border-2 border-indigo-700/90 bg-transparent hover:bg-transparent hover:border-indigo-700/70 text-indigo-700/90 hover:text-indigo-700/70",
+        dateInput:
+          "border-2 border-indigo-100 bg-transparent hover:bg-transparent hover:border-indigo-50 dark:border-indigo-900 dark:bg-black dark:hover:border-indigo-900 dark:hover:bg-black font-normal text-black dark:text-white",
         secondary:
           "bg-indigo-100 hover:bg-indigo-200",
         ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -21,6 +23,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-6 py-2",
+        offset: "w-full justify-start h-10 px-3 py-2",
         lg: "h-11 rounded-md px-8 text-md",
         xl: "w-full h-28 py-3 px-8 text-left",
         icon: "h-9 w-9",
