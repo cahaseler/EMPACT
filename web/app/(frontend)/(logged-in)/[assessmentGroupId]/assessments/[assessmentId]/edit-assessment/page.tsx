@@ -40,6 +40,10 @@ export default async function Page({ params }: Readonly<{ params: {
         url: `/${assessmentType.id}/assessments`, 
         name: assessmentType.name
       },
+      {
+        url: `/${assessmentType.id}/assessments/${assessment.id}`, 
+        name: assessment.name
+      },
     ]
     const permissions = session?.user?.assessmentUser.find(assessmentUser => 
         assessmentUser.assessmentId === assessment.id
@@ -59,7 +63,7 @@ export default async function Page({ params }: Readonly<{ params: {
             <div className="w-full max-w-4xl mx-auto">
                 <section className="mb-8">
                     <div className="space-y-4">
-                        <Breadcrumbs links={links} currentPage={`Edit ${assessment.name}`} />
+                        <Breadcrumbs links={links} currentPage="Edit Assessment" />
                         <div className="flex flex-row justify-between">
                             <h1 className="text-3xl font-bold tracking-tighter">Edit {assessment.name}</h1>
                             {canEditStatus && <SubmitModule assessment={assessment} />}
