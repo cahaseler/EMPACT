@@ -17,6 +17,7 @@ import {
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import SubmitModule from "./submit-module"
+import DeleteAssessmentModule from "../../delete-assessment-module"
 import EditForm from "./edit-form"
 import PartsTable from "./parts-table"
 
@@ -58,6 +59,10 @@ export default async function Page({ params }: Readonly<{ params: {
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         isLeadForAssessment(session, params.assessmentId)
+    const canDelete =
+        isAdmin(session) || 
+        isManagerForCollection(session, assessment.assessmentCollectionId) || 
+        permissions?.find(permission => permission.name === "Delete assessments") !== undefined
     if (canEdit) {
         return (
             <div className="w-full max-w-4xl mx-auto">
@@ -66,7 +71,16 @@ export default async function Page({ params }: Readonly<{ params: {
                         <Breadcrumbs links={links} currentPage="Edit Assessment" />
                         <div className="flex flex-row justify-between">
                             <h1 className="text-3xl font-bold tracking-tighter">Edit {assessment.name}</h1>
-                            {canEditStatus && <SubmitModule assessment={assessment} />}
+                            <div className="flex flex-col sm:flex-row justify-end max-sm:space-y-4 sm:space-x-4 ml-4">
+                                {canEditStatus && <SubmitModule assessment={assessment} />}
+                                {canDelete && 
+                                    <DeleteAssessmentModule 
+                                        assessment={assessment} 
+                                        assessmentTypeId={assessmentType.id} 
+                                        buttonType="default" 
+                                    />
+                                }
+                            </div>
                         </div>
                     </div>
                 </section>

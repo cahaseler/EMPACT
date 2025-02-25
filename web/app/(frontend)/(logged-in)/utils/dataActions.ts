@@ -1,5 +1,12 @@
 "use server"
-import { AssessmentCollection, Assessment, AssessmentPart, AssessmentCollectionUser, AssessmentUserResponse } from "@/prisma/mssql/generated/client"
+import { db } from "@/lib/db"
+import { 
+    AssessmentCollection, 
+    Assessment, 
+    AssessmentPart, 
+    AssessmentCollectionUser, 
+    AssessmentUserResponse 
+} from "@/prisma/mssql/generated/client"
 import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentPart from "@/app/utils/assessmentPart"
@@ -22,6 +29,26 @@ export async function deleteAssessmentCollection(collectionId: number): Promise<
     return await assessmentCollection.delete_({ where: { id: collectionId } })
 }
 
+export async function createAssessment(
+    projectId: string,
+    collectionId: number | null, 
+    name: string, 
+    status: string,
+    location: string,
+    date: Date,
+    description: string
+): Promise<Assessment> {
+    return await assessment.create({ data: { 
+        projectId,
+        assessmentCollectionId: collectionId, 
+        name,
+        status,
+        location,
+        date,
+        description
+    } })
+}
+
 export async function updateAssessment(
     assessmentId: number,
     projectId: string,
@@ -41,6 +68,18 @@ export async function updateAssessment(
         date,
         description
     } })
+}
+
+export async function deleteAssessment(assessmentId: number): Promise<Assessment> {
+    return await assessment.delete_({ where: { id: assessmentId } })
+}
+
+export async function createAssessmentPart(
+    status: string,
+    assessmentId: number,
+    partId: number
+): Promise<AssessmentPart> {
+    return await db.assessmentPart.create({ data: { status, assessmentId, partId } })
 }
 
 export async function updateAssessmentPart(

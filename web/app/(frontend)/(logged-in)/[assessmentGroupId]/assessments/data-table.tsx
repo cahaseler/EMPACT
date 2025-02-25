@@ -31,6 +31,8 @@ import {
 
 import { useRouter } from "next/navigation"
 
+import DeleteAssessmentModule from "./delete-assessment-module"
+
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
 
@@ -146,9 +148,11 @@ function AssessmentActions({
                 </Link>
             }
             {canDelete && 
-                <Button size="icon">
-                    <Trash2 className="w-5 h-5 text-white" />
-                </Button>
+                <DeleteAssessmentModule 
+                    assessment={assessment} 
+                    assessmentTypeId={assessmentTypeId} 
+                    buttonType="icon" 
+                />
             }
         </div>
     )
