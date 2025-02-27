@@ -25,13 +25,12 @@ import {
 import { 
     SquarePen,
     FileChartColumn,
-    Users,
-    Trash2
+    Users
   } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
-import DeleteAssessmentModule from "./delete-assessment-module"
+import DeleteModule from "./delete-module"
 
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
@@ -148,7 +147,7 @@ function AssessmentActions({
                 </Link>
             }
             {canDelete && 
-                <DeleteAssessmentModule 
+                <DeleteModule 
                     assessment={assessment} 
                     assessmentTypeId={assessmentTypeId} 
                     buttonType="icon" 

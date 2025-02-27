@@ -3,7 +3,8 @@ import {
   AssessmentType, 
   Assessment, 
   User, 
-  AssessmentUser
+  AssessmentUser,
+  AssessmentUserGroup
 } from "@/prisma/mssql/generated/client"
 
 import Link from "next/link"
@@ -16,7 +17,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { SquarePen, Trash2 } from "lucide-react"
+import { SquarePen } from "lucide-react"
+
+import DeleteModule from "./delete-module"
 
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
@@ -25,11 +28,13 @@ export default function DataTable({
   users,
   assessment, 
   assessmentType,
+  groups,
   canEdit
 }: Readonly<{
-  readonly users: (AssessmentUser & { user: User })[],
+  users: (AssessmentUser & { user: User })[],
   assessment: Assessment, 
   assessmentType: AssessmentType,
+  groups: AssessmentUserGroup[],
   canEdit: boolean
 }>) {   
   return (
@@ -40,25 +45,30 @@ export default function DataTable({
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Group</TableHead>
                 <TableHead>Actions</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-            {users.map((user: AssessmentUser & { user: User }, key: number) => (
-            <TableRow key={key}>
-                <TableCell>{user.user.id}</TableCell>
-                <TableCell>{user.user.lastName}, {user.user.firstName}</TableCell>
-                <TableCell>{user.user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>
-                  {canEdit && <UserActions 
-                    assessmentTypeId={assessmentType.id} 
-                    assessmentId={assessment.id} 
-                    assessmentUserId={user.id}
-                  />}
-                </TableCell>
-            </TableRow>
-            ))}
+            {users.map((user: AssessmentUser & { user: User }, key: number) => { 
+              const group = groups.find((group: AssessmentUserGroup) => group.id === user.assessmentUserGroupId)
+              return (
+                <TableRow key={key}>
+                    <TableCell>{user.user.id}</TableCell>
+                    <TableCell>{user.user.lastName}, {user.user.firstName}</TableCell>
+                    <TableCell>{user.user.email}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{group ? group.name: "N/A"}</TableCell>
+                    <TableCell>
+                      {canEdit && <UserActions 
+                        assessmentTypeId={assessmentType.id} 
+                        assessmentId={assessment.id} 
+                        assessmentUser={user}
+                      />}
+                    </TableCell>
+                </TableRow>
+              )
+            })}
         </TableBody>
     </Table>
   )
@@ -67,22 +77,25 @@ export default function DataTable({
 function UserActions({ 
   assessmentTypeId, 
   assessmentId,
-  assessmentUserId,
+  assessmentUser,
 }: { 
   assessmentTypeId: number, 
   assessmentId: number,
-  assessmentUserId: number,
+  assessmentUser: AssessmentUser,
 }) {
   return (
       <div className="grid grid-cols-2 gap-2 w-20">
-        <Link href={`/${assessmentTypeId}/users/${assessmentId}/edit-user/${assessmentUserId}`} >
+        <Link href={`/${assessmentTypeId}/users/${assessmentId}/${assessmentUser.id}`} >
           <Button size="icon">
             <SquarePen className="w-5 h-5 text-white" />
           </Button>
         </Link>
-        <Button size="icon">
-          <Trash2 className="w-5 h-5 text-white" />
-        </Button>
+        <DeleteModule 
+            assessmentUser={assessmentUser} 
+            assessmentTypeId={assessmentTypeId} 
+            assessmentId={assessmentId} 
+            buttonType="icon" 
+        />
       </div>
   )
 }

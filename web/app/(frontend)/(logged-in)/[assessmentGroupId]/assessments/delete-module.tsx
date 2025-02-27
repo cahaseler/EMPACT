@@ -23,7 +23,7 @@ import { Trash2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
-export default function DeleteAssessmentModule({ assessment, assessmentTypeId, buttonType } : { 
+export default function DeleteModule({ assessment, assessmentTypeId, buttonType } : { 
     assessment: Assessment, 
     assessmentTypeId: number,
     buttonType: "icon" | "default"

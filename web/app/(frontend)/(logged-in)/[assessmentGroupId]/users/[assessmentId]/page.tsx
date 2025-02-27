@@ -1,4 +1,9 @@
-import { fetchAssessmentType, fetchAssessment, fetchAssessmentUsers } from "../../../utils/dataFetchers"
+import { 
+  fetchAssessmentType, 
+  fetchAssessment, 
+  fetchAssessmentUsers, 
+  fetchAssessmentUserGroups 
+} from "../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { 
   isAdmin,
@@ -18,6 +23,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
   const users = await fetchAssessmentUsers(params.assessmentId)
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const groups = await fetchAssessmentUserGroups(params.assessmentId)
   const permissions = session?.user?.assessmentUser.find(assessmentUser => 
     assessmentUser.assessmentId === parseInt(params.assessmentId, 10)
   )?.permissions
@@ -82,6 +88,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
               users={users} 
               assessment={assessment} 
               assessmentType={assessmentType}
+              groups={groups}
               canEdit={canAddEdit}
             />
           </div>

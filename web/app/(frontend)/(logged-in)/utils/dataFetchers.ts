@@ -8,6 +8,7 @@ import {
   AssessmentCollectionUser,
   Assessment, 
   AssessmentUser, 
+  AssessmentUserGroup,
   AssessmentUserResponse,
   AssessmentPart,
   Part, 
@@ -17,6 +18,7 @@ import {
 } from "@/prisma/mssql/generated/client"
 import * as assessmentType from "@/app/utils/assessmentType"
 import * as assessment from "@/app/utils/assessment"
+import * as assessmentUserGroup from "@/app/utils/assessmentUserGroup"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
 import * as section from "@/app/utils/section"
 import * as attribute from "@/app/utils/attribute"
@@ -81,7 +83,7 @@ export async function fetchAssessment(assessmentId: string): Promise<(Assessment
   return await db.assessment.findUnique({ where: { id: idAsInteger }, include: { assessmentParts: { include: { part: true } } } })
 }
 
-export async function fetchAssessmentUsers(assessmentId: string): Promise<(AssessmentUser & { user: User })[]> {
+export async function fetchAssessmentUserGroups(assessmentId: string): Promise<AssessmentUserGroup[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -89,7 +91,27 @@ export async function fetchAssessmentUsers(assessmentId: string): Promise<(Asses
     return []
   }
 
-  return await db.assessmentUser.findMany({ where: { assessmentId: idAsInteger }, include: { user: true } })
+  return await assessmentUserGroup.findMany({ where: { assessmentId: idAsInteger } })
+}
+
+export async function fetchAssessmentUsers(assessmentId: string): Promise<(AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] } })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return []
+  }
+
+  return await db.assessmentUser.findMany({ 
+    where: { assessmentId: idAsInteger }, 
+    include: { 
+      user: { 
+        include: { 
+          assessmentUserResponse: true 
+        } 
+      } 
+    } 
+  })
 }
 
 export async function fetchAssessmentParticipants(assessmentId: string): Promise<(AssessmentUser & { user: User })[]> {

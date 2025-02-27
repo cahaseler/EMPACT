@@ -17,7 +17,7 @@ import {
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import SubmitModule from "./submit-module"
-import DeleteAssessmentModule from "../../delete-assessment-module"
+import DeleteModule from "../../delete-module"
 import EditForm from "./edit-form"
 import PartsTable from "./parts-table"
 
@@ -74,7 +74,7 @@ export default async function Page({ params }: Readonly<{ params: {
                             <div className="flex flex-col sm:flex-row justify-end max-sm:space-y-4 sm:space-x-4 ml-4">
                                 {canEditStatus && <SubmitModule assessment={assessment} />}
                                 {canDelete && 
-                                    <DeleteAssessmentModule 
+                                    <DeleteModule 
                                         assessment={assessment} 
                                         assessmentTypeId={assessmentType.id} 
                                         buttonType="default" 

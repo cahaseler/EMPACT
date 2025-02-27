@@ -5,12 +5,14 @@ import {
     Assessment, 
     AssessmentPart, 
     AssessmentCollectionUser, 
+    AssessmentUser,
     AssessmentUserResponse 
 } from "@/prisma/mssql/generated/client"
 import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentPart from "@/app/utils/assessmentPart"
 import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
+import * as assessmentUser from "@/app/utils/assessmentUser"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
 
 export async function createAssessmentCollection(name: string, assessmentTypeId: number): Promise<AssessmentCollection> {
@@ -93,6 +95,19 @@ export async function updateAssessmentPart(
         assessmentId,
         partId
     } })
+}
+
+export async function createAssessmentUser(
+    assessmentId: number,
+    role: string,
+    userId: number,
+    assessmentUserGroupId: number | null,
+): Promise<AssessmentUser> {
+    return await assessmentUser.create({ data: { assessmentId, role, userId, assessmentUserGroupId } })
+}
+
+export async function deleteAssessmentUser(assessmentUserId: number): Promise<AssessmentUser> {
+    return await assessmentUser.delete_({ where: { id: assessmentUserId } })
 }
 
 export async function createAssessmentUserResponse(
