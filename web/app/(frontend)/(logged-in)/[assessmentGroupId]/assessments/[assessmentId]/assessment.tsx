@@ -19,6 +19,7 @@ import {
   CardTitle,
   CardDescription
 } from "@/components/ui/card"
+import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -50,8 +51,13 @@ export default function AssessmentContent({
                 <CardTitle>
                   {part.part.name}
                 </CardTitle>
-                <CardDescription>
-                  Status: {part.status}
+                <CardDescription className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
+                  <div>
+                    Status: {part.status}
+                  </div>
+                  <div>
+                    Date: {format(part.date, "MM/dd/yyyy")}
+                  </div>
                 </CardDescription>
               </div>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">

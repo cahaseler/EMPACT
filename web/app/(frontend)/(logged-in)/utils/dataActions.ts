@@ -37,7 +37,6 @@ export async function createAssessment(
     name: string, 
     status: string,
     location: string,
-    date: Date,
     description: string
 ): Promise<Assessment> {
     return await assessment.create({ data: { 
@@ -46,7 +45,6 @@ export async function createAssessment(
         name,
         status,
         location,
-        date,
         description
     } })
 }
@@ -58,7 +56,6 @@ export async function updateAssessment(
     name: string, 
     status: string,
     location: string,
-    date: Date,
     description: string
 ): Promise<Assessment> {
     return await assessment.update({ where: { id: assessmentId }, data: { 
@@ -67,7 +64,6 @@ export async function updateAssessment(
         name,
         status,
         location,
-        date,
         description
     } })
 }
@@ -78,10 +74,11 @@ export async function deleteAssessment(assessmentId: number): Promise<Assessment
 
 export async function createAssessmentPart(
     status: string,
+    date: Date,
     assessmentId: number,
     partId: number
 ): Promise<AssessmentPart> {
-    return await db.assessmentPart.create({ data: { status, assessmentId, partId } })
+    return await db.assessmentPart.create({ data: { status, date, assessmentId, partId } })
 }
 
 export async function updateAssessmentPart(

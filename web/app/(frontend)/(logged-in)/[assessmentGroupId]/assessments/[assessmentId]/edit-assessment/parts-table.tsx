@@ -35,6 +35,7 @@ export default function PartsTable({
                     <TableHead className="w-20">Part ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
                     {canEditStatus && <TableHead className="w-32">Actions</TableHead>}
                 </TableRow>
             </TableHeader>

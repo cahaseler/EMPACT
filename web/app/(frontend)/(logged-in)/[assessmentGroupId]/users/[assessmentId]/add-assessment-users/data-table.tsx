@@ -94,7 +94,6 @@ export default function DataTable({
                         const updateUsersToAdd = () => {
                             const newUsersToAdd = usersToAdd.filter((userWithRole) => userWithRole.userId !== user.id)
                             setUsersToAdd([...newUsersToAdd, { userId: user.id, role: role, groupId: groupId }])
-                            console.log(usersToAdd)
                         }
 
                         return (

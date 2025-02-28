@@ -39,7 +39,6 @@ model Assessment {
     projectId              String //A unique identifier for the project that this assessment belongs to, for example a PARSID
     name                   String
     location               String
-    date                   DateTime
     description            String                   @db.VarChar(Max)
     status                 String
     assessmentParts        AssessmentPart[]
@@ -56,6 +55,7 @@ model Assessment {
 model AssessmentPart {
     id                     Int                  @id() @default(autoincrement())
     status                 String
+    date                   DateTime
     assessment             Assessment           @relation(fields: [assessmentId], references: [id])
     assessmentUser         AssessmentUser[]
     partId                 Int

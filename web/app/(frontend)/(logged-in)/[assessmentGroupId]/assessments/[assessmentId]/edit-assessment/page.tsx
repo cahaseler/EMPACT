@@ -3,6 +3,7 @@ import {
     fetchAssessmentCollections,
     fetchAssessment,
     fetchAssessmentParts,
+    fetchAssessmentUsers,
     fetchAssessmentParticipants,
     fetchAllResponsesForAssessment
 } from "../../../../utils/dataFetchers"
@@ -17,7 +18,7 @@ import {
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import SubmitModule from "./submit-module"
-import DeleteModule from "../../delete-module"
+import ArchiveModule from "../../archive-module"
 import EditForm from "./edit-form"
 import PartsTable from "./parts-table"
 
@@ -32,6 +33,7 @@ export default async function Page({ params }: Readonly<{ params: {
   const editableCollections = await viewableCollections(session, params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentParts = await fetchAssessmentParts(params.assessmentId)
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
   const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
   const userResponses = await fetchAllResponsesForAssessment(params.assessmentId)
 
@@ -59,7 +61,7 @@ export default async function Page({ params }: Readonly<{ params: {
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         isLeadForAssessment(session, params.assessmentId)
-    const canDelete =
+    const canArchive =
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         permissions?.find(permission => permission.name === "Delete assessments") !== undefined
@@ -73,10 +75,11 @@ export default async function Page({ params }: Readonly<{ params: {
                             <h1 className="text-3xl font-bold tracking-tighter">Edit {assessment.name}</h1>
                             <div className="flex flex-col sm:flex-row justify-end max-sm:space-y-4 sm:space-x-4 ml-4">
                                 {canEditStatus && <SubmitModule assessment={assessment} />}
-                                {canDelete && 
-                                    <DeleteModule 
+                                {canArchive && 
+                                    <ArchiveModule 
                                         assessment={assessment} 
                                         assessmentTypeId={assessmentType.id} 
+                                        assessmentUsers={assessmentUsers}
                                         buttonType="default" 
                                     />
                                 }

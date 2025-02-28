@@ -1,6 +1,6 @@
 "use client"
-import { Assessment } from "@/prisma/mssql/generated/client"
-import { deleteAssessment } from "../../utils/dataActions"
+import { Assessment, AssessmentUser } from "@/prisma/mssql/generated/client"
+import { updateAssessment } from "../../utils/dataActions"
 
 import { Button } from "@/components/ui/button"
 import { 
@@ -18,54 +18,41 @@ import {
     AlertDialogAction,
     AlertDialogCancel
 } from "@/components/ui/alert-dialog"
-import { Trash2 } from "lucide-react"
+import { Archive } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
-export default function DeleteModule({ assessment, assessmentTypeId, buttonType } : { 
+export default function ArchiveModule({ assessment, assessmentTypeId, assessmentUsers, buttonType } : { 
     assessment: Assessment, 
     assessmentTypeId: number,
+    assessmentUsers: AssessmentUser[],
     buttonType: "icon" | "default"
 }) {
     const router = useRouter()
 
-    const handleDelete = async (e: React.FormEvent) => {
+    const handleArchive = async (e: React.FormEvent) => {
         e.preventDefault()
-        await deleteAssessment(assessment.id)
+        await updateAssessment(assessment.id, assessment.projectId, assessment.assessmentCollectionId, assessment.name, "Archived", assessment.location, assessment.description)
         router.push(`/${assessmentTypeId}/assessments`)
         toast({
-            title: "Assessment deleted successfully."
+            title: "Assessment archived successfully."
         })
     }
 
-    // TODO: Determine what conditions must be met for an assessment to be able to be deleted
     return (
-        assessment ? 
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button size={buttonType} className="cursor-default opacity-50">
-                            {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Delete Assessment"}
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="w-60 text-center">
-                        In order to delete this assessment, you must ???.
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider> 
-        : 
+        (assessmentUsers?.length === 0 || assessment.status === "Final") ? 
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <Button size={buttonType}>
-                        {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Delete Assessment"}
+                        {buttonType === "icon" ? <Archive className="w-5 h-5 text-white" /> : "Archive Assessment"}
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogPortal>
                     <AlertDialogOverlay />
                     <AlertDialogContent>
                         <div className="flex flex-col space-y-6 text center">
-                            <p>Are you sure you want to delete this assessment?</p>
+                            <p>Are you sure you want to archive this assessment?</p>
                             <div className="flex flex-row space-x-2 justify-end">
                                 <AlertDialogCancel asChild>
                                     <Button variant="outline">
@@ -73,8 +60,8 @@ export default function DeleteModule({ assessment, assessmentTypeId, buttonType 
                                     </Button>
                                 </AlertDialogCancel>
                                 <AlertDialogAction asChild>
-                                    <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
-                                        Delete
+                                    <Button onClick={(e: React.FormEvent) => handleArchive(e)}>
+                                        Archive
                                     </Button>
                                 </AlertDialogAction>
                             </div>
@@ -82,5 +69,18 @@ export default function DeleteModule({ assessment, assessmentTypeId, buttonType 
                     </AlertDialogContent>
                 </AlertDialogPortal>
             </AlertDialog>
+        :  
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button size={buttonType} className="cursor-default opacity-50">
+                            {buttonType === "icon" ? <Archive className="w-5 h-5 text-white" /> : "Archive Assessment"}
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="w-60 text-center">
+                        In order to archive this assessment, it must either be finalized or have no assigned users.
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider> 
     )
 }

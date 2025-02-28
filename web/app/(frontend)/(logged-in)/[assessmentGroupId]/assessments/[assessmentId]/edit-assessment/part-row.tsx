@@ -11,6 +11,14 @@ import {
     SelectItem
 } from "@/components/ui/select"
 import { TableCell, TableRow } from "@/components/ui/table"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { 
     TooltipProvider, 
     Tooltip, 
@@ -51,6 +59,7 @@ export default function DataTable({
 }) {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [status, setStatus] = useState<string>(assessmentPart.status)
+    const [date, setDate] = useState<Date>(assessmentPart.date)
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
@@ -94,6 +103,31 @@ export default function DataTable({
                     : status
                 }
             </TableCell>
+            <TableCell>
+                {isEditing ? 
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button variant="dateInput" size="offset" disabled={!canEditStatus}>
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date ? format(date, "MM/dd/yyyy") : <span>Select date</span>}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                            <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={(selectedDate) => {
+                                    if (selectedDate !== undefined) {
+                                        setDate(selectedDate)
+                                    }
+                                }}
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    : format(date, "MM/dd/yyyy")
+                }
+            </TableCell>
             {canEditStatus && 
                 <TableCell>
                     <div className="grid grid-cols-2 gap-2 w-20">
@@ -114,6 +148,7 @@ export default function DataTable({
                                 onClick={() => {
                                     setIsEditing(false)
                                     setStatus(assessmentPart.status)
+                                    setDate(assessmentPart.date)
                                 }}
                                 variant="outline"
                                 size="icon"

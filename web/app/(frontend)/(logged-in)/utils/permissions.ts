@@ -3,6 +3,7 @@ import {
     User, 
     AssessmentCollection, 
     Assessment, 
+    AssessmentUser,
     AssessmentUserResponse,
     Part,
     Section,
@@ -95,7 +96,7 @@ export async function viewableCollections(session: Session | null, assessmentGro
     return []
 }
 
-export async function viewableAssessments(session: Session | null, assessmentGroupId: string): Promise<Assessment[]> { 
+export async function viewableAssessments(session: Session | null, assessmentGroupId: string): Promise<(Assessment & { assessmentUser: AssessmentUser[] })[]> { 
     if (session) {
         const assessments = await fetchAssessments(assessmentGroupId)
         // Admins can view all assessments

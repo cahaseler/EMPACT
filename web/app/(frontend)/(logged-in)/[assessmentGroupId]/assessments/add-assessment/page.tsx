@@ -43,12 +43,10 @@ export default async function Page({ params }: Readonly<{ params: {
                         </div>
                     </div>
                 </section>
-                <section className="mb-8">
-                    <AddForm 
-                        assessmentCollections={isAdmin(session) ? assessmentCollections : editableCollections}
-                        parts={parts}
-                    />
-                </section>
+                <AddForm 
+                    assessmentCollections={isAdmin(session) ? assessmentCollections : editableCollections}
+                    parts={parts}
+                />
             </div>
         )
     }

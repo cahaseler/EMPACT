@@ -12,14 +12,7 @@ import {
     SelectItem
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+
 import { Button } from "@/components/ui/button"
 import { Loader } from "lucide-react"
 
@@ -42,7 +35,6 @@ export default function EditForm({
     const [projectId, setProjectId] = useState<string>(assessment.projectId)
     const [name, setName] = useState<string>(assessment.name)
     const [status, setStatus] = useState<string>(assessment.status)
-    const [date, setDate] = useState<Date>(assessment.date)
     const [location, setLocation] = useState<string>(assessment.location)
     const [description, setDescription] = useState<string>(assessment.description)
     const [saving, setSaving] = useState<boolean>(false)
@@ -54,7 +46,7 @@ export default function EditForm({
         if (projectId !== "" && collectionId !== undefined && name !== "") {
             setSaving(true)
             try {
-                updateAssessment(assessment.id, projectId, parseInt(collectionId, 10), name, status, location, date, description).then(() => {
+                updateAssessment(assessment.id, projectId, parseInt(collectionId, 10), name, status, location, description).then(() => {
                     setSaving(false)
                     router.refresh()
                     toast({
@@ -111,7 +103,7 @@ export default function EditForm({
                     </div>
                 </div>
                 <div className="flex flex-col max-md:space-y-4 md:flex-row md:space-x-4">
-                    <div className="min-w-40 flex flex-col space-y-2">
+                    <div className="min-w-60 flex flex-col space-y-2">
                         <Select onValueChange={(value) => setStatus(value)} disabled={!canEditStatus}>
                             <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
                                 <SelectValue placeholder={status} defaultValue={status}/>
@@ -138,29 +130,6 @@ export default function EditForm({
                             onChange={(e) => setLocation(e.target.value)} 
                         />
                         <Label>Location</Label>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="dateInput" size="offset" disabled={!canEditStatus}>
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "MM/dd/yyyy") : <span>Select date</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={(selectedDate) => {
-                                        if (selectedDate !== undefined) {
-                                            setDate(selectedDate)
-                                        }
-                                    }}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
-                        <Label>Date</Label>
                     </div>
                 </div>
                 <div className="flex flex-col space-y-2">

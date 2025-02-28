@@ -3,6 +3,7 @@ import { Session } from "@/auth"
 import { 
     AssessmentType, 
     Assessment,
+    AssessmentUser,
     Permission
 } from "@/prisma/mssql/generated/client"
 import { 
@@ -30,7 +31,7 @@ import {
 
 import { useRouter } from "next/navigation"
 
-import DeleteModule from "./delete-module"
+import ArchiveModule from "./archive-module"
 
 // TODO: Convert to React-Table
 // TODO: Filtering, sorting, search, pagination
@@ -40,7 +41,7 @@ export default function DataTable({
     assessmentType,
     session
 }: {
-    readonly assessments: Assessment[], 
+    readonly assessments: (Assessment & { assessmentUser: AssessmentUser[] })[], 
     readonly assessmentType: AssessmentType,
     readonly session: Session | null
 }) {
@@ -53,12 +54,11 @@ export default function DataTable({
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Location</TableHead>
-                    <TableHead>Date</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {assessments.map((assessment: Assessment, key: number) => {
+                {assessments.map((assessment: Assessment & { assessmentUser: AssessmentUser[] }, key: number) => {
                 const permissions = session?.user?.assessmentUser.find(assessmentUser => 
                     assessmentUser.assessmentId === assessment.id
                 )?.permissions
@@ -84,17 +84,13 @@ export default function DataTable({
                         }>
                             {assessment.location}
                         </TableCell>
-                        <TableCell onClick={() =>
-                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
-                        }>
-                            {`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
-                        </TableCell>
                         <TableCell>
                             <AssessmentActions 
                                 assessmentTypeId={assessmentType.id} 
                                 assessment={assessment} 
                                 session={session}
                                 permissions={permissions}
+                                assessmentUsers={assessment.assessmentUser}
                             />
                         </TableCell>
                     </TableRow>
@@ -108,12 +104,14 @@ function AssessmentActions({
     assessmentTypeId, 
     assessment,
     session,
-    permissions
+    permissions,
+    assessmentUsers
 }: { 
     assessmentTypeId: number, 
     assessment: Assessment,
     session: Session | null,
-    permissions: Permission[] | undefined
+    permissions: Permission[] | undefined,
+    assessmentUsers: AssessmentUser[]
 }) {
     const canEdit = 
         isAdmin(session) || 
@@ -121,7 +119,7 @@ function AssessmentActions({
         isLeadForAssessment(session, assessment.id.toString()) || 
         permissions?.find(permission => permission.name === "Edit assessments") !== undefined
     const canView = canViewUsers(session)
-    const canDelete = 
+    const canArchive = 
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         permissions?.find(permission => permission.name === "Delete assessments") !== undefined
@@ -146,10 +144,11 @@ function AssessmentActions({
                     </Button>
                 </Link>
             }
-            {canDelete && 
-                <DeleteModule 
+            {canArchive && 
+                <ArchiveModule 
                     assessment={assessment} 
                     assessmentTypeId={assessmentTypeId} 
+                    assessmentUsers={assessmentUsers}
                     buttonType="icon" 
                 />
             }
