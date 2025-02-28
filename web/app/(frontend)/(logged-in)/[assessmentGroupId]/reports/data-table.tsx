@@ -41,7 +41,7 @@ export function DataTable({
                                 <TableHead>Project ID</TableHead>
                                 <TableHead>Name</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
+                                <TableHead>Location</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -52,7 +52,7 @@ export function DataTable({
                                 <TableCell>{assessment.projectId}</TableCell>
                                 <TableCell>{assessment.name}</TableCell>
                                 <TableCell>{assessment.status}</TableCell>
-                                <TableCell>{`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}</TableCell>
+                                <TableCell>{assessment.location}</TableCell>
                             </TableRow>
                             ))}
                         </TableBody>
