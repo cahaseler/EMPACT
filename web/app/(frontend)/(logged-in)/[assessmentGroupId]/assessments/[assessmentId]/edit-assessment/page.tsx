@@ -55,7 +55,7 @@ export default async function Page({ params }: Readonly<{ params: {
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         isLeadForAssessment(session, params.assessmentId) || 
-        permissions?.find(permission => permission.name === "Edit assessments") !== undefined
+        permissions?.find(permission => permission.name === "Edit assessment") !== undefined
     const canEditCollection = isAdmin(session) || isCollectionManager(session)
     const canEditStatus = 
         isAdmin(session) || 
@@ -64,7 +64,7 @@ export default async function Page({ params }: Readonly<{ params: {
     const canArchive =
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
-        permissions?.find(permission => permission.name === "Delete assessments") !== undefined
+        permissions?.find(permission => permission.name === "Archive assessment") !== undefined
     if (canEdit) {
         return (
             <div className="w-full max-w-4xl mx-auto">

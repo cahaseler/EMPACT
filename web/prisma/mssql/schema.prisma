@@ -41,6 +41,7 @@ model Assessment {
     location               String
     description            String                   @db.VarChar(Max)
     status                 String
+    completedDate          DateTime
     assessmentParts        AssessmentPart[]
     assessmentUserGroup    AssessmentUserGroup[]
     assessmentUser         AssessmentUser[]

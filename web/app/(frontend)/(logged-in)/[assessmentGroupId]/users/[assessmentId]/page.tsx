@@ -8,12 +8,17 @@ import { auth } from "@/auth"
 import { 
   isAdmin,
   isManagerForCollection,
-  isLeadForAssessment,
-  isFacForAssessment
+  isLeadForAssessment
 } from "../../../utils/permissions"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { 
+  TooltipProvider, 
+  Tooltip, 
+  TooltipTrigger, 
+  TooltipContent 
+} from "@/components/ui/tooltip"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import DataTable from "./data-table"
 
@@ -39,12 +44,12 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
       isAdmin(session) || 
       isManagerForCollection(session, assessment.assessmentCollectionId) || 
       isLeadForAssessment(session, assessment.id.toString()) || 
-      isFacForAssessment(session, assessment.id.toString())
+      permissions?.find(permission => permission.name === "Move users between groups") !== undefined
     const canRegroup = 
       isAdmin(session) || 
       isManagerForCollection(session, assessment?.assessmentCollectionId) || 
       isLeadForAssessment(session, assessment.id.toString()) || 
-      permissions?.find(permission => permission.name === "Regroup users") !== undefined
+      permissions?.find(permission => permission.name === "Manage user groups") !== undefined
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -60,7 +65,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
               <div className="flex flex-row space-x-2 justify-end">
                 {canRegroup && 
                   <Link
-                    href={`/${assessmentType.id}/users/${assessment.id}/regroup-assessment-users`}
+                    href={`/${assessmentType.id}/users/${assessment.id}/manage-user-groups`}
                     prefetch={false}
                   >
                     <Button>
@@ -69,14 +74,11 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
                   </Link>
                 }
                 {canAddEdit && 
-                  <Link
-                    href={`/${assessmentType.id}/users/${assessment.id}/add-assessment-users`}
-                    prefetch={false}
-                  >
-                    <Button>
-                      Add Users to Assessment
-                    </Button>
-                  </Link>
+                  <AddUsersButton 
+                    assessmentTypeId={assessmentType.id} 
+                    assessmentId={assessment.id} 
+                    doGroupsExist={groups.length > 0}
+                  />
                 }
               </div>
             </div>
@@ -96,4 +98,36 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
       </div>
     )
   }
+}
+
+function AddUsersButton({ 
+  assessmentTypeId, 
+  assessmentId, 
+  doGroupsExist 
+}: Readonly<{ 
+    assessmentTypeId: number, 
+    assessmentId: number, 
+    doGroupsExist: boolean  
+}>) {
+  return (
+    doGroupsExist ? 
+      <Link href={`/${assessmentTypeId}/users/${assessmentId}/add-assessment-users`} prefetch={false} >
+        <Button>
+        Add Users to Assessment
+        </Button>
+      </Link> 
+    : 
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button className="cursor-default opacity-50">
+              Add Users to Assessment
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="w-60 text-center">
+            In order to add users to this assessment, you must create at least one user group.
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+  )
 }

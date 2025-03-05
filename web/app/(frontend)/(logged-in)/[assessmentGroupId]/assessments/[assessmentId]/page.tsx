@@ -29,7 +29,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
     isAdmin(session) || 
     isManagerForCollection(session, assessment?.assessmentCollectionId) || 
     isLeadForAssessment(session, params.assessmentId) ||
-    permissions?.find(permission => permission.name === "Edit assessments") !== undefined
+    permissions?.find(permission => permission.name === "Edit assessment") !== undefined
 
   if(assessmentType && assessment) {
     const links = [

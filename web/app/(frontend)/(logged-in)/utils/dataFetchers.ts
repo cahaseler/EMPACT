@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { 
   User,
   SystemRole,
+  Permission,
   AssessmentType, 
   AssessmentCollection,
   AssessmentCollectionUser,
@@ -98,6 +99,36 @@ export async function fetchAssessmentUserGroups(assessmentId: string): Promise<A
   }
 
   return await assessmentUserGroup.findMany({ where: { assessmentId: idAsInteger } })
+}
+
+export async function fetchPermissions(): Promise<Permission[]> {
+  return await db.permission.findMany({})
+}
+
+export async function fetchAssessmentUser(assessmentUserId: string): Promise<AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] }, permissions: Permission[], participantParts: (AssessmentPart & { part: Part })[] } | null> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentUserId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return null
+  }
+
+  return await db.assessmentUser.findUnique({ 
+    where: { id: idAsInteger }, 
+    include: {
+      user: {
+        include: {
+          assessmentUserResponse: true
+        }
+      }, 
+      permissions: true, 
+      participantParts: {
+        include: {
+          part: true
+        }
+      }
+    } 
+  })
 }
 
 export async function fetchAssessmentUsers(assessmentId: string): Promise<(AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] } })[]> {

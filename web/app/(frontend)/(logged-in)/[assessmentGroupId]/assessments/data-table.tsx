@@ -23,6 +23,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { format } from "date-fns"
 import { 
     SquarePen,
     FileChartColumn,
@@ -54,6 +55,7 @@ export default function DataTable({
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Location</TableHead>
+                    <TableHead>Completion Date</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -83,6 +85,11 @@ export default function DataTable({
                             router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
                         }>
                             {assessment.location}
+                        </TableCell>
+                        <TableCell onClick={() =>
+                            router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+                        }>
+                            {assessment.status === "Final" ? format(assessment.completedDate, "MM/dd/yyyy") : "N/A"}
                         </TableCell>
                         <TableCell>
                             <AssessmentActions 
@@ -117,12 +124,12 @@ function AssessmentActions({
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
         isLeadForAssessment(session, assessment.id.toString()) || 
-        permissions?.find(permission => permission.name === "Edit assessments") !== undefined
+        permissions?.find(permission => permission.name === "Edit assessment") !== undefined
     const canView = canViewUsers(session)
     const canArchive = 
         isAdmin(session) || 
         isManagerForCollection(session, assessment.assessmentCollectionId) || 
-        permissions?.find(permission => permission.name === "Delete assessments") !== undefined
+        permissions?.find(permission => permission.name === "Archive assessment") !== undefined
     return (
         <div className="grid grid-cols-2 gap-2 w-20">
             {canEdit && 

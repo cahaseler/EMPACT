@@ -1,3 +1,4 @@
+"use client"
 import { useState } from "react"
 import { fetchAssessmentType } from "../../../utils/dataFetchers"
 import { auth } from "@/auth"

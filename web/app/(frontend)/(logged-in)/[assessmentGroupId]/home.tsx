@@ -16,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -37,7 +38,7 @@ export default function Home({
     const mostRecentAssessment = assessments.filter(
       (assessment: Assessment) => assessment.status === "Active"
     ).sort(
-      (a: Assessment, b: Assessment) => b.date.valueOf() - a.date.valueOf()
+      (a: Assessment, b: Assessment) => b.completedDate.valueOf() - a.completedDate.valueOf()
     )[0]
     const mostRecentResponseAttributeIds = userResponses.filter(
       (userResponse: AssessmentUserResponse) => userResponse.assessmentId === mostRecentAssessment.id
@@ -51,7 +52,7 @@ export default function Home({
     const nextAttribute = nextSection?.attributes.find(attribute => !mostRecentResponseAttributeIds.includes(attribute.id))
 
     const completedAssessments = assessments.filter(
-      (assessment: Assessment) => assessment.status === "Completed"
+      (assessment: Assessment) => assessment.status === "Final"
     )
 
     return (
@@ -75,7 +76,7 @@ export default function Home({
             </Link>
           </div>
         </section>}
-        <section>
+        <section className="mb-16">
           <div className="space-y-4">
             <h2 className="text-2xl font-bold">Previous Assessments</h2>
             <div className="grid gap-4">
@@ -86,7 +87,7 @@ export default function Home({
                       groupId={assessmentType.id}
                       id={assessment.id}
                       name={assessment.name}
-                      date={`${assessment.date.getMonth() + 1}/${assessment.date.getDate()}/${assessment.date.getFullYear()}`}
+                      completedDate={assessment.completedDate}
                       parts={parts}
                       session={session}
                     />
@@ -107,28 +108,28 @@ function AssessmentCard({
   groupId,
   id,
   name,
-  date,
+  completedDate,
   parts,
   session
 }: {
   readonly groupId: number
   readonly id: number
   readonly name: string
-  readonly date: string
+  readonly completedDate: Date
   readonly parts: any[]
   readonly session: Session | null
 }) {
   const role = isParticipantForAssessment(session, id.toString()) ? "Participant" : "Facilitator"
   return (
     <Card className="w-auto">
-      <CardHeader className="flex justify-between">
-        <div className="space-y-1">
+      <CardHeader className="flex justify-between flex justify-between space-y-4 ml-2">
+        <div className="flex flex-col space-y-2 max-sm:items-center">
           <CardTitle className="max-sm:text-center">
             <Link href={`/${groupId}/assessments/${id}`} className="hover:opacity-60" prefetch={false}>
               {name}
             </Link>
           </CardTitle>
-          <CardDescription className="max-sm:text-center">Completed on {date}</CardDescription>
+          <CardDescription className="max-sm:text-center">Completed on {format(completedDate, "MM/dd/yyyy")}</CardDescription>
         </div>
         <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
           <Link

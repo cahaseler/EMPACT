@@ -46,7 +46,7 @@ export default function DeleteModule({ assessmentUser, assessmentTypeId, assessm
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button size={buttonType} className="cursor-default opacity-50">
-                            {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Delete Assessment"}
+                            {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Remove User from Assessment"}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent className="w-60 text-center">
@@ -58,7 +58,7 @@ export default function DeleteModule({ assessmentUser, assessmentTypeId, assessm
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <Button size={buttonType}>
-                        {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Delete Assessment"}
+                        {buttonType === "icon" ? <Trash2 className="w-5 h-5 text-white" /> : "Remove User from Assessment"}
                     </Button>
                 </AlertDialogTrigger>
                 <AlertDialogPortal>
@@ -74,7 +74,7 @@ export default function DeleteModule({ assessmentUser, assessmentTypeId, assessm
                                 </AlertDialogCancel>
                                 <AlertDialogAction asChild>
                                     <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
-                                        Delete
+                                        Remove
                                     </Button>
                                 </AlertDialogAction>
                             </div>

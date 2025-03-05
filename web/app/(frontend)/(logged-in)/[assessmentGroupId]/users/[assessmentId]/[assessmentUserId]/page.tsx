@@ -1,8 +1,10 @@
 import { 
     fetchAssessmentType, 
     fetchAssessment,
+    fetchAssessmentUser,
     fetchAssessmentUserGroups,
-    fetchUsers
+    fetchAssessmentParts,
+    fetchPermissions
 } from "../../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { 
@@ -13,20 +15,24 @@ import {
 } from "../../../../utils/permissions"
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
-import DataTable from "./data-table"
+import DeleteModule from "../delete-module"
+import EditForm from "./edit-form"
 
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string,
-    assessmentId: string 
+    assessmentId: string,
+    assessmentUserId: string 
 } }>) {
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
+  const assessmentUser = await fetchAssessmentUser(params.assessmentUserId)
   const groups = await fetchAssessmentUserGroups(params.assessmentId)
-  const users = await fetchUsers()
+  const parts = await fetchAssessmentParts(params.assessmentId)
+  const permissions = await fetchPermissions()
 
-  if (assessmentType && assessment) {
+  if (assessmentType && assessment && assessmentUser) {
     const links = [
       {
         url: `/${assessmentType.id}/users`, 
@@ -37,29 +43,41 @@ export default async function Page({ params }: Readonly<{ params: {
         name: `${assessment.name} Users`
       },
     ]
-    const canAdd = 
+    const canEdit = 
         isAdmin(session) || 
         isCollectionManager(session) || 
         isLeadForAssessment(session, params.assessmentId) || 
         isFacForAssessment(session, params.assessmentId)
-    if (canAdd) {
-        const usersNotInAssessment = users.filter(user => user.assessmentUser.find(uc => uc.assessmentId === parseInt(params.assessmentId, 10)) === undefined)
+    const canEditPermissions = 
+        isAdmin(session) || 
+        isCollectionManager(session) || 
+        isLeadForAssessment(session, assessment.id.toString())
+    if (canEdit) {
         return (
             <div className="w-full max-w-4xl mx-auto">
                 <section className="mb-8">
                     <div className="space-y-4">
-                        <Breadcrumbs links={links} currentPage="Add Assessment Users" />
-                        <div className="flex flex-row justify-between">
-                            <h1 className="text-3xl font-bold tracking-tighter">Add Users to {assessment.name}</h1>
+                        <Breadcrumbs links={links} currentPage="Edit Assessment User" />
+                        <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between md:space-x-4">
+                            <h1 className="text-3xl font-bold tracking-tighter">
+                                Edit {assessment.name} User - {assessmentUser.user.firstName} {assessmentUser.user.lastName}
+                            </h1>
+                            <DeleteModule 
+                                assessmentUser={assessmentUser} 
+                                assessmentTypeId={assessmentType.id} 
+                                assessmentId={assessment.id} 
+                                buttonType="default" 
+                            />
                         </div>
                     </div>
                 </section>
                 <section className="mb-8">
-                    <DataTable 
-                        users={usersNotInAssessment} 
-                        assessmentId={assessment.id} 
-                        assessmentTypeId={assessmentType.id} 
-                        groups={groups}
+                    <EditForm 
+                        assessmentUser={assessmentUser} 
+                        groups={groups} 
+                        parts={parts} 
+                        permissions={permissions} 
+                        canEditPermissions={canEditPermissions}
                     />
                 </section>
             </div>
@@ -69,7 +87,7 @@ export default async function Page({ params }: Readonly<{ params: {
         <div className="w-full max-w-4xl mx-auto">
             <section className="mb-8">
                 <div className="space-y-4 max-lg:ml-2">
-                    <Breadcrumbs links={links} currentPage="Add Assessment Users" />
+                    <Breadcrumbs links={links} currentPage="Edit Assessment User" />
                     <p className="text-md text-muted-foreground dark:text-indigo-300/80">
                         You are not authorized to view this page.
                     </p>

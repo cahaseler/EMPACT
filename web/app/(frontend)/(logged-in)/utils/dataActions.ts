@@ -15,6 +15,8 @@ import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
 import * as assessmentUser from "@/app/utils/assessmentUser"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
 
+type idObject = { id: number }
+
 export async function createAssessmentCollection(name: string, assessmentTypeId: number): Promise<AssessmentCollection> {
     return await assessmentCollection.create({ data: { name, assessmentTypeId } })
 }
@@ -44,6 +46,7 @@ export async function createAssessment(
         assessmentCollectionId: collectionId, 
         name,
         status,
+        completedDate: "",
         location,
         description
     } })
@@ -101,6 +104,21 @@ export async function createAssessmentUser(
     assessmentUserGroupId: number | null,
 ): Promise<AssessmentUser> {
     return await assessmentUser.create({ data: { assessmentId, role, userId, assessmentUserGroupId } })
+}
+
+export async function updateAssessmentUser(
+    assessmentUserId: number,
+    role: string,
+    assessmentUserGroupId: number | null,
+    partIds: idObject[],
+    permissionIds: idObject[],
+): Promise<AssessmentUser> {
+    return await assessmentUser.update({ where: { id: assessmentUserId }, data: { 
+        role, 
+        assessmentUserGroupId,
+        participantParts: { set: partIds },
+        permissions: { set: permissionIds }
+    } })
 }
 
 export async function deleteAssessmentUser(assessmentUserId: number): Promise<AssessmentUser> {

@@ -4,6 +4,7 @@ import {
   Assessment, 
   User, 
   AssessmentUser,
+  AssessmentUserResponse,
   AssessmentUserGroup
 } from "@/prisma/mssql/generated/client"
 
@@ -31,7 +32,7 @@ export default function DataTable({
   groups,
   canEdit
 }: Readonly<{
-  users: (AssessmentUser & { user: User })[],
+  users: (AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] } })[],
   assessment: Assessment, 
   assessmentType: AssessmentType,
   groups: AssessmentUserGroup[],
@@ -50,25 +51,32 @@ export default function DataTable({
             </TableRow>
         </TableHeader>
         <TableBody>
-            {users.map((user: AssessmentUser & { user: User }, key: number) => { 
-              const group = groups.find((group: AssessmentUserGroup) => group.id === user.assessmentUserGroupId)
-              return (
-                <TableRow key={key}>
-                    <TableCell>{user.user.id}</TableCell>
-                    <TableCell>{user.user.lastName}, {user.user.firstName}</TableCell>
-                    <TableCell>{user.user.email}</TableCell>
-                    <TableCell>{user.role}</TableCell>
-                    <TableCell>{group ? group.name: "N/A"}</TableCell>
-                    <TableCell>
-                      {canEdit && <UserActions 
-                        assessmentTypeId={assessmentType.id} 
-                        assessmentId={assessment.id} 
-                        assessmentUser={user}
-                      />}
-                    </TableCell>
+            {users.length > 0 ? 
+              users.map((user: AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] } }, key: number) => { 
+                const group = groups.find((group: AssessmentUserGroup) => group.id === user.assessmentUserGroupId)
+                return (
+                  <TableRow key={key}>
+                      <TableCell>{user.user.id}</TableCell>
+                      <TableCell>{user.user.lastName}, {user.user.firstName}</TableCell>
+                      <TableCell>{user.user.email}</TableCell>
+                      <TableCell>{user.role}</TableCell>
+                      <TableCell>{group ? group.name: "N/A"}</TableCell>
+                      <TableCell>
+                        {canEdit && <UserActions 
+                          assessmentTypeId={assessmentType.id} 
+                          assessmentId={assessment.id} 
+                          assessmentUser={user}
+                        />}
+                      </TableCell>
+                  </TableRow>
+                )
+              }) 
+              : <TableRow>
+                  <TableCell colSpan={6} className="h-20 text-muted-foreground dark:text-indigo-300/80">
+                    No users have been assigned to this assessment.
+                  </TableCell>
                 </TableRow>
-              )
-            })}
+            }
         </TableBody>
     </Table>
   )
@@ -81,7 +89,7 @@ function UserActions({
 }: { 
   assessmentTypeId: number, 
   assessmentId: number,
-  assessmentUser: AssessmentUser,
+  assessmentUser: AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] } },
 }) {
   return (
       <div className="grid grid-cols-2 gap-2 w-20">
