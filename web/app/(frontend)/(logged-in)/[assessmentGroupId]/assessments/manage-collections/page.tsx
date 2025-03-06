@@ -1,10 +1,7 @@
-"use client"
-import { useState } from "react"
 import { fetchAssessmentType } from "../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { viewableCollections } from "../../../utils/permissions"
 
-import { Button } from "@/components/ui/button"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import AddCollection from "./add-collection"
 import DataTable from "./data-table"
@@ -14,8 +11,6 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const collections = await viewableCollections(session, params.assessmentGroupId)
-
-  const [isAdding, setIsAdding] = useState<boolean>(false)
 
   if(assessmentType) {
     const links = [
@@ -31,27 +26,10 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
             <Breadcrumbs links={links} currentPage="Manage Assessment Collections" />
             <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-between">
               <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name} Collections</h1>
-              {!isAdding ? 
-                <Button 
-                  onClick={() => setIsAdding(true)} 
-                  variant="default" 
-                  size="default"
-                >
-                  Add Assessment Collection
-                </Button>
-              : 
-                <Button 
-                  onClick={() => setIsAdding(false)} 
-                  variant="outline" 
-                  size="default"
-                >
-                  Cancel
-                </Button>
-              }
+              <AddCollection assessmentTypeId={assessmentType.id} session={session}/>
             </div>
           </div>
         </section>
-        {isAdding && <AddCollection assessmentTypeId={assessmentType.id} session={session}/>}
         <section className="mb-16">
           <div className="space-y-4">
             <DataTable 

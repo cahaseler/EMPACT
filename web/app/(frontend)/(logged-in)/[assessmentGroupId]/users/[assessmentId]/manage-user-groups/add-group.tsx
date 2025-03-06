@@ -1,55 +1,43 @@
 "use client"
 
 import { useState } from "react"
-import { Session } from "@/auth"
-import { isCollectionManager } from "../../../utils/permissions"
-import { createAssessmentCollection, createAssessmentCollectionUser } from "../../../utils/dataActions"
+import { createAssessmentUserGroup } from "../../../../utils/dataActions"
 
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Loader } from "lucide-react"
-import { AssessmentCollection } from "@/prisma/mssql/generated/client"
 
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
-export default function AddCollection({
-    assessmentTypeId,
-    session
-}: {
-    assessmentTypeId: number,
-    session: Session | null
+export default function AddGroup({ assessmentId }: {
+    assessmentId: number
 }) {
     const [isAdding, setIsAdding] = useState<boolean>(false)
     const [name, setName] = useState<string>("")
+    const [status, setStatus] = useState<string>("Inactive")
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
-        if (session) {
-            e.preventDefault()
-            setSaving(true)
-            await createAssessmentCollection(name, assessmentTypeId).then(async (collection: AssessmentCollection) => {
-                if (isCollectionManager(session)) {
-                    await createAssessmentCollectionUser(parseInt(session.user.id, 10), collection.id).then(() => {
-                        setName("")
-                        setSaving(false)
-                        router.refresh()
-                        toast({
-                            title: "Assessment collection added successfully."
-                        })
-                    })
-                } else {
-                    setName("")
-                    setSaving(false)
-                    router.refresh()
-                    toast({
-                        title: "Assessment collection added successfully."
-                    })
-                }
+        e.preventDefault()
+        setSaving(true)
+        await createAssessmentUserGroup(name, status, assessmentId).then(() => {
+            setName("")
+            setSaving(false)
+            router.refresh()
+            toast({
+                title: "Assessment user group added successfully."
             })
-        }
+        })
     }
 
     return (
@@ -61,7 +49,7 @@ export default function AddCollection({
                         variant="default" 
                         size="default"
                     >
-                    Add Assessment Collection
+                    Add User Group
                     </Button>
                 : 
                     <Button 
@@ -78,10 +66,25 @@ export default function AddCollection({
                             <div className="flex flex-row space-x-2 justify-end">
                                 <Input 
                                     type="text" 
-                                    placeholder="Collection Name" 
+                                    placeholder="Group Name" 
                                     value={name} 
                                     onChange={(e) => setName(e.target.value)} 
                                 />
+                                <Select 
+                                    onValueChange={(value) => setStatus(value)}
+                                >
+                                    <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
+                                        <SelectValue placeholder={status} defaultValue={status}/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Active" key={0}>
+                                            Active
+                                        </SelectItem>
+                                        <SelectItem value="Inactive" key={1}>
+                                            Inactive
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <Button type="submit" disabled={saving || name === ""}>
                                     {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Add
                                 </Button>

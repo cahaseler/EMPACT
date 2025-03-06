@@ -4,6 +4,7 @@ import {
     AssessmentCollection, 
     Assessment, 
     AssessmentPart, 
+    AssessmentUserGroup,
     AssessmentCollectionUser, 
     AssessmentUser,
     AssessmentUserResponse 
@@ -11,6 +12,7 @@ import {
 import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentPart from "@/app/utils/assessmentPart"
+import * as assessmentUserGroup from "@/app/utils/assessmentUserGroup"
 import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
 import * as assessmentUser from "@/app/utils/assessmentUser"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
@@ -95,6 +97,26 @@ export async function updateAssessmentPart(
         assessmentId,
         partId
     } })
+}
+
+export async function createAssessmentUserGroup(
+    name: string,
+    status: string,
+    assessmentId: number,
+): Promise<AssessmentUserGroup> {
+    return await assessmentUserGroup.create({ data: { name, status, assessmentId } })
+}
+
+export async function updateAssessmentUserGroup(
+    assessmentUserGroupId: number,
+    name: string,
+    status: string
+): Promise<AssessmentUserGroup> {
+    return await assessmentUserGroup.update({ where: { id: assessmentUserGroupId }, data: { name, status } })
+}
+
+export async function deleteAssessmentUserGroup(assessmentUserGroupId: number): Promise<AssessmentUserGroup> {
+    return await assessmentUserGroup.delete_({ where: { id: assessmentUserGroupId } })
 }
 
 export async function createAssessmentUser(
