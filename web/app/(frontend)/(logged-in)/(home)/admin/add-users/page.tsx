@@ -1,10 +1,8 @@
-import { fetchUsers } from "../../utils/dataFetchers"
+import { fetchUsers } from "../../../utils/dataFetchers"
 import { auth } from "@/auth"
-import { isAdmin } from "../../utils/permissions"
+import { isAdmin } from "../../../utils/permissions"
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import DataTable from "./data-table"
+import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 
 export default async function Page() {
   const session = await auth()
@@ -13,25 +11,27 @@ export default async function Page() {
   const users = await fetchUsers()
 
   if (isUserAdmin) {
+    const links = [
+      {
+        url: "/admin",
+        name: "Admin Settings",
+      }
+    ]
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
+            <Breadcrumbs links={links} currentPage="Add Users" />
             <div className="flex flex-row justify-between">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter">Admin Settings</h1>
-              </div>
-              <div className="flex flex-row space-x-2">
-                  <Link href={`/admin/add-users`} prefetch={false}>
-                    <Button>Add Users</Button>
-                  </Link>
+                <h1 className="text-3xl font-bold tracking-tighter">Add Users</h1>
               </div>
             </div>
           </div>
         </section>
         <section className="mb-16">
           <div className="space-y-4">
-            <DataTable users={users} />
+            {/* TODO: Add user functionality */}
           </div>
         </section>
       </div>

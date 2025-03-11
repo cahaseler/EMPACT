@@ -26,8 +26,8 @@ export default function DataTable({ groups }: {
                 <TableRow>
                     <TableHead className="w-32">Group ID</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Number of Assigned Users</TableHead>
+                    <TableHead className="w-48">Status</TableHead>
+                    <TableHead className="w-48">Number of Assigned Users</TableHead>
                     <TableHead className="w-32">Actions</TableHead>
                 </TableRow>
             </TableHeader>
