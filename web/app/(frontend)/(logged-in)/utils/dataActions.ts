@@ -11,7 +11,6 @@ import {
 } from "@/prisma/mssql/generated/client"
 import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessment from "@/app/utils/assessment"
-import * as assessmentPart from "@/app/utils/assessmentPart"
 import * as assessmentUserGroup from "@/app/utils/assessmentUserGroup"
 import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
 import * as assessmentUser from "@/app/utils/assessmentUser"
@@ -92,7 +91,7 @@ export async function updateAssessmentPart(
     assessmentId: number,
     partId: number
 ): Promise<AssessmentPart> {
-    return await assessmentPart.update({ where: { id: assessmentPartId }, data: { 
+    return await db.assessmentPart.update({ where: { id: assessmentPartId }, data: { 
         status,
         assessmentId,
         partId

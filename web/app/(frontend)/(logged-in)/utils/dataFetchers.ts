@@ -19,7 +19,6 @@ import {
 } from "@/prisma/mssql/generated/client"
 import * as assessmentType from "@/app/utils/assessmentType"
 import * as assessment from "@/app/utils/assessment"
-import * as assessmentUserGroup from "@/app/utils/assessmentUserGroup"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
 import * as section from "@/app/utils/section"
 import * as attribute from "@/app/utils/attribute"
