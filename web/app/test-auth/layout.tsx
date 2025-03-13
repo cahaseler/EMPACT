@@ -1,5 +1,5 @@
 import { ThemeProvider } from "@/components/theme-provider"
-import "@/styles/globals.css"
+import "../(frontend)/globals.css"
 
 export default function TestAuthLayout({
     children,
