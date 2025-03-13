@@ -93,7 +93,7 @@ async function seedTestAssessments(prisma: PrismaClientType) {
   console.log("Seeding test collection and assessment...")
 
   // Get the IP2M METRR Assessment type
-  const assessmentType = await prisma.assessmentType.findUnique({
+  const assessmentType = await (prisma.assessmentType.findUnique as any)({
     where: { name: "IP2M METRR Assessment" },
   })
 
@@ -112,7 +112,7 @@ async function seedTestAssessments(prisma: PrismaClientType) {
   })
 
   // Find or create test assessment
-  let testAssessment = await prisma.assessment.findFirst({
+  let testAssessment = await (prisma.assessment.findFirst as any)({
     where: { projectId: "TEST-001" },
   })
 
@@ -135,7 +135,7 @@ async function seedTestAssessments(prisma: PrismaClientType) {
   }
 
   // Get users
-  const users = await prisma.user.findMany({
+  const users = await (prisma.user.findMany as any)({
     where: {
       email: {
         in: Object.values(testAccounts),
@@ -143,13 +143,13 @@ async function seedTestAssessments(prisma: PrismaClientType) {
     },
   })
 
-  const usersByEmail = users.reduce((acc, user) => {
+  const usersByEmail = users.reduce((acc: any, user: typeof users[0]) => {
     acc[user.email] = user
     return acc
   }, {} as Record<string, typeof users[0]>)
 
   // Assign collection manager role
-  const existingCollectionUser = await prisma.assessmentCollectionUser.findFirst({
+  const existingCollectionUser = await (prisma.assessmentCollectionUser.findFirst as any)({
     where: {
       assessmentCollectionId: testCollection.id,
       userId: usersByEmail[testAccounts.collectionManager].id,
@@ -174,7 +174,7 @@ async function seedTestAssessments(prisma: PrismaClientType) {
   ]
 
   for (const { email, role } of assessmentRoles) {
-    const existingAssessmentUser = await prisma.assessmentUser.findFirst({
+    const existingAssessmentUser = await (prisma.assessmentUser.findFirst as any)({
       where: {
         assessmentId: testAssessment.id,
         userId: usersByEmail[email].id,
