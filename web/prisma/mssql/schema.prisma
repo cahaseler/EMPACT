@@ -16,13 +16,14 @@ datasource db {
 
 // Users in the system. Most user data will be passed in via SSO.
 model User {
-    id                     Int                      @id() @default(autoincrement())
-    firstName              String
-    lastName               String
-    email                  String                   @unique()
-    systemRoles            SystemRole[]
-    assessmentUser         AssessmentUser[]
-    assessmentUserResponse AssessmentUserResponse[]
+    id                       Int                        @id() @default(autoincrement())
+    firstName                String
+    lastName                 String
+    email                    String                     @unique()
+    systemRoles              SystemRole[]
+    assessmentUser           AssessmentUser[]
+    assessmentCollectionUser AssessmentCollectionUser[]
+    assessmentUserResponse   AssessmentUserResponse[]
 }
 
 // System roles that users can be assigned to, such as Admin, Facilitator, etc. This is different from a role on a particular assessment.
@@ -38,14 +39,31 @@ model Assessment {
     projectId              String //A unique identifier for the project that this assessment belongs to, for example a PARSID
     name                   String
     location               String
-    date                   DateTime
     description            String                   @db.VarChar(Max)
     status                 String
+    completedDate          DateTime
+    assessmentParts        AssessmentPart[]
+    assessmentUserGroup    AssessmentUserGroup[]
     assessmentUser         AssessmentUser[]
     assessmentCollection   AssessmentCollection?    @relation(fields: [assessmentCollectionId], references: [id])
     assessmentCollectionId Int?
     scoreSummaries         ScoreSummary[]
     assessmentUserResponse AssessmentUserResponse[]
+}
+
+// Represents a part of a specific assessment being done
+// Parts of an assessment can be activated/submitted separately
+model AssessmentPart {
+    id                     Int                  @id() @default(autoincrement())
+    status                 String
+    date                   DateTime
+    assessment             Assessment           @relation(fields: [assessmentId], references: [id])
+    assessmentUser         AssessmentUser[]
+    partId                 Int
+    part                   Part                 @relation(fields: [partId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentId           Int
+    
+    @@unique([assessmentId, partId])
 }
 
 // Final / total scores for an assessment. Depending on the type of assessment, there may be multiple. For example, Environment and Maturity for IP2M METRR scores.
@@ -60,22 +78,60 @@ model ScoreSummary {
 // A collection of assessments that might be run at the same time, potentially with different groups of users
 // An assessment collection is of a single type, such as IP2M METRR or PDRI
 model AssessmentCollection {
-    id               Int            @id() @default(autoincrement())
-    name             String         @unique()
-    assessmentTypes  AssessmentType @relation(fields: [assessmentTypeId], references: [id])
-    assessments      Assessment[]
-    assessmentTypeId Int
+    id                       Int                        @id() @default(autoincrement())
+    name                     String                     @unique()
+    assessmentTypes          AssessmentType             @relation(fields: [assessmentTypeId], references: [id])
+    assessments              Assessment[]
+    assessmentTypeId         Int
+    assessmentCollectionUser AssessmentCollectionUser[]
+}
+
+// Users that are assigned to an assessment collection
+// This is used to specify the role a given user has on a given collection of assessments
+model AssessmentCollectionUser {
+    id                     Int                  @id() @default(autoincrement())
+    assessmentCollection   AssessmentCollection @relation(fields: [assessmentCollectionId], references: [id])
+    user                   User                 @relation(fields: [userId], references: [id])
+    role                   String
+    assessmentCollectionId Int
+    userId                 Int
+
+    @@unique([assessmentCollectionId, userId])
+}
+
+// Groups of users that are assigned to an assessment
+// Different groups can have access to the assessment at different times
+model AssessmentUserGroup {
+    id                 Int                  @id() @default(autoincrement())
+    name               String
+    assessment         Assessment           @relation(fields: [assessmentId], references: [id])
+    assessmentUser     AssessmentUser[]
+    status             String
+    assessmentId       Int
 }
 
 // Users that are assigned to an assessment
 // This is also used to specify the role a given user has on a given assessment
 model AssessmentUser {
-    id           Int        @id() @default(autoincrement())
-    assessment   Assessment @relation(fields: [assessmentId], references: [id])
-    user         User       @relation(fields: [userId], references: [id])
-    role         String
-    assessmentId Int
-    userId       Int
+    id                    Int                   @id() @default(autoincrement())
+    assessment            Assessment            @relation(fields: [assessmentId], references: [id])
+    user                  User                  @relation(fields: [userId], references: [id])
+    assessmentUserGroup   AssessmentUserGroup?  @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    participantParts      AssessmentPart[] // Parts of the assessment for which the user should submit responses
+    role                  String
+    assessmentId          Int
+    userId                Int
+    assessmentUserGroupId Int?
+    permissions           Permission[]
+
+    @@unique([assessmentId, userId, assessmentUserGroupId])
+}
+
+// Specific permissions that assessment users can be assigned to, such as edit, delete, etc.
+model Permission {
+    id              Int    @id() @default(autoincrement())
+    name            String @unique()
+    assessmentUsers AssessmentUser[]
 }
 
 // Types of assessments offered in this tool, for example IP2M METRR, PDRI, etc
@@ -88,14 +144,16 @@ model AssessmentType {
 }
 
 // An assessment itself is broken into Parts (for example, Environment and Maturity). Each part has a set of sections, each containing a series of questions (attributes), and users choose their responses from the list of options (levels)
-
 model Part {
-    id               Int            @id() @default(autoincrement())
-    name             String
-    description      String         @db.VarChar(Max)
-    assessmentType   AssessmentType @relation(fields: [assessmentTypeId], references: [id])
-    assessmentTypeId Int
-    sections         Section[]
+    id                Int            @id() @default(autoincrement())
+    name              String
+    description       String         @db.VarChar(Max)
+    attributeType     String
+    canFacParticipate Boolean // Specifies whether or not a facilitator can also submit responses to the part
+    assessmentType    AssessmentType @relation(fields: [assessmentTypeId], references: [id])
+    assessmentTypeId  Int
+    sections          Section[]
+    assessmentPart    AssessmentPart[]
 }
 
 // For example, Culture, People, Practices, Resources, Organizing, for Environment assessments in IP2M METRR
