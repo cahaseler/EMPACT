@@ -39,7 +39,7 @@ export default function SubmitModule({ assessment } : {
             assessment.assessmentCollectionId,
             assessment.name, 
             "Final", 
-            assessment.date, 
+            assessment.location, 
             assessment.description
         ).then(() => {
             router.refresh()
