@@ -1,4 +1,4 @@
-import { fetchAssessmentType, fetchAssessment } from "../../../utils/dataFetchers"
+import { fetchAssessmentType, fetchAssessment } from "../../../../utils/dataFetchers"
 import NotFound from "@/app/(frontend)/components/notFound"
 
 export default async function RootLayout({

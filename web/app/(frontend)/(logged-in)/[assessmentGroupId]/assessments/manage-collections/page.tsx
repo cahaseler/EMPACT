@@ -1,4 +1,4 @@
-import { fetchAssessmentType } from "../../../utils/dataFetchers"
+import { fetchAssessmentType, fetchUsers } from "../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { viewableCollections } from "../../../utils/permissions"
 
@@ -11,6 +11,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const collections = await viewableCollections(session, params.assessmentGroupId)
+  const users = await fetchUsers()
 
   if(assessmentType) {
     const links = [
@@ -26,7 +27,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
             <Breadcrumbs links={links} currentPage="Manage Assessment Collections" />
             <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-between">
               <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name} Collections</h1>
-              <AddCollection assessmentTypeId={assessmentType.id} session={session}/>
+              <AddCollection assessmentTypeId={assessmentType.id} session={session} users={users}/>
             </div>
           </div>
         </section>

@@ -51,7 +51,12 @@ export async function fetchAssessmentType(typeid: string): Promise<AssessmentTyp
   return await assessmentType.findUnique({ where: { id: idAsInteger } })
 }
 
-export async function fetchAssessmentCollections(typeid: string): Promise<(AssessmentCollection & { assessments: (Assessment & { assessmentUser: AssessmentUser[] })[] } )[]> {
+export async function fetchAssessmentCollections(typeid: string): Promise<
+  (AssessmentCollection & { 
+    assessments: (Assessment & { assessmentUser: AssessmentUser[] })[],
+    assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] 
+  } )[]
+> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -64,8 +69,24 @@ export async function fetchAssessmentCollections(typeid: string): Promise<(Asses
       include: { 
         assessmentUser: true 
       } 
-    } 
+    },
+    assessmentCollectionUser: {
+      include: { 
+        user: true 
+      } 
+    }
   } })
+}
+
+export async function fetchAssessmentCollection(collectionId: string): Promise<(AssessmentCollection & { assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] }) | null> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(collectionId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return null
+  }
+
+  return await db.assessmentCollection.findUnique({ where: { id: idAsInteger }, include: { assessmentCollectionUser: { include: { user: true } } } })
 }
 
 export async function fetchAllAssessments(): Promise<Assessment[]> {

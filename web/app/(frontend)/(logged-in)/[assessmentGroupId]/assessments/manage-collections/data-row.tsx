@@ -1,11 +1,14 @@
 "use client"
 import { 
+    User,
     AssessmentType, 
     AssessmentCollection,
+    AssessmentCollectionUser,
     Assessment
 } from "@/prisma/mssql/generated/client"
 import { updateAssessmentCollection, deleteAssessmentCollection } from "../../../utils/dataActions"
 
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { TableCell, TableRow } from "@/components/ui/table"
@@ -26,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { 
     SquarePen, 
+    Users,
     Trash2,
     X,
     Save,
@@ -44,7 +48,10 @@ export default function DataTable({
     assessmentType,
     isAdmin
 }: {
-    readonly collection: AssessmentCollection & { assessments: Assessment[] }, 
+    readonly collection: AssessmentCollection & { 
+        assessments: Assessment[], 
+        assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] 
+    }, 
     readonly assessmentType: AssessmentType,
     readonly isAdmin: boolean
 }) {
@@ -90,36 +97,52 @@ export default function DataTable({
                 </ul>
             </TableCell>
             <TableCell>
+                <ul className="list-none">
+                    {collection.assessmentCollectionUser.map(user => 
+                        <li key={user.id}>{user.user.lastName}, {user.user.firstName}</li>
+                    )}
+                </ul>
+            </TableCell>
+            <TableCell>
                 <div className="grid grid-cols-2 gap-2 w-20">
-                    {!isEditing ? <>
-                        <Button 
-                            onClick={() => setIsEditing(true)}
-                            size="icon"
-                        >
-                            <SquarePen className="w-5 h-5 text-white" />
-                        </Button>
-                        {isAdmin && <DeleteModule collection={collection} />}
-                    </> : <>
-                        <Button 
-                            onClick={() => {
-                                setIsEditing(false)
-                                setName(collection.name)
-                            }}
-                            variant="outline"
-                            size="icon"
-                            className="border-[3px]"
-                        >
-                            <X className="w-5 h-5 stroke-[3px]" />
-                        </Button>
-                        {isAdmin && 
+                    {!isEditing ? 
+                        <>
                             <Button 
-                                onClick={(e: React.FormEvent) => handleUpdate(e)}
+                                onClick={() => setIsEditing(true)}
                                 size="icon"
                             >
-                                {saving ? <Loader className="h-5 w-5 animate-spin"/> : <Save className="w-5 h-5 text-white" />}
+                                <SquarePen className="w-5 h-5 text-white" />
                             </Button>
-                        }
-                    </>
+                            {isAdmin && <DeleteModule collection={collection} />}
+                            {isAdmin &&
+                                <Link href={`/${assessmentType.id}/users/collection/${collection.id}`}>
+                                    <Button size="icon">
+                                        <Users className="w-5 h-5 text-white" />
+                                    </Button>
+                                </Link>
+                            }
+                        </> : 
+                        <>
+                            <Button 
+                                onClick={() => {
+                                    setIsEditing(false)
+                                    setName(collection.name)
+                                }}
+                                variant="outline"
+                                size="icon"
+                                className="border-[3px]"
+                            >
+                                <X className="w-5 h-5 stroke-[3px]" />
+                            </Button>
+                            {isAdmin && 
+                                <Button 
+                                    onClick={(e: React.FormEvent) => handleUpdate(e)}
+                                    size="icon"
+                                >
+                                    {saving ? <Loader className="h-5 w-5 animate-spin"/> : <Save className="w-5 h-5 text-white" />}
+                                </Button>
+                            }
+                        </>
                     }
                 </div>
             </TableCell>

@@ -22,16 +22,20 @@ export async function createAssessmentCollection(name: string, assessmentTypeId:
     return await assessmentCollection.create({ data: { name, assessmentTypeId } })
 }
 
-export async function createAssessmentCollectionUser(userId: number, assessmentCollectionId: number): Promise<AssessmentCollectionUser> {
-    return await assessmentCollectionUser.create({ data: { userId, role: "Collection Manager", assessmentCollectionId } })
-}
-
 export async function updateAssessmentCollection(collectionId: number, name: string, assessmentTypeId: number): Promise<AssessmentCollection> {
     return await assessmentCollection.update({ where: { id: collectionId }, data: { name, assessmentTypeId } })
 }
 
 export async function deleteAssessmentCollection(collectionId: number): Promise<AssessmentCollection> {
     return await assessmentCollection.delete_({ where: { id: collectionId } })
+}
+
+export async function createAssessmentCollectionUser(userId: number, assessmentCollectionId: number): Promise<AssessmentCollectionUser> {
+    return await assessmentCollectionUser.create({ data: { userId, role: "Collection Manager", assessmentCollectionId } })
+}
+
+export async function deleteAssessmentCollectionUser(userId: number): Promise<AssessmentCollectionUser> {
+    return await assessmentCollectionUser.delete_({ where: { id: userId } })
 }
 
 export async function createAssessment(

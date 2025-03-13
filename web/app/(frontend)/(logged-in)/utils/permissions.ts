@@ -2,6 +2,7 @@ import { Session } from "@/auth"
 import { 
     User, 
     AssessmentCollection, 
+    AssessmentCollectionUser,
     Assessment, 
     AssessmentUser,
     AssessmentUserResponse,
@@ -82,7 +83,9 @@ export function canViewUsers(session: Session | null): boolean {
     return session?.user?.systemRoles.length !== undefined && session?.user?.systemRoles.length > 0 
 }
 
-export async function viewableCollections(session: Session | null, assessmentGroupId: string): Promise<(AssessmentCollection & { assessments: Assessment[] } )[]> { 
+export async function viewableCollections(session: Session | null, assessmentGroupId: string): Promise<
+    (AssessmentCollection & { assessments: Assessment[], assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] } )[]
+> { 
     if (session) {
         const assessmentCollections = await fetchAssessmentCollections(assessmentGroupId)
         if (isAdmin(session)) return assessmentCollections

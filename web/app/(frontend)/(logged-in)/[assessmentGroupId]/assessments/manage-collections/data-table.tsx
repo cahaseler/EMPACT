@@ -1,8 +1,10 @@
 "use client"
 import { Session } from "@/auth"
 import { 
+    User,
     AssessmentType, 
     AssessmentCollection,
+    AssessmentCollectionUser,
     Assessment
 } from "@/prisma/mssql/generated/client"
 import { isAdmin } from "../../../utils/permissions"
@@ -24,7 +26,10 @@ export default function DataTable({
     assessmentType,
     session
 }: {
-    readonly collections: (AssessmentCollection & { assessments: Assessment[] } )[], 
+    readonly collections: (AssessmentCollection & { 
+        assessments: Assessment[], 
+        assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] 
+    } )[], 
     readonly assessmentType: AssessmentType,
     readonly session: Session | null
 }) {
@@ -35,11 +40,15 @@ export default function DataTable({
                     <TableHead className="w-32">Collection ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Assessments</TableHead>
+                    <TableHead>Manager(s)</TableHead>
                     <TableHead className="w-32">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {collections.map((collection: AssessmentCollection & { assessments: Assessment[] }) => 
+                {collections.map((collection: AssessmentCollection & { 
+                    assessments: Assessment[], 
+                    assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[] 
+                }) => 
                     <DataRow collection={collection} assessmentType={assessmentType} isAdmin={isAdmin(session)} />
                 )}
             </TableBody>

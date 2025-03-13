@@ -93,7 +93,7 @@ function UserActions({
 }) {
   return (
       <div className="grid grid-cols-2 gap-2 w-20">
-        <Link href={`/${assessmentTypeId}/users/${assessmentId}/${assessmentUser.id}`} >
+        <Link href={`/${assessmentTypeId}/users/assessment/${assessmentId}/${assessmentUser.id}`} >
           <Button size="icon">
             <SquarePen className="w-5 h-5 text-white" />
           </Button>

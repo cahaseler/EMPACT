@@ -145,7 +145,7 @@ function AssessmentActions({
                 </Button>
             </Link>
             {canView && 
-                <Link href={`/${assessmentTypeId}/users/${assessment.id}`}>
+                <Link href={`/${assessmentTypeId}/users/assessment/${assessment.id}`}>
                     <Button size="icon">
                         <Users className="w-5 h-5 text-white" />
                     </Button>

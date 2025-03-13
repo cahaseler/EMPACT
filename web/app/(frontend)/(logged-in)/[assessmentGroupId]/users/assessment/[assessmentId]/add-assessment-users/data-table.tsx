@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import { User, AssessmentUserGroup } from "@/prisma/mssql/generated/client"
-import { createAssessmentUser } from "../../../../utils/dataActions"
+import { createAssessmentUser } from "../../../../../utils/dataActions"
 
 import { Button } from "@/components/ui/button"
 import {

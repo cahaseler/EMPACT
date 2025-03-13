@@ -8,7 +8,7 @@ import {
     Part, 
     Permission 
 } from "@/prisma/mssql/generated/client"
-import { updateAssessmentUser } from "../../../../utils/dataActions"
+import { updateAssessmentUser } from "../../../../../utils/dataActions"
 
 import {
     Select,

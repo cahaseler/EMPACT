@@ -3,13 +3,13 @@ import {
   fetchAssessment, 
   fetchAssessmentUsers, 
   fetchAssessmentUserGroups 
-} from "../../../utils/dataFetchers"
+} from "../../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { 
   isAdmin,
   isManagerForCollection,
   isLeadForAssessment
-} from "../../../utils/permissions"
+} from "../../../../utils/permissions"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -65,7 +65,7 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
               <div className="flex flex-row space-x-2 justify-end">
                 {canRegroup && 
                   <Link
-                    href={`/${assessmentType.id}/users/${assessment.id}/manage-user-groups`}
+                    href={`/${assessmentType.id}/users/assessment/${assessment.id}/manage-user-groups`}
                     prefetch={false}
                   >
                     <Button>
@@ -111,7 +111,7 @@ function AddUsersButton({
 }>) {
   return (
     doGroupsExist ? 
-      <Link href={`/${assessmentTypeId}/users/${assessmentId}/add-assessment-users`} prefetch={false} >
+      <Link href={`/${assessmentTypeId}/users/assessment/${assessmentId}/add-assessment-users`} prefetch={false} >
         <Button>
         Add Users to Assessment
         </Button>

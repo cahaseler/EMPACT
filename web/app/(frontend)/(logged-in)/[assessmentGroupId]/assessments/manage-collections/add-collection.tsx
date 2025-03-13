@@ -2,10 +2,19 @@
 
 import { useState } from "react"
 import { Session } from "@/auth"
-import { isCollectionManager } from "../../../utils/permissions"
+import { User } from "@/prisma/mssql/generated/client"
+import { isAdmin, isCollectionManager } from "../../../utils/permissions"
 import { createAssessmentCollection, createAssessmentCollectionUser } from "../../../utils/dataActions"
 
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem
+} from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Loader } from "lucide-react"
 import { AssessmentCollection } from "@/prisma/mssql/generated/client"
@@ -15,13 +24,16 @@ import { toast } from "@/components/ui/use-toast"
 
 export default function AddCollection({
     assessmentTypeId,
+    users,
     session
 }: {
     assessmentTypeId: number,
+    users: User[],
     session: Session | null
 }) {
     const [isAdding, setIsAdding] = useState<boolean>(false)
     const [name, setName] = useState<string>("")
+    const [managerId, setManagerId] = useState<string>(users[0].id.toString())
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
@@ -41,11 +53,13 @@ export default function AddCollection({
                         })
                     })
                 } else {
-                    setName("")
-                    setSaving(false)
-                    router.refresh()
-                    toast({
-                        title: "Assessment collection added successfully."
+                    await createAssessmentCollectionUser(parseInt(managerId, 10), collection.id).then(() => {
+                        setName("")
+                        setSaving(false)
+                        router.refresh()
+                        toast({
+                            title: "Assessment collection added successfully."
+                        })
                     })
                 }
             })
@@ -76,13 +90,36 @@ export default function AddCollection({
                     <form onSubmit={handleSubmit}>
                         <section className="w-full">
                             <div className="flex flex-row space-x-2 justify-end">
-                                <Input 
-                                    type="text" 
-                                    placeholder="Collection Name" 
-                                    value={name} 
-                                    onChange={(e) => setName(e.target.value)} 
-                                />
-                                <Button type="submit" disabled={saving || name === ""}>
+                                <div className="flex flex-col space-y-2">
+                                    <Input 
+                                        type="text" 
+                                        placeholder="Collection Name" 
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                    />
+                                    <Label>Name</Label>
+                                </div>
+                                {isAdmin(session) && 
+                                    <div className="min-w-40 flex flex-col space-y-2">
+                                        <Select onValueChange={(value) => setManagerId(value)}>
+                                            <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
+                                                <SelectValue 
+                                                    placeholder={`${users[0].lastName}, ${users[0].firstName}`} 
+                                                    defaultValue={managerId}
+                                                />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {users.map((user: User, key: number) => 
+                                                    <SelectItem value={user.id.toString()} key={key}>
+                                                        {user.lastName}, {user.firstName}
+                                                    </SelectItem>
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        <Label>Manager</Label>
+                                    </div>
+                                }
+                                <Button type="submit" disabled={saving || name === "" || managerId === null}>
                                     {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Add
                                 </Button>
                             </div>

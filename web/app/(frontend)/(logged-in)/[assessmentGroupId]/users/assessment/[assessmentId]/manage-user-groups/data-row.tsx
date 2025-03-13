@@ -4,7 +4,7 @@ import {
     AssessmentUserGroup,
     AssessmentUser
 } from "@/prisma/mssql/generated/client"
-import { updateAssessmentUserGroup, deleteAssessmentUserGroup } from "../../../../utils/dataActions"
+import { updateAssessmentUserGroup, deleteAssessmentUserGroup } from "../../../../../utils/dataActions"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

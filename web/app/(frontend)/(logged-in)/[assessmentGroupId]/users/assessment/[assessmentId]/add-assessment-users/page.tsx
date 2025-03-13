@@ -3,14 +3,14 @@ import {
     fetchAssessment,
     fetchAssessmentUserGroups,
     fetchUsers
-} from "../../../../utils/dataFetchers"
+} from "../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { 
     isAdmin, 
     isCollectionManager,
     isLeadForAssessment,
     isFacForAssessment
-} from "../../../../utils/permissions"
+} from "../../../../../utils/permissions"
 
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import DataTable from "./data-table"

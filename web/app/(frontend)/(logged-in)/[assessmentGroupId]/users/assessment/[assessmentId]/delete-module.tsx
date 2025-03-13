@@ -1,6 +1,6 @@
 "use client"
 import { User, AssessmentUser, AssessmentUserResponse } from "@/prisma/mssql/generated/client"
-import { deleteAssessmentUser } from "../../../utils/dataActions"
+import { deleteAssessmentUser } from "../../../../utils/dataActions"
 
 import { Button } from "@/components/ui/button"
 import { 
