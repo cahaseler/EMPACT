@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npx prisma generate --schema prisma/mssql/schema.prisma && npx prisma generate --schema prisma/postgres/schema.prisma && npx prisma generate --schema prisma/sqlite/schema.prisma && next build",
-    "build-linux": "npx prisma generate --schema prisma/mssql/schema.prisma && next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\"",
+    "build-linux": "npx prisma generate --schema prisma/mssql/schema.prisma && next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\" && mkdir -p \".next/standalone/.prisma/client\" && cp -rf \"node_modules/.prisma/client\" \".next/standalone/.prisma/\" && cp -rf \"prisma\" \".next/standalone/prisma\"",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "prisma-generate": "npx prisma generate --schema prisma/mssql/schema.prisma",
