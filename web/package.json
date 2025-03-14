@@ -18,7 +18,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npx prisma generate --schema prisma/mssql/schema.prisma && npx prisma generate --schema prisma/postgres/schema.prisma && npx prisma generate --schema prisma/sqlite/schema.prisma && next build",
-    "build-linux": "npx prisma generate --schema prisma/mssql/schema.prisma && next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\" && mkdir -p \".next/standalone/.prisma/client\" && cp -rf \"node_modules/.prisma/client\" \".next/standalone/.prisma/\" && cp -rf \"prisma\" \".next/standalone/prisma\"",
+    "build-linux": "npx prisma generate --schema prisma/mssql/schema.prisma && next build && cp -rf public \".next/standalone/public\" && cp -rf \".next/static\" \".next/standalone/.next/static\" && mkdir -p \".next/standalone/.prisma/client\" && cp -rf node_modules/.prisma/client/* \".next/standalone/.prisma/client/\" && cp -rf prisma \".next/standalone/prisma\" && cp -rf node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node \".next/standalone/.next/server/\" && cp -rf node_modules/.prisma/client/libquery_engine-debian-openssl-3.0.x.so.node \".next/standalone/.next/server/\" && find \".next/standalone/.prisma/client\" -type f -name \"libquery_engine-*\" -exec chmod +x {} \\; && echo 'Copied and configured Prisma files to standalone output'",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "prisma-generate": "npx prisma generate --schema prisma/mssql/schema.prisma",

@@ -82,10 +82,10 @@ jobs:
           ref: main
           persist-credentials: false
 
-      - name: Install Node.js 18 and Yarn
+      - name: Install Node.js 20 and Yarn
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'yarn'
           cache-dependency-path: 'web/yarn.lock'
 

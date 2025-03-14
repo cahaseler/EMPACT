@@ -1,21 +1,27 @@
-FROM node:alpine AS deps
+FROM node:20-slim
 
 WORKDIR /usr/src/app
 
-# Copy the standalone Next.js output with Prisma binaries
+# Copy the standalone Next.js output that's already been built by yarn build-linux
 COPY ./.next/standalone /usr/src/app
 
-# Make sure Prisma engine can be executed
-RUN apk add --no-cache openssl3
-RUN chmod +x /usr/src/app/.prisma/client/libquery_engine-* || true
+# Copy public and static files (these should already be included by build-linux)
+COPY ./public /usr/src/app/public
+COPY ./.next/static /usr/src/app/.next/static
 
+# Install necessary dependencies for Prisma
+RUN apt-get update && apt-get install -y openssl ca-certificates
+
+# Set executable permissions for Prisma engines
+RUN find /usr/src/app -name "libquery_engine-*" -exec chmod +x {} \; || true
+RUN find /usr/src/app -name "libquery_engine-*" -exec ls -la {} \; || true
+
+# Set environment variables
 ENV NODE_ENV=production \
     PORT=3000 \
-    PRISMA_QUERY_ENGINE_LIBRARY=/usr/src/app/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
+    DEBUG=prisma:*
 
 EXPOSE 3000
-
 # Use a non-root user for security
 USER node
-
 CMD ["node", "server.js"]
