@@ -97,6 +97,8 @@ jobs:
       - name: Build Webapp for Docker
         run: |
           cd web
+          sudo apt-get update
+          sudo apt-get install openssl
           yarn build-linux
 
       - name: Login to DockerHub
