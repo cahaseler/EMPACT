@@ -66,15 +66,14 @@ export default function AttributeContent({
           ))}
         </Accordion>
       </section>
-      {isParticipant ? 
+      {isParticipant && 
         <AttributeUserResponse 
           assessment={assessment} 
           userId={userId}
           attributeId={attribute.id} 
           levels={levels} 
           userResponse={userResponses[0]} 
-        /> :
-        <AttributeResponseTable userResponses={userResponses} levels={levels} />
+        /> 
       }
       <section className="mb-8 space-y-4">
         <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>

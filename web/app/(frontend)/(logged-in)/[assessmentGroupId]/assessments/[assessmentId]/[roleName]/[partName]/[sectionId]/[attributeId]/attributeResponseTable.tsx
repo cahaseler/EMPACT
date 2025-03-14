@@ -20,12 +20,12 @@ export default function AttributeResponseTable({
     levels: Level[]
 }) {
     return (
-        <section className="mb-16 flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4">
             <h2 className="text-2xl font-bold max-lg:ml-2">Participant Responses</h2>
             <Table className="dark:bg-transparent">
                 <TableHeader>
                     <TableRow>
-                        <TableHead>User ID</TableHead>
+                        <TableHead className="w-20">User ID</TableHead>
                         <TableHead>Name</TableHead>
                         <TableHead>Rating</TableHead>
                         <TableHead>Comments</TableHead>
@@ -50,6 +50,6 @@ export default function AttributeResponseTable({
                     }
                 </TableBody>
             </Table>
-        </section>
+        </div>
       )
 }

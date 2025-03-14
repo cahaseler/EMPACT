@@ -1,6 +1,8 @@
 import { 
     AssessmentType, 
     Assessment,
+    AssessmentPart,
+    AssessmentUser,
     AssessmentUserResponse,
     Part, 
     Section, 
@@ -29,15 +31,17 @@ export function AssessmentSidebar ({
     assessment,
     role,
     parts,
-    numAssessmentUsers,
-    userResponses
+    assessmentUsers,
+    userResponses,
+    isParticipant
 }: Readonly<{ 
     assessmentType: AssessmentType
     assessment: Assessment
     role: string
     parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
-    numAssessmentUsers: number
-    userResponses: AssessmentUserResponse[]
+    assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[]})[]
+    userResponses: AssessmentUserResponse[],
+    isParticipant: boolean
 }>) {
   const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
   return (
@@ -64,7 +68,9 @@ export function AssessmentSidebar ({
         {parts.map((part) => {
             const partAttributeIds = part.sections.flatMap(section => section.attributes.map(attribute => attribute.id))
             const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributeIds.includes(responseAttributeId))
-            const unfinishedPart = partAttributeIds.length * numAssessmentUsers !== partResponseAttributeIds.length * numAssessmentUsers
+            const partParticipants = assessmentUsers.filter(assessmentUser => assessmentUser.role === "Participant" || assessmentUser.participantParts.some(participantPart => participantPart.partId === part.id))
+            const numParticipants = isParticipant ? 1 : partParticipants.length
+            const unfinishedPart = partAttributeIds.length * numParticipants !== partResponseAttributeIds.length * numParticipants
             return ( 
             <Collapsible className="group/collapsible">
                 <SidebarGroup>
@@ -87,7 +93,7 @@ export function AssessmentSidebar ({
                             {part.sections.map((section) => {
                                 const sectionAttributeIds = section.attributes.map(attribute => attribute.id)
                                 const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
-                                const unfinishedSection = sectionAttributeIds.length * numAssessmentUsers !== sectionResponseAttributeIds.length * numAssessmentUsers
+                                const unfinishedSection = sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
                                 return (
                                 <Collapsible className="group/collapsible-2">
                                     <SidebarMenuItem key={section.name}>
@@ -108,7 +114,7 @@ export function AssessmentSidebar ({
                                             <SidebarMenuSub>
                                                 {section.attributes.map((attribute) => {
                                                     const attributeResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => attribute.id === responseAttributeId)
-                                                    const unfinishedAttribute = attributeResponseAttributeIds.length !== numAssessmentUsers
+                                                    const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
                                                     return (
                                                     <SidebarMenuSubItem key={attribute.name}>
                                                         <SidebarMenuButton asChild>

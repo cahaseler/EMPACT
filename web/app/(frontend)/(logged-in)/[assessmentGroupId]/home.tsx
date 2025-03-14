@@ -69,7 +69,7 @@ export default function Home({
           <div className="flex flex-col space-y-4">
             <h2 className="text-2xl font-bold">Continue Recent Assessment</h2>
             <Link
-              href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}` }
+              href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/Participant/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}` }
               prefetch={false}
             >
               <Button>{mostRecentAssessment.name}</Button>

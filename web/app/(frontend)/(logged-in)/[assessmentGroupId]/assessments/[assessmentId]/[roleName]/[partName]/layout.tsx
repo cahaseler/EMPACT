@@ -2,7 +2,7 @@ import {
   fetchAssessmentType, 
   fetchAssessment,
   fetchPart,
-  fetchAssessmentParticipants
+  fetchAssessmentUsers
 } from "../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { 
@@ -38,10 +38,9 @@ export default async function RootLayout({
   const assessment = await fetchAssessment(params.assessmentId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const parts = await viewableParts(session, params.assessmentGroupId, params.assessmentId, params.roleName)
-  const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
 
   const isParticipant = params.roleName === "Participant"
-  const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
   const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
 
   if (assessmentType && assessment) {
@@ -72,8 +71,9 @@ export default async function RootLayout({
               assessment={assessment} 
               role={params.roleName}
               parts={parts} 
-              numAssessmentUsers={numAssessmentUsers}
+              assessmentUsers={assessmentUsers}
               userResponses={userResponses} 
+              isParticipant={isParticipant}
             />
             {children}
           </SidebarProvider>

@@ -14,6 +14,7 @@ import { viewableAttributeResponses } from "../../../../../../../utils/permissio
 import { Card } from "@/components/ui/card"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import AttributeContent from "./attributeContent"
+import AttributeResponseTable from "./attributeResponseTable"
 
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string, 
@@ -61,16 +62,19 @@ export default async function Page({ params }: Readonly<{ params: {
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
             <Breadcrumbs links={links} currentPage={part.attributeType + " " + attribute.id.toString().toUpperCase()} />
-            <h1 
-              className="text-3xl font-bold tracking-tighter" 
-              dangerouslySetInnerHTML={{ __html: attribute.id.toString().toUpperCase() + ". " + attribute.name }} 
-            />
-            <Card className="bg-white max-h-60 overflow-auto px-6 py-1">
-              <div 
-                className="text-sm text-description text-muted-foreground dark:text-indigo-300/80" 
-                dangerouslySetInnerHTML={{ __html: attribute.description }} 
+            <div className={isParticipant ? "space-y-4" : "space-y-6"}>
+              <h1 
+                className="text-3xl font-bold tracking-tighter" 
+                dangerouslySetInnerHTML={{ __html: attribute.id.toString().toUpperCase() + ". " + attribute.name }} 
               />
-            </Card>
+              {params.roleName === "Facilitator" && <AttributeResponseTable userResponses={userResponses} levels={levels} />}
+              <Card className="bg-white max-h-60 overflow-auto px-6 py-1">
+                <div 
+                  className="text-sm text-description text-muted-foreground dark:text-indigo-300/80" 
+                  dangerouslySetInnerHTML={{ __html: attribute.description }} 
+                />
+              </Card>
+            </div>
           </div>
         </section>
         <AttributeContent 

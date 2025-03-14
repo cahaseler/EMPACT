@@ -1,6 +1,8 @@
 import { 
   AssessmentType, 
-  Assessment, 
+  Assessment,
+  AssessmentPart,
+  AssessmentUser, 
   AssessmentUserResponse, 
   Part, 
   Section, 
@@ -14,23 +16,27 @@ export default function PartContent({
     assessmentType,
     role,
     part,
-    numAssessmentUsers,
-    userResponses
+    assessmentUsers,
+    userResponses,
+    isParticipant
 }: {
     assessment: Assessment, 
     assessmentType: AssessmentType,
     role: string,
     part: Part & { sections: (Section & { attributes: Attribute[] })[] },
-    numAssessmentUsers: number,
-    userResponses: AssessmentUserResponse[]
+    assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[]})[],
+    userResponses: AssessmentUserResponse[],
+    isParticipant: boolean
 }) {
   const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
+  const partParticipants = assessmentUsers.filter(assessmentUser => assessmentUser.role === "Participant" || assessmentUser.participantParts.some(participantPart => participantPart.partId === part.id))
+  const numParticipants = isParticipant ? 1 : partParticipants.length
   return (
     <div className="flex flex-col space-y-2">
       {part.sections.map((section: Section & { attributes: Attribute[] }, key: number) => {
         const sectionAttributeIds = section.attributes.map(attribute => attribute.id)
         const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
-        const unfinishedSection = sectionAttributeIds.length * numAssessmentUsers !== sectionResponseAttributeIds.length * numAssessmentUsers
+        const unfinishedSection = sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
         return (
           <Link
             key={key}

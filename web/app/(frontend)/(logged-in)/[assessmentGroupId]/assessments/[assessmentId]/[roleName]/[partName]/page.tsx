@@ -2,7 +2,7 @@ import {
   fetchAssessmentType, 
   fetchAssessment, 
   fetchPart,
-  fetchAssessmentParticipants
+  fetchAssessmentUsers
 } from "../../../../../utils/dataFetchers"
 import { auth } from "@/auth"
 import { viewableResponses } from "../../../../../utils/permissions"
@@ -21,10 +21,9 @@ export default async function Page({ params }: Readonly<{ params: {
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
-  const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
 
   const isParticipant = params.roleName === "Participant"
-  const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
   const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
 
   if (assessmentType && assessment) {
@@ -60,8 +59,9 @@ export default async function Page({ params }: Readonly<{ params: {
               assessmentType={assessmentType} 
               part={part} 
               role={params.roleName}
-              numAssessmentUsers={numAssessmentUsers}
+              assessmentUsers={assessmentUsers}
               userResponses={userResponses} 
+              isParticipant={isParticipant}
             />
           </section>
         </div>
