@@ -1,7 +1,7 @@
 import { parseArgs } from "node:util"
 import { PrismaClient as MssqlPrismaClient } from "./mssql/generated/client"
 //import { PrismaClient as PostgresPrismaClient } from "./postgres/generated/client"
-import { PrismaClient as SqlitePrismaClient } from "./sqlite/generated/client"
+/* import { PrismaClient as SqlitePrismaClient } from "./sqlite/generated/client" */
 import { testAccounts } from "../tests/e2e/test-accounts"
 
 const prismaMssql = new MssqlPrismaClient({
@@ -11,10 +11,10 @@ const prismaMssql = new MssqlPrismaClient({
 /* const prismaPostgres = new PostgresPrismaClient({
   log: ["info", "warn", "error"],
 }) */
-const prismaSqlite = new SqlitePrismaClient({
+/* const prismaSqlite = new SqlitePrismaClient({
   log: ["info", "warn", "error"],
 })
-
+ */
 import fs from "node:fs"
 
 const options = {
@@ -35,10 +35,10 @@ async function main() {
     //console.log("Seeding initial data to postgres database")
     //await seedPostgres(prismaPostgres)
     //break
-    case "prisma/sqlite/schema.prisma":
-      console.log("Seeding initial data to sqlite database")
-      await seedSqlite(prismaSqlite)
-      break
+    /*     case "prisma/sqlite/schema.prisma":
+          console.log("Seeding initial data to sqlite database")
+          await seedSqlite(prismaSqlite)
+          break */
     default:
       console.error(
         "Please specify a valid schema argument with the --schema parameter, such as `npx prisma db seed -- --schema prisma/mssql/schema.prisma`"
@@ -52,7 +52,7 @@ main().catch(async (e) => {
   process.exit(1)
 })
 
-type PrismaClientType = MssqlPrismaClient | SqlitePrismaClient
+type PrismaClientType = MssqlPrismaClient/*  | SqlitePrismaClient */
 
 async function seedTestUsers(prisma: PrismaClientType) {
   console.log("Seeding test users and roles...")
@@ -272,7 +272,7 @@ async function seedMssql(prisma: MssqlPrismaClient) {
 
   prisma.$disconnect()
 }
-
+/* 
 async function seedSqlite(prisma: SqlitePrismaClient) {
   try {
     console.log("Seeding AssessmentTypes and AssessmentParts...")
@@ -352,3 +352,4 @@ async function seedSqlite(prisma: SqlitePrismaClient) {
 
   prisma.$disconnect()
 }
+ */
