@@ -1,9 +1,9 @@
-FROM node:20.16.0 AS deps
+FROM node:alpine AS deps
 
 WORKDIR /usr/src/app
 
 COPY ./.next/standalone /usr/src/app
-RUN apk add openssl
+RUN apk add --no-cache openssl3
 
 ENV NODE_ENV=production \
     PORT=3000
