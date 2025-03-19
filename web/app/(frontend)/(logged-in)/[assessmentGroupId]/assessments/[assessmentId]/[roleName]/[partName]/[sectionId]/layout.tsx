@@ -6,24 +6,29 @@ import {
   } from "../../../../../../utils/dataFetchers"
   import NotFound from "@/app/(frontend)/components/notFound"
   
-  export default async function RootLayout({
-    children,
-    params
-  }: Readonly<{
-    children: React.ReactNode,
-    params: { 
-      assessmentGroupId: string,
-      assessmentId: string,
-      roleName: string,
-      partName: string,
-      sectionId: string
-    }
-  }>) {
+  export default async function RootLayout(
+    props: Readonly<{
+      children: React.ReactNode,
+      params: { 
+        assessmentGroupId: string,
+        assessmentId: string,
+        roleName: string,
+        partName: string,
+        sectionId: string
+      }
+    }>
+  ) {
+    const params = await props.params;
+
+    const {
+      children
+    } = props;
+
     const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
     const assessment = await fetchAssessment(params.assessmentId)
     const part = await fetchPart(params.assessmentGroupId, params.partName)
     const section = await fetchSection(params.sectionId)
-  
+
     if (assessmentType && assessment && part) {
       const links = [
         {
@@ -44,5 +49,4 @@ import {
       }
       return <NotFound links={links} pageType="section" />
     }
-    
   }

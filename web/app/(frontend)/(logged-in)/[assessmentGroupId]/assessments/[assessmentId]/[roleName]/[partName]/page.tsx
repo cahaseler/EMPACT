@@ -10,12 +10,15 @@ import { viewableResponses } from "../../../../../utils/permissions"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import PartContent from "./part"
 
-export default async function Page({ params }: Readonly<{ params: { 
-    assessmentGroupId: string, 
-    assessmentId: string, 
-    roleName: string,
-    partName: string 
-  } }>) {
+export default async function Page(
+  props: Readonly<{ params: { 
+      assessmentGroupId: string, 
+      assessmentId: string, 
+      roleName: string,
+      partName: string 
+    } }>
+) {
+  const params = await props.params;
   const session = await auth()
 
   const assessment = await fetchAssessment(params.assessmentId)

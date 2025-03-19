@@ -1,7 +1,8 @@
 import { fetchAssessmentType } from "../../utils/dataFetchers"
 
-export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string } }>) {
-const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+export default async function Page(props: Readonly<{ params: { assessmentGroupId: string } }>) {
+  const params = await props.params;
+  const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
 
   if (assessmentType) {
     return (

@@ -3,10 +3,13 @@ import { fetchAssessmentType, fetchAssessment } from "../../../utils/dataFetcher
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import AssessmentReport from "./report"
 
-export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string, assessmentId: string } }>) {
+export default async function Page(
+  props: Readonly<{ params: { assessmentGroupId: string, assessmentId: string } }>
+) {
+  const params = await props.params;
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
-  
+
   if (assessmentType && assessment) {
     const links = [
       {

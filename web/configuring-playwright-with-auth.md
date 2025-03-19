@@ -1,3 +1,6 @@
+
+NOTE: Deprecated. Needs to be rewritten to work with Clerk.
+
 # Configuring Playwright with Authentication
 
 This guide explains how Playwright is configured in this project, including authentication setup, test accounts, and CI/CD integration.

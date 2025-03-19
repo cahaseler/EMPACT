@@ -1,11 +1,14 @@
 import { fetchAssessmentType } from "../../../utils/dataFetchers"
 import NotFound from "@/app/(frontend)/components/notFound"
 
-export default async function Page({ params }: Readonly<{
-params: { 
-    assessmentGroupId: string
-}
-}>) {
+export default async function Page(
+    props: Readonly<{
+    params: { 
+        assessmentGroupId: string
+    }
+    }>
+) {
+    const params = await props.params;
     const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
 
     if (assessmentType) {

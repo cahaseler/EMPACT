@@ -1,15 +1,20 @@
 import { fetchAssessmentType, fetchAssessment } from "../../../utils/dataFetchers"
 import NotFound from "@/app/(frontend)/components/notFound"
 
-export default async function RootLayout({
-    children,
-    params
-}: Readonly<{
-    children: React.ReactNode,
-    params: { 
-        assessmentGroupId: string,
-        assessmentId: string}
-}>) {
+export default async function RootLayout(
+    props: Readonly<{
+        children: React.ReactNode,
+        params: { 
+            assessmentGroupId: string,
+            assessmentId: string}
+    }>
+) {
+    const params = await props.params;
+
+    const {
+        children
+    } = props;
+
     const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
     const assessment = await fetchAssessment(params.assessmentId)
 

@@ -4,7 +4,8 @@ import { isAdmin, viewableAssessments } from "../../utils/permissions"
 
 import PageView from "./page-view"
 
-export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string } }>) {
+export default async function Page(props: Readonly<{ params: { assessmentGroupId: string } }>) {
+  const params = await props.params;
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)

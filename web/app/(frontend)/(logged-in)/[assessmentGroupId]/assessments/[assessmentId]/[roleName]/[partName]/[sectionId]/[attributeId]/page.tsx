@@ -15,17 +15,20 @@ import { Card } from "@/components/ui/card"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import AttributeContent from "./attributeContent"
 
-export default async function Page({ params }: Readonly<{ params: { 
-    assessmentGroupId: string, 
-    assessmentId: string, 
-    roleName: string,
-    partName: string,
-    sectionId: string,
-    attributeId: string 
-  } 
-}>) {
+export default async function Page(
+  props: Readonly<{ params: { 
+      assessmentGroupId: string, 
+      assessmentId: string, 
+      roleName: string,
+      partName: string,
+      sectionId: string,
+      attributeId: string 
+    } 
+  }>
+) {
+  const params = await props.params;
   const session = await auth()
-  
+
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)

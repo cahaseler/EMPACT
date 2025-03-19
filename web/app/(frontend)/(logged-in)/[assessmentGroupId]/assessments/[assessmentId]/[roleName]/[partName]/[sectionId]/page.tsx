@@ -11,14 +11,17 @@ import { viewableResponses } from "../../../../../../utils/permissions"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import DataTable from "./data-table"
 
-export default async function Page({ params }: Readonly<{ params: { 
-    assessmentGroupId: string, 
-    assessmentId: string, 
-    roleName: string,
-    partName: string,
-    sectionId: string 
-  } 
-}>) {
+export default async function Page(
+  props: Readonly<{ params: { 
+      assessmentGroupId: string, 
+      assessmentId: string, 
+      roleName: string,
+      partName: string,
+      sectionId: string 
+    } 
+  }>
+) {
+  const params = await props.params;
   const session = await auth()
 
   const assessment = await fetchAssessment(params.assessmentId)

@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import DataTable from "./data-table"
 
-export default async function Page({ params }: Readonly<{ params: { assessmentGroupId: string, collectionId: string } }>) {
+export default async function Page(
+    props: Readonly<{ params: { assessmentGroupId: string, collectionId: string } }>
+) {
+    const params = await props.params;
     const session = await auth()
 
     const collection = await fetchAssessmentCollection(params.collectionId)
     const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
-  
+
     if(assessmentType && collection) {
         const links = [
             {
@@ -61,4 +64,4 @@ export default async function Page({ params }: Readonly<{ params: { assessmentGr
             </div>
         )
     }
-  }
+}

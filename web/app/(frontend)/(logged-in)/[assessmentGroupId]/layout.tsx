@@ -21,13 +21,18 @@ export const metadata: Metadata = {
   description: "Environmental and Maturity Program Assessment and Control Tool",
 }
 
-export default async function RootLayout({
-  children,
-  params
-}: Readonly<{
-  children: React.ReactNode,
-  params: { assessmentGroupId: string }
-}>) {
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode,
+    params: { assessmentGroupId: string }
+  }>
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const session = await auth()
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   if (assessmentType) {

@@ -20,18 +20,23 @@ import { AssessmentSidebar } from "@/app/(frontend)/components/assessment-sideba
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
   
-export default async function RootLayout({
-  children,
-  params
-}: Readonly<{
-  children: React.ReactNode,
-  params: { 
-    assessmentGroupId: string,
-    assessmentId: string,
-    roleName: string,
-    partName: string
-  }
-}>) {
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode,
+    params: { 
+      assessmentGroupId: string,
+      assessmentId: string,
+      roleName: string,
+      partName: string
+    }
+  }>
+) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
