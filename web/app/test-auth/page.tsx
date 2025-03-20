@@ -4,9 +4,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { Suspense, useState } from "react"
 
 export default function TestAuthPage() {
+    return (
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+            <TestAuthForm />
+        </Suspense>
+    )
+}
+
+function TestAuthForm() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const searchParams = useSearchParams()
