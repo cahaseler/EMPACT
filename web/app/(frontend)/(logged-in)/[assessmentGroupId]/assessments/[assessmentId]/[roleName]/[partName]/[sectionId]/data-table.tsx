@@ -1,7 +1,8 @@
 "use client"
 import { 
   AssessmentType, 
-  Assessment, 
+  Assessment,
+  AssessmentAttribute, 
   Part, 
   Section, 
   Attribute, 
@@ -32,7 +33,7 @@ export default function DataTable({
     userResponses,
     isParticipant
 }: {
-    assessment: Assessment, 
+    assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] }, 
     assessmentType: AssessmentType,
     role: string,
     part: Part,
@@ -42,6 +43,9 @@ export default function DataTable({
     isParticipant: boolean
 }) {
   const router = useRouter()
+
+  const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
+  const attributesInAssessment = attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
   
   return (
     <Table className="dark:bg-transparent">
@@ -58,7 +62,7 @@ export default function DataTable({
           </TableRow>
       </TableHeader>
       <TableBody className="cursor-pointer">
-          {attributes.map((attribute: Attribute & { levels: Level[] }, key: number) => {
+          {attributesInAssessment.map((attribute: Attribute & { levels: Level[] }, key: number) => {
           const attributeResponses = userResponses.filter((userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id)
           const level = attributeResponses.length > 0 ? attribute.levels.find((level: Level) => level.id === attributeResponses[0].levelId) : undefined
           return (

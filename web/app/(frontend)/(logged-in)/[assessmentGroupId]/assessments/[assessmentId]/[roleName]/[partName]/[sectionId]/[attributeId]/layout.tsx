@@ -3,7 +3,7 @@ import {
     fetchAssessment,
     fetchPart,
     fetchSection,
-    fetchAttribute
+    fetchAssessmentAttribute
   } from "../../../../../../../utils/dataFetchers"
   import NotFound from "@/app/(frontend)/components/notFound"
   
@@ -25,7 +25,7 @@ import {
     const assessment = await fetchAssessment(params.assessmentId)
     const part = await fetchPart(params.assessmentGroupId, params.partName)
     const section = await fetchSection(params.sectionId)
-    const attribute = await fetchAttribute(params.attributeId)
+    const attribute = await fetchAssessmentAttribute(params.assessmentId, params.attributeId)
   
     if (assessmentType && assessment && part && section) {
       const links = [

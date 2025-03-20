@@ -51,7 +51,7 @@ export default function DataTable({
         <Table className="cursor-pointer dark:bg-transparent">
             <TableHeader>
                 <TableRow>
-                    <TableHead>Project ID</TableHead>
+                    <TableHead>{assessmentType.projectType || "Project"} ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Location</TableHead>

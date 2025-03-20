@@ -24,7 +24,7 @@ export default function PageView({
                 <div className="space-y-4 max-lg:ml-2">
                     <div className="flex flex-col max-md:space-y-2 md:flex-row md:space-x-4 justify-between">
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name} Users</h1>
+                            <h1 className="text-3xl font-bold tracking-tighter">{assessmentType.name} Assessment Users</h1>
                             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                                 Select an assessment {assessmentsOrCollections === "collections" && "collection"} from the list below to view its assigned {assessmentsOrCollections === "collections" ? "managers" : "users"}.
                             </p>

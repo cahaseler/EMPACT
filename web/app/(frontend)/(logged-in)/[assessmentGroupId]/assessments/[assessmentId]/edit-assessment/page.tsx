@@ -3,8 +3,8 @@ import {
     fetchAssessmentCollections,
     fetchAssessment,
     fetchAssessmentParts,
+    fetchAssessmentAttributes,
     fetchAssessmentUsers,
-    fetchAssessmentParticipants,
     fetchAllResponsesForAssessment
 } from "../../../../utils/dataFetchers"
 import { auth } from "@/auth"
@@ -21,6 +21,7 @@ import SubmitModule from "./submit-module"
 import ArchiveModule from "../../archive-module"
 import EditForm from "./edit-form"
 import PartsTable from "./parts-table"
+import AssessmentAttributes from "./attributes"
 
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string,
@@ -33,8 +34,9 @@ export default async function Page({ params }: Readonly<{ params: {
   const editableCollections = await viewableCollections(session, params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentParts = await fetchAssessmentParts(params.assessmentId)
+  const parts = assessmentParts.map(part => part.part)
+  const assessmentAttributes = await fetchAssessmentAttributes(params.assessmentId)
   const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
-  const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
   const userResponses = await fetchAllResponsesForAssessment(params.assessmentId)
 
   if (assessmentType && assessment) {
@@ -89,6 +91,7 @@ export default async function Page({ params }: Readonly<{ params: {
                 </section>
                 <section className="mb-8">
                     <EditForm 
+                        assessmentType={assessmentType}
                         assessment={assessment} 
                         assessmentCollections={canEditCollection ? editableCollections : assessmentCollections}
                         canEditCollection={canEditCollection}
@@ -101,8 +104,13 @@ export default async function Page({ params }: Readonly<{ params: {
                         <PartsTable 
                             assessmentParts={assessmentParts}
                             canEditStatus={canEditStatus}
-                            numAssessmentUsers={assessmentParticipants.length}
+                            assessmentUsers={assessmentUsers}
                             userResponses={userResponses}
+                        />
+                        <AssessmentAttributes 
+                            assessmentId={assessment.id}
+                            parts={parts}
+                            assessmentAttributes={assessmentAttributes}
                         />
                     </div>
                 </section>

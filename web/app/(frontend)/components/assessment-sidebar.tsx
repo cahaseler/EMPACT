@@ -2,6 +2,7 @@ import {
     AssessmentType, 
     Assessment,
     AssessmentPart,
+    AssessmentAttribute,
     AssessmentUser,
     AssessmentUserResponse,
     Part, 
@@ -36,13 +37,14 @@ export function AssessmentSidebar ({
     isParticipant
 }: Readonly<{ 
     assessmentType: AssessmentType
-    assessment: Assessment
+    assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] }
     role: string
     parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
     assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[]})[]
     userResponses: AssessmentUserResponse[],
     isParticipant: boolean
 }>) {
+  const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
   const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
   return (
     <Sidebar 
@@ -67,10 +69,11 @@ export function AssessmentSidebar ({
       <SidebarContent className="group-data-[collapsible=icon]:hidden">
         {parts.map((part) => {
             const partAttributeIds = part.sections.flatMap(section => section.attributes.map(attribute => attribute.id))
-            const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributeIds.includes(responseAttributeId))
+            const partAttributesInAssessmentIds = partAttributeIds.filter(partAttributeId => assessmentAttributeIds.includes(partAttributeId))
+            const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributesInAssessmentIds.includes(responseAttributeId))
             const partParticipants = assessmentUsers.filter(assessmentUser => assessmentUser.role === "Participant" || assessmentUser.participantParts.some(participantPart => participantPart.partId === part.id))
             const numParticipants = isParticipant ? 1 : partParticipants.length
-            const unfinishedPart = partAttributeIds.length * numParticipants !== partResponseAttributeIds.length * numParticipants
+            const unfinishedPart = partAttributesInAssessmentIds.length * numParticipants !== partResponseAttributeIds.length * numParticipants
             return ( 
             <Collapsible className="group/collapsible">
                 <SidebarGroup>
@@ -91,7 +94,8 @@ export function AssessmentSidebar ({
                         <SidebarGroupContent>
                             <SidebarMenu>
                             {part.sections.map((section) => {
-                                const sectionAttributeIds = section.attributes.map(attribute => attribute.id)
+                                const sectionAttributesInAssessment = section.attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
+                                const sectionAttributeIds = sectionAttributesInAssessment.map(attribute => attribute.id)
                                 const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
                                 const unfinishedSection = sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
                                 return (
@@ -112,7 +116,7 @@ export function AssessmentSidebar ({
                                         </div>
                                         <CollapsibleContent>
                                             <SidebarMenuSub>
-                                                {section.attributes.map((attribute) => {
+                                                {sectionAttributesInAssessment.map((attribute) => {
                                                     const attributeResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => attribute.id === responseAttributeId)
                                                     const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
                                                     return (

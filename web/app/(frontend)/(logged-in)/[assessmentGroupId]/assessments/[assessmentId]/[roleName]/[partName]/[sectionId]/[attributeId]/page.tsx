@@ -1,9 +1,9 @@
 import { 
   fetchAssessmentType, 
   fetchAssessment, 
+  fetchAssessmentAttribute,
   fetchPart, 
-  fetchSection, 
-  fetchAttribute,
+  fetchSection,
   fetchPreviousAttribute,
   fetchNextAttribute,
   fetchLevels
@@ -13,8 +13,10 @@ import { viewableAttributeResponses } from "../../../../../../../utils/permissio
 
 import { Card } from "@/components/ui/card"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
-import AttributeContent from "./attributeContent"
 import AttributeResponseTable from "./attributeResponseTable"
+import AttributeLevels from "./attributeLevels"
+import AttributeUserResponse from "./attributeUserResponse"
+import Navigation from "./navigation"
 
 export default async function Page({ params }: Readonly<{ params: { 
     assessmentGroupId: string, 
@@ -28,17 +30,17 @@ export default async function Page({ params }: Readonly<{ params: {
   const session = await auth()
   
   const assessment = await fetchAssessment(params.assessmentId)
+  const assessmentAttribute = await fetchAssessmentAttribute(params.assessmentId, params.attributeId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const section = await fetchSection(params.sectionId)
-  const attribute = await fetchAttribute(params.attributeId)
-  const prevAttribute = await fetchPreviousAttribute(params.assessmentGroupId, params.attributeId)
-  const nextAttribute = await fetchNextAttribute(params.assessmentGroupId, params.attributeId)
+  const prevAttribute = await fetchPreviousAttribute(params.assessmentId, params.attributeId)
+  const nextAttribute = await fetchNextAttribute(params.assessmentId, params.attributeId)
   const levels = await fetchLevels(params.attributeId)
   const isParticipant = params.roleName === "Participant"
   const userResponses = await viewableAttributeResponses(session, params.assessmentId, params.attributeId, params.roleName)
 
-  if (assessmentType && assessment && part && section && attribute) {
+  if (assessmentType && assessment && part && section && assessmentAttribute) {
     const links = [
       {
           url: `/${assessmentType.id}/assessments`, 
@@ -61,35 +63,38 @@ export default async function Page({ params }: Readonly<{ params: {
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
-            <Breadcrumbs links={links} currentPage={part.attributeType + " " + attribute.id.toString().toUpperCase()} />
+            <Breadcrumbs links={links} currentPage={part.attributeType + " " + assessmentAttribute.attributeId.toUpperCase()} />
             <div className={isParticipant ? "space-y-4" : "space-y-6"}>
               <h1 
                 className="text-3xl font-bold tracking-tighter" 
-                dangerouslySetInnerHTML={{ __html: attribute.id.toString().toUpperCase() + ". " + attribute.name }} 
+                dangerouslySetInnerHTML={{ __html: assessmentAttribute.attributeId.toUpperCase() + ". " + assessmentAttribute.attribute.name }} 
               />
               {params.roleName === "Facilitator" && <AttributeResponseTable userResponses={userResponses} levels={levels} />}
               <Card className="bg-white max-h-60 overflow-auto px-6 py-1">
                 <div 
                   className="text-sm text-description text-muted-foreground dark:text-indigo-300/80" 
-                  dangerouslySetInnerHTML={{ __html: attribute.description }} 
+                  dangerouslySetInnerHTML={{ __html: assessmentAttribute.attribute.description }} 
                 />
               </Card>
             </div>
           </div>
         </section>
-        <AttributeContent 
-          assessment={assessment} 
-          assessmentType={assessmentType} 
-          role={params.roleName}
-          part={part} 
-          section={section} 
-          attribute={attribute}
-          prevAttribute={prevAttribute}
+        <AttributeLevels levels={levels} />
+        {isParticipant && 
+          <AttributeUserResponse 
+            assessment={assessment} 
+            userId={session?.user?.id}
+            attributeId={assessmentAttribute.attributeId} 
+            levels={levels} 
+            userResponse={userResponses[0]} 
+          />
+        }
+        <Navigation 
+          urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}/${section.id}`}
+          isParticipant={isParticipant} 
+          userResponses={userResponses} 
+          prevAttribute={prevAttribute} 
           nextAttribute={nextAttribute} 
-          levels={levels} 
-          userId={session?.user?.id}
-          isParticipant={isParticipant}
-          userResponses={userResponses}
         />
       </div>
     )

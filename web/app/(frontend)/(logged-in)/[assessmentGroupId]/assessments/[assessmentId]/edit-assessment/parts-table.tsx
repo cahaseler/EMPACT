@@ -1,6 +1,6 @@
 import { 
-    Assessment,
     AssessmentPart,
+    AssessmentUser,
     AssessmentUserResponse,
     Part,
     Section,
@@ -19,12 +19,12 @@ import PartRow from "./part-row"
 export default function PartsTable({ 
     assessmentParts, 
     canEditStatus, 
-    numAssessmentUsers, 
+    assessmentUsers, 
     userResponses 
 }: {
     readonly assessmentParts: (AssessmentPart & { part: Part & { sections: (Section & { attributes: Attribute[] })[] } })[]
     readonly canEditStatus: boolean
-    readonly numAssessmentUsers: number
+    readonly assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[]})[]
     readonly userResponses: AssessmentUserResponse[]
 }) {
     const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
@@ -43,7 +43,8 @@ export default function PartsTable({
                 {assessmentParts.map((assessmentPart: AssessmentPart & { part: Part & { sections: (Section & { attributes: Attribute[] })[] } }) => {
                     const partAttributeIds = assessmentPart.part.sections.flatMap(section => section.attributes.map(attribute => attribute.id))
                     const partResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => partAttributeIds.includes(responseAttributeId))
-                    const unfinishedPart = partAttributeIds.length * numAssessmentUsers !== partResponseAttributeIds.length * numAssessmentUsers
+                    const partParticipants = assessmentUsers.filter(assessmentUser => assessmentUser.role === "Participant" || assessmentUser.participantParts.some(participantPart => participantPart.id === assessmentPart.id))
+                    const unfinishedPart = partAttributeIds.length * partParticipants.length !== partResponseAttributeIds.length * partParticipants.length
                     return (
                         <PartRow 
                             assessmentId={assessmentPart.assessmentId} 

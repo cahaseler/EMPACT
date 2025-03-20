@@ -43,6 +43,7 @@ model Assessment {
     status                 String
     completedDate          DateTime
     assessmentParts        AssessmentPart[]
+    assessmentAttributes   AssessmentAttribute[]
     assessmentUserGroup    AssessmentUserGroup[]
     assessmentUser         AssessmentUser[]
     assessmentCollection   AssessmentCollection?    @relation(fields: [assessmentCollectionId], references: [id])
@@ -64,6 +65,17 @@ model AssessmentPart {
     assessmentId           Int
     
     @@unique([assessmentId, partId])
+}
+
+// Represents which attributes will be responded to for a specific assessment being done
+model AssessmentAttribute {
+    id                     Int                  @id() @default(autoincrement())
+    attributeId            String
+    attribute              Attribute            @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentId           Int
+    assessment             Assessment           @relation(fields: [assessmentId], references: [id])
+    
+    @@unique([assessmentId, attributeId])
 }
 
 // Final / total scores for an assessment. Depending on the type of assessment, there may be multiple. For example, Environment and Maturity for IP2M METRR scores.
@@ -139,6 +151,7 @@ model AssessmentType {
     id                   Int                    @id() @default(autoincrement())
     name                 String                 @unique()
     description          String                 @db.VarChar(Max)
+    projectType          String // Type of project that assessments of this type belong to, for example a PARS project
     parts                Part[]
     AssessmentCollection AssessmentCollection[]
 }
@@ -174,6 +187,7 @@ model Attribute {
     section                Section                  @relation(fields: [sectionId], references: [id])
     sectionId              String
     levels                 Level[]
+    assessmentAttributes   AssessmentAttribute[]
     assessmentUserResponse AssessmentUserResponse[]
 }
 

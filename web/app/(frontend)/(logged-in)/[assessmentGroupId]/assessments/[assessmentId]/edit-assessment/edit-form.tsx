@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { AssessmentCollection, Assessment } from "@/prisma/mssql/generated/client"
+import { AssessmentType, AssessmentCollection, Assessment } from "@/prisma/mssql/generated/client"
 import { updateAssessment } from "../../../../utils/dataActions"
 
 import { Input } from "@/components/ui/input"
@@ -20,15 +20,17 @@ import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
 export default function EditForm({
+  assessmentType,
   assessment, 
   assessmentCollections,
   canEditCollection,
   canEditStatus
 }: Readonly<{
-  readonly assessment: Assessment, 
-  readonly assessmentCollections: AssessmentCollection[],
-  readonly canEditCollection: boolean,
-  readonly canEditStatus: boolean
+  assessmentType: AssessmentType,
+  assessment: Assessment, 
+  assessmentCollections: AssessmentCollection[],
+  canEditCollection: boolean,
+  canEditStatus: boolean
 }>) {
     const [collectionId, setCollectionId] = useState<string | undefined>(assessment.assessmentCollectionId?.toString())
     const collection = assessmentCollections.find((collection: AssessmentCollection) => collection.id === assessment.assessmentCollectionId)
@@ -68,11 +70,11 @@ export default function EditForm({
                     <div className="min-w-24 flex flex-col space-y-2">
                         <Input 
                             type="text" 
-                            placeholder="Project ID" 
+                            placeholder={(assessmentType.projectType || "Project") + " ID"} 
                             value={projectId} 
                             onChange={(e) => setProjectId(e.target.value)} 
                         />
-                        <Label>Project ID</Label>
+                        <Label>{assessmentType.projectType || "Project"} ID</Label>
                     </div>
                     <div className="min-w-40 flex flex-col space-y-2">
                         <Select onValueChange={(value) => setCollectionId(value)} disabled={!canEditCollection}>

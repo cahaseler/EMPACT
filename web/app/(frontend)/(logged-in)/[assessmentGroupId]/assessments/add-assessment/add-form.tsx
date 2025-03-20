@@ -1,7 +1,18 @@
 "use client"
 import { useState } from "react"
-import { AssessmentCollection, Assessment, Part } from "@/prisma/mssql/generated/client"
-import { createAssessment, createAssessmentPart } from "../../../utils/dataActions"
+import { 
+    AssessmentType, 
+    AssessmentCollection, 
+    Assessment, 
+    Part,
+    Section,
+    Attribute
+} from "@/prisma/mssql/generated/client"
+import { 
+    createAssessment, 
+    createAssessmentPart, 
+    createAssessmentAttribute 
+} from "../../../utils/dataActions"
 
 import { Input } from "@/components/ui/input"
 import {
@@ -16,6 +27,7 @@ import { Button } from "@/components/ui/button"
 import { Loader } from "lucide-react"
 
 import PartsTable from "./parts-table"
+import AssessmentAttributes from "./attributes"
 
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
@@ -26,9 +38,10 @@ type AssessmentPartToAdd = {
     date: Date
 }
 
-export default function AddForm({ assessmentCollections, parts }: Readonly<{
-  readonly assessmentCollections: AssessmentCollection[],
-  readonly parts: Part[]
+export default function AddForm({ assessmentType, assessmentCollections, parts }: Readonly<{
+  assessmentType: AssessmentType,
+  assessmentCollections: AssessmentCollection[],
+  parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
 }>) {
     const [collectionId, setCollectionId] = useState<string | undefined>("")
     const [projectId, setProjectId] = useState<string>("")
@@ -37,6 +50,8 @@ export default function AddForm({ assessmentCollections, parts }: Readonly<{
     const [location, setLocation] = useState<string>("")
     const [description, setDescription] = useState<string>("")
     const [partsToAdd, setPartsToAdd] = useState<AssessmentPartToAdd[]>([])
+    const allAttributeIds = parts.flatMap(part => part.sections.flatMap(section => section.attributes.map(attribute => attribute.id)))
+    const [attributesToAdd, setAttributesToAdd] = useState<string[]>(allAttributeIds)
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
@@ -46,16 +61,21 @@ export default function AddForm({ assessmentCollections, parts }: Readonly<{
         if (projectId !== "" && collectionId !== undefined && name !== "") {
             setSaving(true)
             try {
-                createAssessment(projectId, parseInt(collectionId, 10), name, status, location, description).then(async (assessment: Assessment) => {
-                    for (var i = 0; i < partsToAdd.length; i++) {
-                        await createAssessmentPart(partsToAdd[i].status, partsToAdd[i].date, assessment.id, partsToAdd[i].partId)
+                createAssessment(projectId, parseInt(collectionId, 10), name, status, location, description).then(
+                    async (assessment: Assessment) => {
+                        for (var i = 0; i < partsToAdd.length; i++) {
+                            await createAssessmentPart(partsToAdd[i].status, partsToAdd[i].date, assessment.id, partsToAdd[i].partId)
+                        }
+                        for (var i = 0; i < attributesToAdd.length; i++) {
+                            await createAssessmentAttribute(assessment.id, attributesToAdd[i])
+                        }
+                        setSaving(false)
+                        router.refresh()
+                        toast({
+                            title: "Assessment created successfully."
+                        })
                     }
-                    setSaving(false)
-                    router.refresh()
-                    toast({
-                      title: "Assessment created successfully."
-                    })
-                })
+                )
             } catch (error) {
                 toast({
                     title: `Error creating assessment: ${error}`
@@ -72,13 +92,13 @@ export default function AddForm({ assessmentCollections, parts }: Readonly<{
                         <div className="min-w-24 flex flex-col space-y-2">
                             <Input 
                                 type="text" 
-                                placeholder="Project ID" 
+                                placeholder={(assessmentType.projectType || "Project") + " ID"}
                                 value={projectId} 
                                 onChange={(e) => setProjectId(e.target.value)} 
                             />
-                            <Label>Project ID</Label>
+                            <Label>{assessmentType.projectType || "Project"} ID</Label>
                         </div>
-                        <div className="min-w-40 flex flex-col space-y-2">
+                        <div className="min-w-48 flex flex-col space-y-2">
                             <Select onValueChange={(value) => setCollectionId(value)}>
                                 <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
                                     <SelectValue 
@@ -155,11 +175,21 @@ export default function AddForm({ assessmentCollections, parts }: Readonly<{
                         partsToAdd={partsToAdd} 
                         setPartsToAdd={setPartsToAdd}
                     />
+                    <AssessmentAttributes 
+                        parts={parts} 
+                        attributesToAdd={attributesToAdd} 
+                        setAttributesToAdd={setAttributesToAdd}
+                    />
                 </div>
             </section>
             <section className="mb-16">
                 <div className="flex flex-col items-center">
-                    <Button type="submit" disabled={saving || projectId === "" || collectionId === undefined || name === ""}>
+                    <Button 
+                        type="submit" 
+                        disabled={
+                            saving || projectId === "" || collectionId === undefined || name === "" || attributesToAdd.length === 0
+                        }
+                    >
                         {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Add Assessment
                     </Button>
                 </div>

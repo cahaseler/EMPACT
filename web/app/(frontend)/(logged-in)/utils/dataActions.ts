@@ -3,7 +3,8 @@ import { db } from "@/lib/db"
 import { 
     AssessmentCollection, 
     Assessment, 
-    AssessmentPart, 
+    AssessmentPart,
+    AssessmentAttribute, 
     AssessmentUserGroup,
     AssessmentCollectionUser, 
     AssessmentUser,
@@ -100,6 +101,20 @@ export async function updateAssessmentPart(
         assessmentId,
         partId
     } })
+}
+
+export async function createAssessmentAttribute(
+    assessmentId: number,
+    attributeId: string
+): Promise<AssessmentAttribute> {
+    return await db.assessmentAttribute.create({ data: { assessmentId, attributeId } })
+}
+
+export async function deleteAssessmentAttribute(
+    assessmentId: number,
+    attributeId: string
+): Promise<AssessmentAttribute> {
+    return await db.assessmentAttribute.delete({ where: { assessmentId_attributeId: { assessmentId, attributeId } } })
 }
 
 export async function createAssessmentUserGroup(

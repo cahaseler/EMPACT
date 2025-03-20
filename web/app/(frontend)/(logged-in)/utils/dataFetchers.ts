@@ -12,6 +12,7 @@ import {
   AssessmentUserGroup,
   AssessmentUserResponse,
   AssessmentPart,
+  AssessmentAttribute,
   Part, 
   Section, 
   Attribute, 
@@ -99,7 +100,9 @@ export async function fetchAssessments(typeid: string): Promise<(Assessment & { 
   return collections.flatMap(collection => collection.assessments)
 }
 
-export async function fetchAssessment(assessmentId: string): Promise<(Assessment & { assessmentParts: (AssessmentPart & { part: Part })[] }) | null> {
+export async function fetchAssessment(assessmentId: string): Promise<
+  (Assessment & { assessmentParts: (AssessmentPart & { part: Part })[], assessmentAttributes: AssessmentAttribute[] }) | null
+> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -107,7 +110,12 @@ export async function fetchAssessment(assessmentId: string): Promise<(Assessment
     return null
   }
 
-  return await db.assessment.findUnique({ where: { id: idAsInteger }, include: { assessmentParts: { include: { part: true } } } })
+  return await db.assessment.findUnique({ where: { 
+    id: idAsInteger 
+  }, include: { 
+    assessmentParts: { include: { part: true } }, 
+    assessmentAttributes: true 
+  } })
 }
 
 export async function fetchAssessmentUserGroups(assessmentId: string): Promise<(AssessmentUserGroup & { assessmentUser: (AssessmentUser & { user: User })[] })[]> {
@@ -252,6 +260,30 @@ export async function fetchAssessmentParts(assessmentId: string): Promise<(Asses
   } })
 }
 
+export async function fetchAssessmentAttributes(assessmentId: string): Promise<(AssessmentAttribute & { attribute: Attribute })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentAttribute.findMany({ where: { assessmentId: idAsInteger }, include: { attribute: true } })
+}
+
+export async function fetchAssessmentAttribute(assessmentId: string, attributeId: string): Promise<
+  AssessmentAttribute & { attribute: Attribute } | null
+> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if(isNaN(idAsInteger)) {
+    return null
+  }
+  return await db.assessmentAttribute.findUnique({ where: { 
+    assessmentId_attributeId: { assessmentId: idAsInteger, attributeId } 
+  }, include: { attribute: true } })
+}
+
 export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
@@ -288,26 +320,20 @@ export async function fetchAttributes(sectionId: string): Promise<(Attribute & {
   return await db.attribute.findMany({ where: { sectionId: sectionId }, include: { levels: true } })
 }
 
-export async function fetchAttribute(attributeId: string): Promise<Attribute | null> {
-  return await attribute.findUnique({ where: { id: attributeId } })
-}
-
-export async function fetchPreviousAttribute(typeid: string, attributeId: string): Promise<Attribute | null> {
-  const assessmentParts = await fetchPartsSectionsAttributes(typeid)
-  const attributes = assessmentParts.flatMap(part => part.sections.flatMap(section => section.attributes))
-  const currentAttribute = attributes.find(attribute => attribute.id === attributeId)
+export async function fetchPreviousAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
+  const attributes = await fetchAssessmentAttributes(assessmentId)
+  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
 
   if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) - 1]
+  return attributes[attributes.indexOf(currentAttribute) - 1].attribute
 }
 
-export async function fetchNextAttribute(typeid: string, attributeId: string): Promise<Attribute | null> {
-  const assessmentParts = await fetchPartsSectionsAttributes(typeid)
-  const attributes = assessmentParts.flatMap(part => part.sections.flatMap(section => section.attributes))
-  const currentAttribute = attributes.find(attribute => attribute.id === attributeId)
+export async function fetchNextAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
+  const attributes = await fetchAssessmentAttributes(assessmentId)
+  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
 
   if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) + 1]
+  return attributes[attributes.indexOf(currentAttribute) + 1].attribute
 }
 
 export async function fetchLevels(attributeId: string): Promise<Level[]> {
