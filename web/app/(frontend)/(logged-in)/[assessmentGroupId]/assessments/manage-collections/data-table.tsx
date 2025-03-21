@@ -1,5 +1,6 @@
 "use client"
 
+import { Session } from "@/auth"
 import {
   Table,
   TableBody,
@@ -23,12 +24,14 @@ import DataRow from "./data-row"
 export default function DataTable({
   collections,
   assessmentType,
+  session,
 }: {
   readonly collections: (AssessmentCollection & {
     assessments: Assessment[]
     assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[]
   })[]
   readonly assessmentType: AssessmentType
+  readonly session: Session | null
 }) {
   return (
     <Table className="table-fixed dark:bg-transparent">
@@ -43,7 +46,7 @@ export default function DataTable({
       </TableHeader>
       <TableBody>
         {collections.map(
-          async (
+          (
             collection: AssessmentCollection & {
               assessments: Assessment[]
               assessmentCollectionUser: (AssessmentCollectionUser & {
@@ -55,7 +58,7 @@ export default function DataTable({
               key={collection.id}
               collection={collection}
               assessmentType={assessmentType}
-              isAdmin={await isAdmin()}
+              isAdmin={isAdmin(session)}
             />
           )
         )}
