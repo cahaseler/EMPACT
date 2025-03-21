@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDown } from "lucide-react"
 
@@ -14,7 +15,10 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("border-b-2 border-indigo-100 dark:border-indigo-900", className)}
+    className={cn(
+      "border-b-2 border-indigo-100 dark:border-indigo-900",
+      className
+    )}
     {...props}
   />
 ))
@@ -55,4 +59,4 @@ const AccordionContent = React.forwardRef<
 
 AccordionContent.displayName = AccordionPrimitive.Content.displayName
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger }

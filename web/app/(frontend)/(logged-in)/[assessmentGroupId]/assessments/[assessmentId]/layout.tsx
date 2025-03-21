@@ -1,24 +1,30 @@
-import { fetchAssessmentType, fetchAssessment } from "../../../utils/dataFetchers"
 import NotFound from "@/app/(frontend)/components/notFound"
+import {
+  fetchAssessment,
+  fetchAssessmentType,
+} from "../../../utils/dataFetchers"
 
-export default async function RootLayout({
-  children,
-  params
-}: Readonly<{
-  children: React.ReactNode,
-  params: { 
-    assessmentGroupId: string,
-    assessmentId: string
-  }
-}>) {
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode
+    params: {
+      assessmentGroupId: string
+      assessmentId: string
+    }
+  }>
+) {
+  const params = await props.params
+
+  const { children } = props
+
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
 
   if (assessmentType) {
     const links = [
       {
-        url: `/${assessmentType.id}/assessments`, 
-        name: assessmentType.name
+        url: `/${assessmentType.id}/assessments`,
+        name: assessmentType.name,
       },
     ]
     if (assessment) {
@@ -26,5 +32,4 @@ export default async function RootLayout({
     }
     return <NotFound links={links} pageType="assessment" />
   }
-  
 }

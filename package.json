@@ -1,6 +1,6 @@
 {
   "name": "empact",
-  "version": "1.2.11",
+  "version": "1.4.1",
   "license": "CC-BY-4.0",
   "description": "Environment and Maturity Program Assessment and Control Tool",
   "keywords": [
@@ -38,6 +38,7 @@
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-react": "7.35.0",
     "eslint-plugin-tailwindcss": "3.17.4",
-    "prettier": "3.3.3"
+    "prettier": "3.3.3",
+    "tailwindcss": "^4.0.14"
   }
 }

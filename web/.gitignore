@@ -7,6 +7,8 @@
 bun.lockb
 pnpm-lock.yaml
 
+/prisma/**/generated/
+
 # testing
 /coverage
 /test-results/
@@ -46,3 +48,6 @@ yarn-error.log*
 next-env.d.ts
 
 
+
+# clerk configuration (can include secrets)
+/.clerk/

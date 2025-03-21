@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	output: "standalone",
-	experimental: { outputFileTracingIgnores: ["./prisma/**/generated/**"] },
-};
+  output: "standalone",
+  experimental: {
+    nodeMiddleware: true,
+  },
+}
 
-export default nextConfig;
+export default nextConfig

@@ -1,7 +1,5 @@
 {
-  "cSpell.words": [
-    "Tauri"
-  ],
+  "cSpell.words": ["Tauri"],
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
@@ -9,5 +7,7 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "cahaseler",
     "projectKey": "cahaseler_EMPACT"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

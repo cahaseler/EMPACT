@@ -1,21 +1,25 @@
-import { 
-  fetchAssessmentType, 
-  fetchAssessment, 
-  fetchPart,
-  fetchAssessmentUsers
-} from "../../../../../utils/dataFetchers"
-import { auth } from "@/auth"
-import { viewableResponses } from "../../../../../utils/permissions"
-
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import { auth } from "@/auth"
+import {
+  fetchAssessment,
+  fetchAssessmentType,
+  fetchAssessmentUsers,
+  fetchPart,
+} from "../../../../../utils/dataFetchers"
+import { viewableResponses } from "../../../../../utils/permissions"
 import PartContent from "./part"
 
-export default async function Page({ params }: Readonly<{ params: { 
-    assessmentGroupId: string, 
-    assessmentId: string, 
-    roleName: string,
-    partName: string 
-  } }>) {
+export default async function Page(
+  props: Readonly<{
+    params: {
+      assessmentGroupId: string
+      assessmentId: string
+      roleName: string
+      partName: string
+    }
+  }>
+) {
+  const params = await props.params
   const session = await auth()
 
   const assessment = await fetchAssessment(params.assessmentId)
@@ -24,18 +28,22 @@ export default async function Page({ params }: Readonly<{ params: {
   const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
 
   const isParticipant = params.roleName === "Participant"
-  const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
+  const userResponses = await viewableResponses(
+    session,
+    params.assessmentId,
+    params.roleName
+  )
 
   if (assessmentType && assessment) {
     const links = [
       {
-        url: `/${assessmentType.id}/assessments`, 
-        name: assessmentType.name
+        url: `/${assessmentType.id}/assessments`,
+        name: assessmentType.name,
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}`,
-        name: assessment.name
-      }
+        name: assessment.name,
+      },
     ]
     if (part) {
       return (
@@ -45,23 +53,25 @@ export default async function Page({ params }: Readonly<{ params: {
               <Breadcrumbs links={links} currentPage={part.name} />
               <div className="flex flex-row justify-between">
                 <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tighter">{part.name}</h1>
-                    <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                      {part.description}
-                    </p>
+                  <h1 className="text-3xl font-bold tracking-tighter">
+                    {part.name}
+                  </h1>
+                  <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+                    {part.description}
+                  </p>
                 </div>
               </div>
             </div>
           </section>
           <section className="mb-16">
-            <PartContent 
-              assessment={assessment} 
-              assessmentType={assessmentType} 
-              part={part} 
-              role={params.roleName}
+            <PartContent
+              assessment={assessment}
+              assessmentType={assessmentType}
               assessmentUsers={assessmentUsers}
-              userResponses={userResponses} 
               isParticipant={isParticipant}
+              role={params.roleName}
+              part={part}
+              userResponses={userResponses}
             />
           </section>
         </div>

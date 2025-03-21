@@ -1,45 +1,62 @@
-import { 
-  AssessmentType, 
+import {
   Assessment,
-  AssessmentPart,
   AssessmentAttribute,
-  AssessmentUser, 
-  AssessmentUserResponse, 
-  Part, 
-  Section, 
-  Attribute 
+  AssessmentPart,
+  AssessmentType,
+  AssessmentUser,
+  AssessmentUserResponse,
+  Attribute,
+  Part,
+  Section
 } from "@/prisma/mssql/generated/client"
+
 import { Button } from "@/components/ui/button"
+
 import Link from "next/link"
 
 export default function PartContent({
-    assessment, 
-    assessmentType,
-    role,
-    part,
-    assessmentUsers,
-    userResponses,
-    isParticipant
-}: {
-    assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] }, 
-    assessmentType: AssessmentType,
-    role: string,
-    part: Part & { sections: (Section & { attributes: Attribute[] })[] },
-    assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[]})[],
-    userResponses: AssessmentUserResponse[],
-    isParticipant: boolean
-}) {
-  const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
-  const responseAttributeIds = userResponses.map(userResponse => userResponse.attributeId)
-  const partParticipants = assessmentUsers.filter(assessmentUser => assessmentUser.role === "Participant" || assessmentUser.participantParts.some(participantPart => participantPart.partId === part.id))
+  assessment,
+  assessmentType,
+  assessmentUsers,
+  isParticipant,
+  role,
+  part,
+  userResponses
+}: Readonly<{
+  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] },
+  assessmentType: AssessmentType,
+  assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[] })[],
+  isParticipant: boolean,
+  role: string,
+  part: Part & { sections: (Section & { attributes: Attribute[] })[] },
+  userResponses: AssessmentUserResponse[]
+}>) {
+  const assessmentAttributeIds = assessment.assessmentAttributes.map(
+    assessmentAttribute => assessmentAttribute.attributeId
+  )
+  const responseAttributeIds = userResponses.map(
+    userResponse => userResponse.attributeId
+  )
+  const partParticipants = assessmentUsers.filter(
+    assessmentUser =>
+      assessmentUser.role === "Participant" ||
+      assessmentUser.participantParts.some(
+        participantPart => participantPart.partId === part.id
+      )
+  )
   const numParticipants = isParticipant ? 1 : partParticipants.length
   return (
     <div className="flex flex-col space-y-2">
       {part.sections.map((section: Section & { attributes: Attribute[] }, key: number) => {
-        const sectionAttributesInAssessment = section.attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
+        const sectionAttributesInAssessment = section.attributes.filter(
+          attribute => assessmentAttributeIds.includes(attribute.id)
+        )
         const sectionAttributeIds = sectionAttributesInAssessment.map(attribute => attribute.id)
-        const sectionResponseAttributeIds = responseAttributeIds.filter(responseAttributeId => sectionAttributeIds.includes(responseAttributeId))
-        const unfinishedSection = sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
+        const sectionResponseAttributeIds = responseAttributeIds.filter(
+          responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
+        )
+        const unfinishedSection =
+          sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
         return (
           <Link
             key={key}

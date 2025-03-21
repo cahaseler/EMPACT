@@ -1,6 +1,6 @@
 generator client {
     provider      = "prisma-client-js"
-    binaryTargets = ["native", "debian-openssl-3.0.x"]
+    binaryTargets = ["debian-openssl-3.0.x", "native", "darwin", "linux-musl-openssl-3.0.x"]
     output        = "./generated/client"
 }
 
@@ -55,15 +55,15 @@ model Assessment {
 // Represents a part of a specific assessment being done
 // Parts of an assessment can be activated/submitted separately
 model AssessmentPart {
-    id                     Int                  @id() @default(autoincrement())
-    status                 String
-    date                   DateTime
-    assessment             Assessment           @relation(fields: [assessmentId], references: [id])
-    assessmentUser         AssessmentUser[]
-    partId                 Int
-    part                   Part                 @relation(fields: [partId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    assessmentId           Int
-    
+    id             Int              @id() @default(autoincrement())
+    status         String
+    date           DateTime
+    assessment     Assessment       @relation(fields: [assessmentId], references: [id])
+    assessmentUser AssessmentUser[]
+    partId         Int
+    part           Part             @relation(fields: [partId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentId   Int
+
     @@unique([assessmentId, partId])
 }
 
@@ -114,21 +114,21 @@ model AssessmentCollectionUser {
 // Groups of users that are assigned to an assessment
 // Different groups can have access to the assessment at different times
 model AssessmentUserGroup {
-    id                 Int                  @id() @default(autoincrement())
-    name               String
-    assessment         Assessment           @relation(fields: [assessmentId], references: [id])
-    assessmentUser     AssessmentUser[]
-    status             String
-    assessmentId       Int
+    id             Int              @id() @default(autoincrement())
+    name           String
+    assessment     Assessment       @relation(fields: [assessmentId], references: [id])
+    assessmentUser AssessmentUser[]
+    status         String
+    assessmentId   Int
 }
 
 // Users that are assigned to an assessment
 // This is also used to specify the role a given user has on a given assessment
 model AssessmentUser {
-    id                    Int                   @id() @default(autoincrement())
-    assessment            Assessment            @relation(fields: [assessmentId], references: [id])
-    user                  User                  @relation(fields: [userId], references: [id])
-    assessmentUserGroup   AssessmentUserGroup?  @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    id                    Int                  @id() @default(autoincrement())
+    assessment            Assessment           @relation(fields: [assessmentId], references: [id])
+    user                  User                 @relation(fields: [userId], references: [id])
+    assessmentUserGroup   AssessmentUserGroup? @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     participantParts      AssessmentPart[] // Parts of the assessment for which the user should submit responses
     role                  String
     assessmentId          Int
@@ -141,8 +141,8 @@ model AssessmentUser {
 
 // Specific permissions that assessment users can be assigned to, such as edit, delete, etc.
 model Permission {
-    id              Int    @id() @default(autoincrement())
-    name            String @unique()
+    id              Int              @id() @default(autoincrement())
+    name            String           @unique()
     assessmentUsers AssessmentUser[]
 }
 
@@ -158,12 +158,12 @@ model AssessmentType {
 
 // An assessment itself is broken into Parts (for example, Environment and Maturity). Each part has a set of sections, each containing a series of questions (attributes), and users choose their responses from the list of options (levels)
 model Part {
-    id                Int            @id() @default(autoincrement())
+    id                Int              @id() @default(autoincrement())
     name              String
-    description       String         @db.VarChar(Max)
+    description       String           @db.VarChar(Max)
     attributeType     String
     canFacParticipate Boolean // Specifies whether or not a facilitator can also submit responses to the part
-    assessmentType    AssessmentType @relation(fields: [assessmentTypeId], references: [id])
+    assessmentType    AssessmentType   @relation(fields: [assessmentTypeId], references: [id])
     assessmentTypeId  Int
     sections          Section[]
     assessmentPart    AssessmentPart[]
