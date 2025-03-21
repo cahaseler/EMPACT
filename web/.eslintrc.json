@@ -13,7 +13,10 @@
     "react/prefer-read-only-props": "warn",
     "jsdoc/check-alignment": 1,
     "jsdoc/no-types": 1,
-    "@typescript-eslint/no-explicit-any": "warn"
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react/no-unescaped-entities": "warn",
+    "@typescript-eslint/no-unused-expressions":"warn"
   },
   "overrides": [
     {
