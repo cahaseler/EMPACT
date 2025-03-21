@@ -28,12 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  Assessment,
-  AssessmentPart,
-  AssessmentUserResponse,
-  Attribute,
   Part,
-  Section,
 } from "@/prisma/mssql/generated/client"
 
 type AssessmentPartToAdd = {
@@ -49,7 +44,7 @@ export default function PartsTable({
 }: {
   readonly parts: Part[]
   readonly partsToAdd: AssessmentPartToAdd[]
-  readonly setPartsToAdd: Function
+  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>>
 }) {
   return (
     <Table className="table-fixed dark:bg-transparent">
@@ -63,7 +58,7 @@ export default function PartsTable({
       <TableBody>
         {parts.map((part: Part) => {
           const [status, setStatus] = useState<string>("Planned")
-          const [date, setDate] = useState<Date | undefined>(new Date())
+          const [date, setDate] = useState<Date>(new Date())
 
           const updatePartsToAdd = () => {
             const newPartsToAdd = partsToAdd.filter(
@@ -121,6 +116,9 @@ export default function PartsTable({
                         if (selectedDate !== undefined) {
                           setDate(selectedDate)
                           updatePartsToAdd()
+                        } else {
+                          // Ensure date is never undefined by using current date as fallback
+                          setDate(new Date())
                         }
                       }}
                       initialFocus
