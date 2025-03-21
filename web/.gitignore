@@ -7,6 +7,8 @@
 bun.lockb
 pnpm-lock.yaml
 
+/prisma/**/generated/
+
 # testing
 /coverage
 /test-results/

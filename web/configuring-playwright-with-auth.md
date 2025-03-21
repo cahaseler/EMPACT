@@ -1,9 +1,9 @@
-
 NOTE: Deprecated. Needs to be rewritten to work with Clerk.
 
 # Configuring Playwright with Authentication
 
-This guide explains how Playwright is configured in this project, including authentication setup, test accounts, and CI/CD integration.
+This guide explains how Playwright is configured in this project, including
+authentication setup, test accounts, and CI/CD integration.
 
 ## Project Setup
 
@@ -19,9 +19,10 @@ yarn exec playwright install
 The main configuration is in `playwright.config.ts`:
 
 ```typescript
+import path from "path"
+
 import { defineConfig, devices } from "@playwright/test"
 import dotenv from "dotenv"
-import path from "path"
 
 dotenv.config({ path: path.resolve(__dirname, ".env.test") })
 
@@ -64,7 +65,8 @@ export default defineConfig({
 
 #### Test Credentials Provider
 
-The project includes a special test credentials provider in `auth.ts` that's only enabled during testing:
+The project includes a special test credentials provider in `auth.ts` that's
+only enabled during testing:
 
 ```typescript
 ...(process.env.ENABLE_AUTOMATED_TEST_LOGIN === "true"
@@ -105,6 +107,7 @@ The project includes a special test credentials provider in `auth.ts` that's onl
 ```
 
 Key features of the test auth provider:
+
 - Only enabled when `ENABLE_AUTOMATED_TEST_LOGIN=true`
 - Validates credentials against test accounts
 - Verifies password against `TEST_USER_PASSWORD` environment variable
@@ -116,6 +119,7 @@ Key features of the test auth provider:
 The authentication system is configured to use different paths during testing:
 
 1. In `auth.ts`, the sign-in page is configured based on the environment:
+
 ```typescript
 pages: {
   signIn:
@@ -126,22 +130,29 @@ pages: {
 ```
 
 2. In `middleware.ts`, the login redirect path is similarly configured:
+
 ```typescript
 const loginPath =
   process.env.ENABLE_AUTOMATED_TEST_LOGIN === "true" ? "/test-auth" : "/login"
 ```
 
 The middleware handles several authentication-related scenarios:
-- Redirects unauthenticated users to the appropriate login page (either `/test-auth` or `/login`)
+
+- Redirects unauthenticated users to the appropriate login page (either
+  `/test-auth` or `/login`)
 - Preserves the original destination URL in the `callbackUrl` parameter
-- Redirects authenticated users away from the login page to their intended destination
+- Redirects authenticated users away from the login page to their intended
+  destination
 - Excludes certain paths from authentication checks (see matcher configuration)
 
 #### Global Setup
 
-The project uses a global setup file (`tests/e2e/global-setup.ts`) to handle authentication. This creates authenticated states for different user roles that can be reused across tests.
+The project uses a global setup file (`tests/e2e/global-setup.ts`) to handle
+authentication. This creates authenticated states for different user roles that
+can be reused across tests.
 
 Key features:
+
 - Stores authentication state for each user role
 - Automatically refreshes auth states after 23 hours
 - Uses a test auth page for automated login
@@ -163,7 +174,8 @@ export const testAccounts = {
 
 ### 5. Test Fixtures
 
-Fixtures in `tests/e2e/fixtures.ts` provide easy access to authenticated contexts:
+Fixtures in `tests/e2e/fixtures.ts` provide easy access to authenticated
+contexts:
 
 ```typescript
 import { test as base } from "@playwright/test"
@@ -186,17 +198,17 @@ export const test = {
 ### 1. Writing Authenticated Tests
 
 ```typescript
-import { test } from './fixtures'
+import { test } from "./fixtures"
 
 // Test as admin
-test.asAdmin('admin can accessa dmin dashboard', async ({ page }) => {
-  await page.goto('/admin')
+test.asAdmin("admin can accessa dmin dashboard", async ({ page }) => {
+  await page.goto("/admin")
   // ... test code
 })
 
 // Test as facilitator user
-test.asFacilitator('facilitator can see homepage', async ({ page }) => {
-  await page.goto('/')
+test.asFacilitator("facilitator can see homepage", async ({ page }) => {
+  await page.goto("/")
   // ... test code
 })
 ```
@@ -204,6 +216,7 @@ test.asFacilitator('facilitator can see homepage', async ({ page }) => {
 ### 2. Running Tests
 
 Available npm scripts:
+
 ```json
 {
   "test": "yarn build && playwright test",
@@ -222,6 +235,7 @@ Available npm scripts:
 ### 1. Required Environment Variables
 
 Create a `.env.test` file with:
+
 ```env
 # Base URLs
 NEXTAUTH_URL=http://localhost:3000
@@ -238,13 +252,15 @@ NEXTAUTH_SECRET=test-secret
 # as the test credentials provider is used instead
 ```
 
-The `ENABLE_AUTOMATED_TEST_LOGIN=true` setting affects multiple parts of the authentication system:
+The `ENABLE_AUTOMATED_TEST_LOGIN=true` setting affects multiple parts of the
+authentication system:
+
 1. Enables the test credentials provider in auth.ts
 2. Changes the sign-in page to `/test-auth` instead of `/login` in both:
    - NextAuth configuration (auth.ts)
    - Middleware redirects (middleware.ts)
 3. Allows the global setup script to authenticate (OneID, others)
-5. Modifies middleware behavior to handle test authentication paths:
+4. Modifies middleware behavior to handle test authentication paths:
    - Redirects unauthenticated users to `/test-auth` instead of `/login`
    - Preserves callback URLs for post-authentication redirects
    - Excludes test-related paths from authentication checks
@@ -252,6 +268,7 @@ The `ENABLE_AUTOMATED_TEST_LOGIN=true` setting affects multiple parts of the aut
 ### 2. GitIgnore Entries
 
 Add these entries to `.gitignore`:
+
 ```gitignore
 /test-results/
 /playwright-report/
@@ -283,6 +300,7 @@ The project includes GitHub Actions workflow for running tests on pull requests:
 ```
 
 Key CI/CD features:
+
 - Runs on Ubuntu latest
 - Uses Node.js 20.15.1
 - Caches yarn dependencies
@@ -294,16 +312,19 @@ Key CI/CD features:
 ## Best Practices
 
 1. **Auth State Management**
+
    - Auth states are automatically created and cached
    - States expire after 23 hours to ensure fresh credentials
    - Each user role has its own auth state file
 
 2. **Test Organization**
+
    - Use role-specific fixtures for authenticated tests
    - Group tests by feature in separate files
    - Use descriptive test names that include the role being tested
 
 3. **Environment Configuration**
+
    - Keep sensitive data in GitHub secrets
    - Use different configurations for local and CI environments
    - Enable test-specific features through environment variables

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
 
 /**
  * Retrieves the version information.
@@ -6,5 +6,5 @@ import { NextResponse } from "next/server";
  * NOTE: This file is automatically updated by a script. You don't need to increment this version manually.
  */
 export async function GET(): Promise<NextResponse> {
-  return NextResponse.json({ version: "1.3.7" });
+  return NextResponse.json({ version: "1.3.7" })
 }
