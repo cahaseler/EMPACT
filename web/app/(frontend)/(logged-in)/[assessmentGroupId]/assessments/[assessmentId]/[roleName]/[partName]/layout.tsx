@@ -1,79 +1,97 @@
-import { 
-  fetchAssessmentType, 
-  fetchAssessment,
-  fetchPart,
-  fetchAssessmentParticipants
-} from "../../../../../utils/dataFetchers"
-import { auth } from "@/auth"
-import { 
-  isAdmin, 
-  isManagerForCollection, 
-  isLeadForAssessment, 
-  isFacForAssessment,
-  canUserParticipateInPart,
-  viewableParts,
-  viewableResponses
-} from "../../../../../utils/permissions"
-
-import { SidebarProvider } from "@/components/ui/sidebar"
 import { AssessmentSidebar } from "@/app/(frontend)/components/assessment-sidebar"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotFound from "@/app/(frontend)/components/notFound"
-  
-export default async function RootLayout({
-  children,
-  params
-}: Readonly<{
-  children: React.ReactNode,
-  params: { 
-    assessmentGroupId: string,
-    assessmentId: string,
-    roleName: string,
-    partName: string
-  }
-}>) {
+import { auth } from "@/auth"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import {
+  fetchAssessment,
+  fetchAssessmentParticipants,
+  fetchAssessmentType,
+  fetchPart,
+} from "../../../../../utils/dataFetchers"
+import {
+  canUserParticipateInPart,
+  isAdmin,
+  isFacForAssessment,
+  isLeadForAssessment,
+  isManagerForCollection,
+  viewableParts,
+  viewableResponses,
+} from "../../../../../utils/permissions"
+
+export default async function RootLayout(
+  props: Readonly<{
+    children: React.ReactNode
+    params: {
+      assessmentGroupId: string
+      assessmentId: string
+      roleName: string
+      partName: string
+    }
+  }>
+) {
+  const params = await props.params
+
+  const { children } = props
+
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
-  const parts = await viewableParts(session, params.assessmentGroupId, params.assessmentId, params.roleName)
-  const assessmentParticipants = await fetchAssessmentParticipants(params.assessmentId)
+  const parts = await viewableParts(
+    session,
+    params.assessmentGroupId,
+    params.assessmentId,
+    params.roleName
+  )
+  const assessmentParticipants = await fetchAssessmentParticipants(
+    params.assessmentId
+  )
 
   const isParticipant = params.roleName === "Participant"
   const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
-  const userResponses = await viewableResponses(session, params.assessmentId, params.roleName)
+  const userResponses = await viewableResponses(
+    session,
+    params.assessmentId,
+    params.roleName
+  )
 
   if (assessmentType && assessment) {
     const links = [
       {
-        url: `/${assessmentType.id}/assessments`, 
-        name: assessmentType.name
+        url: `/${assessmentType.id}/assessments`,
+        name: assessmentType.name,
       },
       {
-          url: `/${assessmentType.id}/assessments/${assessment.id}`, 
-          name: assessment.name
-        },
+        url: `/${assessmentType.id}/assessments/${assessment.id}`,
+        name: assessment.name,
+      },
     ]
     if (part) {
-      const canViewAsFac = 
-        isAdmin(session) || 
-        isManagerForCollection(session, assessment?.assessmentCollectionId) || 
+      const canViewAsFac =
+        isAdmin(session) ||
+        isManagerForCollection(session, assessment?.assessmentCollectionId) ||
         isLeadForAssessment(session, params.assessmentId) ||
         isFacForAssessment(session, params.assessmentId)
-      const canViewAsParticipant = canUserParticipateInPart(session, params.assessmentId, part.id)
+      const canViewAsParticipant = canUserParticipateInPart(
+        session,
+        params.assessmentId,
+        part.id
+      )
       const facAuthorized = params.roleName === "Facilitator" && canViewAsFac
-      const participantAuthorized = params.roleName === "Participant" && canViewAsParticipant
+      const participantAuthorized =
+        params.roleName === "Participant" && canViewAsParticipant
       if (facAuthorized || participantAuthorized) {
         return (
           <SidebarProvider defaultOpen={false}>
-            <AssessmentSidebar 
-              assessmentType={assessmentType} 
-              assessment={assessment} 
+            <AssessmentSidebar
+              assessmentType={assessmentType}
+              assessment={assessment}
               role={params.roleName}
-              parts={parts} 
+              parts={parts}
               numAssessmentUsers={numAssessmentUsers}
-              userResponses={userResponses} 
+              userResponses={userResponses}
             />
             {children}
           </SidebarProvider>

@@ -1,13 +1,3 @@
-import { parseArgs } from "node:util"
-import { PrismaClient as MssqlPrismaClient } from "./mssql/generated/client"
-//import { PrismaClient as PostgresPrismaClient } from "./postgres/generated/client"
-/* import { PrismaClient as SqlitePrismaClient } from "./sqlite/generated/client" */
-import { testAccounts } from "../tests/e2e/test-accounts"
-
-const prismaMssql = new MssqlPrismaClient({
-  log: ["info", "warn", "error"],
-})
-
 /* const prismaPostgres = new PostgresPrismaClient({
   log: ["info", "warn", "error"],
 }) */
@@ -16,6 +6,16 @@ const prismaMssql = new MssqlPrismaClient({
 })
  */
 import fs from "node:fs"
+import { parseArgs } from "node:util"
+
+//import { PrismaClient as PostgresPrismaClient } from "./postgres/generated/client"
+/* import { PrismaClient as SqlitePrismaClient } from "./sqlite/generated/client" */
+import { testAccounts } from "../tests/e2e/test-accounts"
+import { PrismaClient as MssqlPrismaClient } from "./mssql/generated/client"
+
+const prismaMssql = new MssqlPrismaClient({
+  log: ["info", "warn", "error"],
+})
 
 const options = {
   schema: { type: "string" as const },
@@ -52,7 +52,7 @@ main().catch(async (e) => {
   process.exit(1)
 })
 
-type PrismaClientType = MssqlPrismaClient/*  | SqlitePrismaClient */
+type PrismaClientType = MssqlPrismaClient /*  | SqlitePrismaClient */
 
 async function seedTestUsers(prisma: PrismaClientType) {
   console.log("Seeding test users and roles...")
@@ -143,13 +143,18 @@ async function seedTestAssessments(prisma: PrismaClientType) {
     },
   })
 
-  const usersByEmail = users.reduce((acc: any, user: typeof users[0]) => {
-    acc[user.email] = user
-    return acc
-  }, {} as Record<string, typeof users[0]>)
+  const usersByEmail = users.reduce(
+    (acc: any, user: (typeof users)[0]) => {
+      acc[user.email] = user
+      return acc
+    },
+    {} as Record<string, (typeof users)[0]>
+  )
 
   // Assign collection manager role
-  const existingCollectionUser = await (prisma.assessmentCollectionUser.findFirst as any)({
+  const existingCollectionUser = await (
+    prisma.assessmentCollectionUser.findFirst as any
+  )({
     where: {
       assessmentCollectionId: testCollection.id,
       userId: usersByEmail[testAccounts.collectionManager].id,
@@ -174,7 +179,9 @@ async function seedTestAssessments(prisma: PrismaClientType) {
   ]
 
   for (const { email, role } of assessmentRoles) {
-    const existingAssessmentUser = await (prisma.assessmentUser.findFirst as any)({
+    const existingAssessmentUser = await (
+      prisma.assessmentUser.findFirst as any
+    )({
       where: {
         assessmentId: testAssessment.id,
         userId: usersByEmail[email].id,
@@ -197,7 +204,7 @@ async function seedMssql(prisma: MssqlPrismaClient) {
   try {
     console.log("Seeding AssessmentTypes and AssessmentParts...")
 
-    const assessmentType = await (prisma.assessmentType.upsert as any)({
+    await (prisma.assessmentType.upsert as any)({
       where: {
         name: "IP2M METRR Assessment",
       },

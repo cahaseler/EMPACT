@@ -9,7 +9,10 @@ const Table = React.forwardRef<
   <div className="relative w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm bg-white dark:bg-indigo-600/20", className)}
+      className={cn(
+        "w-full caption-bottom text-sm bg-white dark:bg-indigo-600/20",
+        className
+      )}
       {...props}
     />
   </div>
@@ -20,7 +23,14 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b-2 [&_tr]:border-indigo-100 dark:[&_tr]:border-indigo-900", className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn(
+      "[&_tr]:border-b-2 [&_tr]:border-indigo-100 dark:[&_tr]:border-indigo-900",
+      className
+    )}
+    {...props}
+  />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -107,11 +117,11 @@ TableCaption.displayName = "TableCaption"
 
 export {
   Table,
-  TableHeader,
   TableBody,
+  TableCaption,
+  TableCell,
   TableFooter,
   TableHead,
+  TableHeader,
   TableRow,
-  TableCell,
-  TableCaption,
 }

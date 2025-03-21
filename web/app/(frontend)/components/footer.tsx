@@ -1,6 +1,6 @@
-
-
-{/* TODO Build out the site footer, include link to the github repo, relevant 508 compliance statements, support links, version number, etc*/}
+{
+  /* TODO Build out the site footer, include link to the github repo, relevant 508 compliance statements, support links, version number, etc*/
+}
 
 export function Footer() {
   return (
@@ -12,7 +12,6 @@ export function Footer() {
       >
         <div className="flex flex-row space-x-20">
           <div>EMPACT</div>
-
         </div>
       </div>
     </div>

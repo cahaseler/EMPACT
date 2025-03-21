@@ -1,38 +1,38 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-
-import { AssessmentType } from "@/prisma/mssql/generated/client"
+import { SignedIn, UserButton } from "@clerk/nextjs"
+import {
+  BookCopy,
+  FileChartColumn,
+  Menu,
+  Moon,
+  NotebookPen,
+  Settings,
+  ShieldUser,
+  Sun,
+  User,
+  UserCog,
+  Users,
+  Wrench,
+} from "lucide-react"
+import { useTheme } from "next-themes"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 import { ModeToggle } from "@/components/mode-toggle"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
-
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent
-} from "@/components/ui/dropdown-menu"
-
-import { 
-  NotebookPen,
-  FileChartColumn,
-  Users,
-  BookCopy,
-  Settings, 
-  UserCog, 
-  LogOut, 
-  Menu 
-} from "lucide-react"
-
-import Link from "next/link"
-
-import { usePathname } from "next/navigation"
-import { signOut } from "next-auth/react"
+import { cn } from "@/lib/utils"
+import { AssessmentType } from "@/prisma/mssql/generated/client"
 
 /*
 
@@ -42,18 +42,23 @@ Lots of work to be done here to link to key sections of the application, and pro
 
 */
 
-export function Nav({ 
-  assessmentType, 
+export function Nav({
+  assessmentType,
   name,
   isAdmin,
-  canViewUsers 
-}: Readonly<{ 
-  assessmentType?: AssessmentType, 
-  name?: string,
-  isAdmin?: boolean,
-  canViewUsers?: boolean 
+  canViewUsers,
+}: Readonly<{
+  assessmentType?: AssessmentType
+  name?: string
+  isAdmin?: boolean
+  canViewUsers?: boolean
 }>) {
-  const pn = usePathname()
+  const { theme, setTheme } = useTheme()
+
+  // Function to toggle between light and dark themes
+  const cycleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
   return (
     <NavigationMenu
       className={
@@ -63,12 +68,16 @@ export function Nav({
       <NavigationView>
         <NavigationMenuList className="md:py-0.5 flex flex-col md:flex-row md:space-x-6 max-md:space-y-4 max-md:mb-4 justify-start">
           <NavigationMenuItem className="max-md:hidden ml-5 font-bold font-sans text-3xl list-none w-fit">
-            <Link href="/" legacyBehavior>EMPACT</Link>
+            <Link href="/" legacyBehavior>
+              EMPACT
+            </Link>
           </NavigationMenuItem>
-          {assessmentType &&
+          {assessmentType && (
             <>
               <NavigationMenuItem className="mr-5 md:mt-0.5 font-bold font-sans text-lg list-none w-fit">
-                <Link href={"/" + assessmentType.id} legacyBehavior>{assessmentType.name}</Link>
+                <Link href={"/" + assessmentType.id} legacyBehavior>
+                  {assessmentType.name}
+                </Link>
               </NavigationMenuItem>
               <NavigationMenuList className="flex-wrap flex-col md:flex-row md:space-x-6 max-md:space-y-4 max-md:mb-4 md:mt-1">
                 <NavigationItemLink
@@ -83,11 +92,13 @@ export function Nav({
                   icon={<FileChartColumn className="w-5 h-5" />}
                 />
                 {/* TODO Add users page */}
-                {canViewUsers && <NavigationItemLink
-                  href={"/" + assessmentType.id + "/users"}
-                  label="Users"
-                  icon={<Users className="w-5 h-5" />}
-                />}
+                {canViewUsers && (
+                  <NavigationItemLink
+                    href={"/" + assessmentType.id + "/users"}
+                    label="Users"
+                    icon={<Users className="w-5 h-5" />}
+                  />
+                )}
                 {/* TODO Add resources page */}
                 <NavigationItemLink
                   href={"/" + assessmentType.id + "/resources"}
@@ -96,44 +107,58 @@ export function Nav({
                 />
               </NavigationMenuList>
             </>
-          }
+          )}
         </NavigationMenuList>
         <NavigationMenuList className="md:py-1 flex flex-col md:flex-row flex-wrap md:space-x-4 max-md:space-y-4 md:mx-4 max-md:mb-4 justify-end">
-          {!pn.includes("login") &&
-          <>
-            <NavigationMenuItem>
-              {name && <div className="flex flex-row space-x-1 items-center">{name}</div>}
-            </NavigationMenuItem>
-            <NavigationItemLink
-              href="/settings"
-              label="Settings"
-              icon={<Settings className="w-5 h-5" />}
-            />
-            {isAdmin && 
-              <NavigationItemLink
-                href="/admin"
-                label="Admin"
-                icon={<UserCog className="w-5 h-5" />}
+          <UserButton
+            showName
+            appearance={{
+              elements: { userButtonOuterIdentifier: "text-white" },
+            }}
+          >
+            {isAdmin && (
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  href={"/admin"}
+                  labelIcon={<ShieldUser className="w-5 h-5" />}
+                  label="Manage Admin Users"
+                />
+                <UserButton.Link
+                  href={
+                    "https://dashboard.clerk.com/apps/app_2uY5YuVmY57Q8zjRsnJROlNQfJ1/instances/ins_2uY5Ys3asJCsfUdZZVsaNe6IR2a"
+                  }
+                  labelIcon={<Wrench className="w-5 h-5" />}
+                  label="Clerk Dashboard"
+                />
+              </UserButton.MenuItems>
+            )}
+            <UserButton.MenuItems>
+              <UserButton.Action
+                label={theme === "light" ? "Dark Mode" : "Light Mode"}
+                labelIcon={
+                  theme === "light" ? (
+                    <Moon className="w-5 h-5" />
+                  ) : (
+                    <Sun className="w-5 h-5" />
+                  )
+                }
+                onClick={() => {
+                  // Stop event propagation to prevent menu closing
+                  setTimeout(() => {
+                    cycleTheme()
+                  }, 0)
+                  return false
+                }}
               />
-            }
-            <NavigationMenuItem onClick={() => signOut()}>
-              <NavigationMenuLink
-                className="md:bg-indigo-800 md:border-indigo-800 hover:font-bold flex flex-row space-x-1 items-center cursor-pointer"
-              >
-                <LogOut className="w-5 h-5" />
-                <div>Sign Out</div>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </>
-          }
-          <ModeToggle />
+            </UserButton.MenuItems>
+          </UserButton>
         </NavigationMenuList>
       </NavigationView>
     </NavigationMenu>
   )
 }
 
-function NavigationView({ children }: { children: React.ReactNode }) {
+function NavigationView({ children }: { readonly children: React.ReactNode }) {
   return (
     <div className="w-full items-center">
       <div className="max-md:hidden flex flex-row justify-between w-full">
@@ -141,15 +166,15 @@ function NavigationView({ children }: { children: React.ReactNode }) {
       </div>
       <div className="md:hidden flex flex-row justify-between w-full items-center">
         <NavigationMenuItem className="mx-5 font-bold font-sans text-3xl list-none w-fit">
-          <Link href="/" legacyBehavior>EMPACT</Link>
+          <Link href="/" legacyBehavior>
+            EMPACT
+          </Link>
         </NavigationMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger className="mx-5">
             <Menu className="w-7 h-7" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {children}
-          </DropdownMenuContent>
+          <DropdownMenuContent>{children}</DropdownMenuContent>
         </DropdownMenu>
       </div>
     </div>
@@ -167,9 +192,8 @@ function NavigationItemLink({
 }) {
   const pn = usePathname()
 
-  const linkStyle = 
+  const linkStyle =
     "md:bg-indigo-800 md:border-indigo-800 hover:font-bold flex flex-row space-x-1 items-center"
-  
 
   return (
     <NavigationMenuItem>

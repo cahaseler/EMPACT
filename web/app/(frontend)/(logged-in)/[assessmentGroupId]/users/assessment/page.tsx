@@ -1,20 +1,23 @@
-import { fetchAssessmentType } from "../../../utils/dataFetchers"
 import NotFound from "@/app/(frontend)/components/notFound"
+import { fetchAssessmentType } from "../../../utils/dataFetchers"
 
-export default async function Page({ params }: Readonly<{
-params: { 
-    assessmentGroupId: string
-}
-}>) {
-    const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
-
-    if (assessmentType) {
-        const links = [
-            {
-                url: `/${assessmentType.id}/users`, 
-                name: assessmentType.name
-            }
-        ]
-        return <NotFound links={links} pageType="assessment" />
+export default async function Page(
+  props: Readonly<{
+    params: {
+      assessmentGroupId: string
     }
+  }>
+) {
+  const params = await props.params
+  const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+
+  if (assessmentType) {
+    const links = [
+      {
+        url: `/${assessmentType.id}/users`,
+        name: assessmentType.name,
+      },
+    ]
+    return <NotFound links={links} pageType="assessment" />
+  }
 }

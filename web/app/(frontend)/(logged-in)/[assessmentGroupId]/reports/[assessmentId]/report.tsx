@@ -1,9 +1,9 @@
 import { Assessment } from "@/prisma/mssql/generated/client"
 
 export default function AssessmentReport({
-  assessment, 
+  assessment,
 }: Readonly<{
-  assessment: Assessment, 
+  assessment: Assessment
 }>) {
   return (
     <div className="w-full flex flex-col space-y-4">
