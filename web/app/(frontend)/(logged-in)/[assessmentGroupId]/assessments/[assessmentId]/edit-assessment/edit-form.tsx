@@ -22,6 +22,7 @@ import {
   AssessmentType
 } from "@/prisma/mssql/generated/client"
 import { updateAssessment } from "../../../../utils/dataActions"
+import { error } from "console"
 
 export default function EditForm({
   assessmentType,
@@ -56,27 +57,26 @@ export default function EditForm({
     e.preventDefault()
     if (projectId !== "" && collectionId !== undefined && name !== "") {
       setSaving(true)
-      try {
-        updateAssessment(
-          assessment.id,
-          projectId,
-          parseInt(collectionId, 10),
-          name,
-          status,
-          location,
-          description
-        ).then(() => {
-          setSaving(false)
-          router.refresh()
-          toast({
-            title: "Assessment updated successfully.",
-          })
+      updateAssessment(
+        assessment.id,
+        projectId,
+        parseInt(collectionId, 10),
+        name,
+        status,
+        location,
+        description
+      ).then(() => {
+        setSaving(false)
+        router.refresh()
+        toast({
+          title: "Assessment updated successfully.",
         })
-      } catch (error) {
+      }).catch(error => {
+        setSaving(false)
         toast({
           title: `Error updating assessment: ${error}`,
         })
-      }
+      })
     }
   }
 

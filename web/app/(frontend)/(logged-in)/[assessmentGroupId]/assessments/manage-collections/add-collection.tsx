@@ -57,6 +57,11 @@ export default function AddCollection({
               toast({
                 title: "Assessment collection added successfully.",
               })
+            }).catch(error => {
+              setSaving(false)
+              toast({
+                title: `Error adding assessment collection: ${error}`
+              })
             })
           } else {
             await createAssessmentCollectionUser(
@@ -68,6 +73,11 @@ export default function AddCollection({
               router.refresh()
               toast({
                 title: "Assessment collection added successfully.",
+              })
+            }).catch(error => {
+              setSaving(false)
+              toast({
+                title: `Error adding assessment collection: ${error}`
               })
             })
           }

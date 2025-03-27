@@ -66,6 +66,11 @@ export default function AttributeUserResponse({
           toast({
             title: "Response saved successfully.",
           })
+        }).catch(error => {
+          setSaving(false)
+          toast({
+            title: `Error saving response: ${error}`
+          })
         })
       } else {
         await createAssessmentUserResponse(
@@ -79,6 +84,11 @@ export default function AttributeUserResponse({
           router.refresh()
           toast({
             title: "Response saved successfully.",
+          })
+        }).catch(error => {
+          setSaving(false)
+          toast({
+            title: `Error saving response: ${error}`
           })
         })
       }

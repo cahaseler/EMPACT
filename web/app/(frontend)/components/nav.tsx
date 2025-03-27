@@ -1,16 +1,13 @@
 "use client"
 
-import { SignedIn, UserButton } from "@clerk/nextjs"
+import { UserButton, SignOutButton } from "@clerk/nextjs"
 import {
   BookCopy,
   FileChartColumn,
   Menu,
   Moon,
   NotebookPen,
-  Settings,
-  ShieldUser,
   Sun,
-  User,
   UserCog,
   Users,
   Wrench,
@@ -19,7 +16,6 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import { ModeToggle } from "@/components/mode-toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,12 +40,10 @@ Lots of work to be done here to link to key sections of the application, and pro
 
 export function Nav({
   assessmentType,
-  name,
   isAdmin,
   canViewUsers,
 }: Readonly<{
   assessmentType?: AssessmentType
-  name?: string
   isAdmin?: boolean
   canViewUsers?: boolean
 }>) {
@@ -120,7 +114,7 @@ export function Nav({
               <UserButton.MenuItems>
                 <UserButton.Link
                   href={"/admin"}
-                  labelIcon={<ShieldUser className="w-5 h-5" />}
+                  labelIcon={<UserCog className="w-5 h-5" />}
                   label="Manage Admin Users"
                 />
                 <UserButton.Link
@@ -174,7 +168,11 @@ function NavigationView({ children }: { readonly children: React.ReactNode }) {
           <DropdownMenuTrigger className="mx-5">
             <Menu className="w-7 h-7" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent>{children}</DropdownMenuContent>
+          <DropdownMenuContent>
+            <div>
+              {children}
+            </div>
+          </DropdownMenuContent>
         </DropdownMenu>
       </div>
     </div>
@@ -201,7 +199,7 @@ function NavigationItemLink({
         <NavigationMenuLink
           className={cn(href === pn ? "font-bold" : "", linkStyle)}
         >
-          {icon}
+          <div>{icon}</div>
           <div>{label}</div>
         </NavigationMenuLink>
       </Link>

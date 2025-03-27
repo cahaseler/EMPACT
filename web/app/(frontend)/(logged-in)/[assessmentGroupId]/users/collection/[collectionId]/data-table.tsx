@@ -78,10 +78,15 @@ function DeleteModule({
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault()
-    await deleteAssessmentCollectionUser(user.id)
-    router.refresh()
-    toast({
-      title: "Collection manager removed successfully.",
+    await deleteAssessmentCollectionUser(user.id).then(() => {
+      router.refresh()
+      toast({
+        title: "Collection manager removed successfully.",
+      })
+    }).catch(error => {
+      toast({
+        title: `Error removing collection manager: ${error}`
+      })
     })
   }
 

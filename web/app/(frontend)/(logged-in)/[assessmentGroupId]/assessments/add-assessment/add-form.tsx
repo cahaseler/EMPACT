@@ -34,6 +34,7 @@ import {
 
 import PartsTable from "./parts-table"
 import AssessmentAttributes from "./attributes"
+import { error } from "console"
 
 type AssessmentPartToAdd = {
   partId: number
@@ -79,42 +80,41 @@ export default function AddForm({
     e.preventDefault()
     if (projectId !== "" && collectionId !== undefined && name !== "") {
       setSaving(true)
-      try {
-        createAssessment(
-          projectId,
-          parseInt(collectionId, 10),
-          name,
-          status,
-          location,
-          description
-        ).then(
-          async (assessment: Assessment) => {
-            for (var i = 0; i < partsToAdd.length; i++) {
-              await createAssessmentPart(
-                partsToAdd[i].status,
-                partsToAdd[i].date,
-                assessment.id,
-                partsToAdd[i].partId
-              )
-            }
-            for (var i = 0; i < attributesToAdd.length; i++) {
-              await createAssessmentAttribute(
-                assessment.id,
-                attributesToAdd[i]
-              )
-            }
-            setSaving(false)
-            router.refresh()
-            toast({
-              title: "Assessment created successfully."
-            })
+      createAssessment(
+        projectId,
+        parseInt(collectionId, 10),
+        name,
+        status,
+        location,
+        description
+      ).then(
+        async (assessment: Assessment) => {
+          for (var i = 0; i < partsToAdd.length; i++) {
+            await createAssessmentPart(
+              partsToAdd[i].status,
+              partsToAdd[i].date,
+              assessment.id,
+              partsToAdd[i].partId
+            )
           }
-        )
-      } catch (error) {
+          for (var i = 0; i < attributesToAdd.length; i++) {
+            await createAssessmentAttribute(
+              assessment.id,
+              attributesToAdd[i]
+            )
+          }
+          setSaving(false)
+          router.refresh()
+          toast({
+            title: "Assessment created successfully."
+          })
+        }
+      ).catch(error => {
+        setSaving(false)
         toast({
           title: `Error creating assessment: ${error}`
         })
-      }
+      })
     }
   }
 

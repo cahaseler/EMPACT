@@ -130,30 +130,6 @@ export default async function Page(
               />
             </div>
           </section>
-          <section className="mb-8">
-            <EditForm
-              assessment={assessment}
-              assessmentCollections={
-                canEditCollection ? editableCollections : assessmentCollections
-              }
-              assessmentType={assessmentType}
-              canEditCollection={canEditCollection}
-              canEditStatus={canEditStatus}
-            />
-          </section>
-          <section className="mb-8">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold max-lg:ml-2">
-                Assessment Parts
-              </h2>
-              <PartsTable
-                assessmentParts={assessmentParts}
-                assessmentUsers={assessmentUsers}
-                canEditStatus={canEditStatus}
-                userResponses={userResponses}
-              />
-            </div>
-          </section>
         </div >
       )
     }

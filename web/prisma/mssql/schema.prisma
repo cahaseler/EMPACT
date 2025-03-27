@@ -41,7 +41,7 @@ model Assessment {
     location               String
     description            String                   @db.VarChar(Max)
     status                 String
-    completedDate          DateTime
+    completedDate          DateTime?
     assessmentParts        AssessmentPart[]
     assessmentAttributes   AssessmentAttribute[]
     assessmentUserGroup    AssessmentUserGroup[]
@@ -69,12 +69,12 @@ model AssessmentPart {
 
 // Represents which attributes will be responded to for a specific assessment being done
 model AssessmentAttribute {
-    id                     Int                  @id() @default(autoincrement())
-    attributeId            String
-    attribute              Attribute            @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    assessmentId           Int
-    assessment             Assessment           @relation(fields: [assessmentId], references: [id])
-    
+    id           Int        @id() @default(autoincrement())
+    attributeId  String
+    attribute    Attribute  @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentId Int
+    assessment   Assessment @relation(fields: [assessmentId], references: [id])
+
     @@unique([assessmentId, attributeId])
 }
 

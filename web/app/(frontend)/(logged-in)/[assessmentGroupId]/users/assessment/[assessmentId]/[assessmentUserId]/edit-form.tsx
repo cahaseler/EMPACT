@@ -49,7 +49,7 @@ export default function EditForm({
   )
   const [shouldFacParticipate, setShouldFacParticipate] = useState<boolean>(
     assessmentUser.role !== "Participant" &&
-      assessmentUser.participantParts.length > 0
+    assessmentUser.participantParts.length > 0
   )
   const partsToParticipate = parts.filter((part) => part.part.canFacParticipate)
   const [selectedParts, setSelectedParts] = useState<number[]>(
@@ -58,11 +58,11 @@ export default function EditForm({
   const selectablePermissions =
     role === "Facilitator"
       ? permissions.filter(
-          (permission) => permission.name !== "Archive assessment"
-        )
+        (permission) => permission.name !== "Archive assessment"
+      )
       : permissions.filter(
-          (permission) => permission.name === "Archive assessment"
-        )
+        (permission) => permission.name === "Archive assessment"
+      )
   const [selectedPermissions, setSelectedPermissions] = useState<number[]>(
     assessmentUser.permissions.map((permission) => permission.id)
   )
@@ -77,26 +77,24 @@ export default function EditForm({
     const permissionIds = selectedPermissions.map((permissionId) => ({
       id: permissionId,
     }))
-    try {
-      updateAssessmentUser(
-        assessmentUser.id,
-        role,
-        groupId,
-        partIds,
-        permissionIds
-      ).then(() => {
-        setSaving(false)
-        router.refresh()
-        toast({
-          title: "Assessment user updated successfully.",
-        })
+    updateAssessmentUser(
+      assessmentUser.id,
+      role,
+      groupId,
+      partIds,
+      permissionIds
+    ).then(() => {
+      setSaving(false)
+      router.refresh()
+      toast({
+        title: "Assessment user updated successfully.",
       })
-    } catch (error) {
+    }).catch(error => {
       setSaving(false)
       toast({
-        title: `Error updating assessment user: ${error}`,
+        title: `Error updating assessment user: ${error}`
       })
-    }
+    })
   }
 
   return (

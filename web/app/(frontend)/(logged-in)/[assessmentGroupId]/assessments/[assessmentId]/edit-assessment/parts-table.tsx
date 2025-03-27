@@ -76,6 +76,7 @@ export default function PartsTable({
               partAttributeIds.length * partParticipants.length !== partResponseAttributeIds.length * partParticipants.length
             return (
               <PartRow
+                key={assessmentPart.id}
                 assessmentId={assessmentPart.assessmentId}
                 assessmentPart={assessmentPart}
                 canEditStatus={canEditStatus}

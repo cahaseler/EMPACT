@@ -72,7 +72,7 @@ export async function createAssessment(
       assessmentCollectionId: collectionId,
       name,
       status,
-      completedDate: "",
+      completedDate: null,
       location,
       description,
     },

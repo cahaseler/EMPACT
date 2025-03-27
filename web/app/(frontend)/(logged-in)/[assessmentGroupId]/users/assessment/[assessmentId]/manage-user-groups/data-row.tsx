@@ -66,7 +66,12 @@ export default function DataTable({
         setSaving(false)
         router.refresh()
         toast({
-          title: "User group updated successfully.",
+          title: "Assessment user group updated successfully.",
+        })
+      }).catch(error => {
+        setSaving(false)
+        toast({
+          title: `Error updating assessment user group: ${error}`
         })
       })
     }
