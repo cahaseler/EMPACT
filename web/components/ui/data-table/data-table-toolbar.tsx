@@ -36,7 +36,7 @@ export function DataTableToolbar<TData>({
   // Local state for the search input to debounce
   const [searchValue, setSearchValue] = useState<string>(
     (table.getColumn(searchableColumns[0]?.id)?.getFilterValue() as string) ??
-      ""
+    ""
   )
 
   // Debounce search input to avoid lag on every keystroke
@@ -58,7 +58,7 @@ export function DataTableToolbar<TData>({
             placeholder="Search users..."
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
-            className="h-8 w-[150px] lg:w-[250px]"
+            className="w-[150px] lg:w-[250px]"
           />
         )}
         {filterableColumns.length > 0 &&
@@ -75,9 +75,7 @@ export function DataTableToolbar<TData>({
           )}
         {isFiltered && (
           <Button
-            variant="default"
             onClick={() => table.resetColumnFilters()}
-            className="h-8 px-3 lg:px-4 text-white"
           >
             Reset
             <X className="ml-2 h-4 w-4" />

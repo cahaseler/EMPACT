@@ -32,9 +32,9 @@ export function isAdmin(session: Session | null): boolean {
 
 export function isCollectionManager(session: Session | null): boolean {
   return (
-    session?.user?.systemRoles?.find(
-      (role) => role.name === "Collection Manager"
-    ) !== undefined
+    session?.user?.assessmentCollectionUser?.some(
+      (uc) => uc.role === "Collection Manager"
+    ) === true
   )
 }
 
@@ -119,8 +119,13 @@ export function isParticipantForAssessment(
 // User can view Users tab in navbar if they are any role but a participant
 export function canViewUsers(session: Session | null): boolean {
   return (
-    session?.user?.systemRoles?.length !== undefined &&
-    session?.user?.systemRoles.length > 0
+    isAdmin(session) ||
+    isCollectionManager(session) ||
+    session?.user?.assessmentUser?.some(
+      (uc) =>
+        uc.role === "Lead Facilitator" ||
+        uc.role === "Facilitator"
+    ) === true
   )
 }
 

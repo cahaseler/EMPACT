@@ -30,14 +30,6 @@ import {
 import { cn } from "@/lib/utils"
 import { AssessmentType } from "@/prisma/mssql/generated/client"
 
-/*
-
-TODO: Build out the navigation menu
-
-Lots of work to be done here to link to key sections of the application, and provide menus for things like admin functions when relevant based on user role
-
-*/
-
 export function Nav({
   assessmentType,
   isAdmin,
@@ -107,7 +99,10 @@ export function Nav({
           <UserButton
             showName
             appearance={{
-              elements: { userButtonOuterIdentifier: "text-white" },
+              elements: {
+                userButtonOuterIdentifier: "text-indigo-200 text-base font-normal",
+                userButtonAvatarBox: "bg-indigo-800 border-2 border-indigo-200 [&>span]:text-indigo-200 [&>span]:font-semibold [&>span]:tracking-wider",
+              }
             }}
           >
             {isAdmin && (
@@ -115,7 +110,7 @@ export function Nav({
                 <UserButton.Link
                   href={"/admin"}
                   labelIcon={<UserCog className="w-5 h-5" />}
-                  label="Manage Admin Users"
+                  label="Admin Settings"
                 />
                 <UserButton.Link
                   href={
