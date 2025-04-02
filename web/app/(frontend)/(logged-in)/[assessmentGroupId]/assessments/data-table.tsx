@@ -46,7 +46,7 @@ export default function DataTable({
     <Table className="cursor-pointer dark:bg-transparent">
       <TableHeader>
         <TableRow>
-          <TableHead>Project ID</TableHead>
+          <TableHead>{assessmentType.projectType || "Project"} ID</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Location</TableHead>
@@ -55,76 +55,49 @@ export default function DataTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {assessments.map(
-          (
-            assessment: Assessment & { assessmentUser: AssessmentUser[] },
-            key: number
-          ) => {
-            const permissions = session?.user?.assessmentUser.find(
-              (assessmentUser) => assessmentUser.assessmentId === assessment.id
-            )?.permissions
-            return (
-              <TableRow key={key}>
-                <TableCell
-                  onClick={() =>
-                    router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}`
-                    )
-                  }
-                >
-                  {assessment.projectId}
-                </TableCell>
-                <TableCell
-                  onClick={() =>
-                    router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}`
-                    )
-                  }
-                >
-                  {assessment.name}
-                </TableCell>
-                <TableCell
-                  onClick={() =>
-                    router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}`
-                    )
-                  }
-                >
-                  {assessment.status}
-                </TableCell>
-                <TableCell
-                  onClick={() =>
-                    router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}`
-                    )
-                  }
-                >
-                  {assessment.location}
-                </TableCell>
-                <TableCell
-                  onClick={() =>
-                    router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}`
-                    )
-                  }
-                >
-                  {assessment.status === "Final"
-                    ? format(assessment.completedDate, "MM/dd/yyyy")
-                    : "N/A"}
-                </TableCell>
-                <TableCell>
-                  <AssessmentActions
-                    assessmentTypeId={assessmentType.id}
-                    assessment={assessment}
-                    session={session}
-                    permissions={permissions}
-                    assessmentUsers={assessment.assessmentUser}
-                  />
-                </TableCell>
-              </TableRow>
-            )
-          }
-        )}
+        {assessments.map((assessment: Assessment & { assessmentUser: AssessmentUser[] }, key: number) => {
+          const permissions = session?.user?.assessmentUser.find(assessmentUser =>
+            assessmentUser.assessmentId === assessment.id
+          )?.permissions
+          return (
+            <TableRow key={key}>
+              <TableCell onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+              }>
+                {assessment.projectId}
+              </TableCell>
+              <TableCell onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+              }>
+                {assessment.name}
+              </TableCell>
+              <TableCell onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+              }>
+                {assessment.status}
+              </TableCell>
+              <TableCell onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+              }>
+                {assessment.location}
+              </TableCell>
+              <TableCell onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
+              }>
+                {assessment.status === "Final" ? format(assessment.completedDate, "MM/dd/yyyy") : "N/A"}
+              </TableCell>
+              <TableCell>
+                <AssessmentActions
+                  assessmentTypeId={assessmentType.id}
+                  assessment={assessment}
+                  session={session}
+                  permissions={permissions}
+                  assessmentUsers={assessment.assessmentUser}
+                />
+              </TableCell>
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
   )
@@ -148,7 +121,7 @@ function AssessmentActions({
     isManagerForCollection(session, assessment.assessmentCollectionId) ||
     isLeadForAssessment(session, assessment.id.toString()) ||
     permissions?.find((permission) => permission.name === "Edit assessment") !==
-      undefined
+    undefined
   const canView = canViewUsers(session)
   const canArchive =
     isAdmin(session) ||

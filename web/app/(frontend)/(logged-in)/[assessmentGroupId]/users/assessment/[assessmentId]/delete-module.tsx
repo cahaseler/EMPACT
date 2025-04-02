@@ -44,10 +44,15 @@ export default function DeleteModule({
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault()
-    await deleteAssessmentUser(assessmentUser.id)
-    router.push(`/${assessmentTypeId}/users/${assessmentId}`)
-    toast({
-      title: "User successfully removed from assessment.",
+    await deleteAssessmentUser(assessmentUser.id).then(() => {
+      router.push(`/${assessmentTypeId}/users/${assessmentId}`)
+      toast({
+        title: "User successfully removed from assessment."
+      })
+    }).catch(error => {
+      toast({
+        title: `Error removing user from assessment: ${error}`
+      })
     })
   }
 

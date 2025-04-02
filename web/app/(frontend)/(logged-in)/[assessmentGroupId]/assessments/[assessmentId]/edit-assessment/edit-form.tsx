@@ -19,19 +19,23 @@ import { toast } from "@/components/ui/use-toast"
 import {
   Assessment,
   AssessmentCollection,
+  AssessmentType
 } from "@/prisma/mssql/generated/client"
 import { updateAssessment } from "../../../../utils/dataActions"
+import { error } from "console"
 
 export default function EditForm({
+  assessmentType,
   assessment,
   assessmentCollections,
   canEditCollection,
   canEditStatus,
 }: Readonly<{
-  readonly assessment: Assessment
-  readonly assessmentCollections: AssessmentCollection[]
-  readonly canEditCollection: boolean
-  readonly canEditStatus: boolean
+  assessmentType: AssessmentType,
+  assessment: Assessment,
+  assessmentCollections: AssessmentCollection[],
+  canEditCollection: boolean,
+  canEditStatus: boolean
 }>) {
   const [collectionId, setCollectionId] = useState<string | undefined>(
     assessment.assessmentCollectionId?.toString()
@@ -53,27 +57,26 @@ export default function EditForm({
     e.preventDefault()
     if (projectId !== "" && collectionId !== undefined && name !== "") {
       setSaving(true)
-      try {
-        updateAssessment(
-          assessment.id,
-          projectId,
-          parseInt(collectionId, 10),
-          name,
-          status,
-          location,
-          description
-        ).then(() => {
-          setSaving(false)
-          router.refresh()
-          toast({
-            title: "Assessment updated successfully.",
-          })
+      updateAssessment(
+        assessment.id,
+        projectId,
+        parseInt(collectionId, 10),
+        name,
+        status,
+        location,
+        description
+      ).then(() => {
+        setSaving(false)
+        router.refresh()
+        toast({
+          title: "Assessment updated successfully.",
         })
-      } catch (error) {
+      }).catch(error => {
+        setSaving(false)
         toast({
           title: `Error updating assessment: ${error}`,
         })
-      }
+      })
     }
   }
 
@@ -84,33 +87,26 @@ export default function EditForm({
           <div className="min-w-24 flex flex-col space-y-2">
             <Input
               type="text"
-              placeholder="Project ID"
+              placeholder={(assessmentType.projectType || "Project") + " ID"}
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
             />
-            <Label>Project ID</Label>
+            <Label>{assessmentType.projectType || "Project"} ID</Label>
           </div>
           <div className="min-w-40 flex flex-col space-y-2">
-            <Select
-              onValueChange={(value) => setCollectionId(value)}
-              disabled={!canEditCollection}
-            >
+            <Select onValueChange={(value) => setCollectionId(value)} disabled={!canEditCollection}>
               <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
                 <SelectValue
-                  placeholder={
-                    collection
-                      ? collection.name
-                      : "Select an assessment collection"
-                  }
+                  placeholder={collection ? collection.name : "Select an assessment collection"}
                   defaultValue={collectionId}
                 />
               </SelectTrigger>
               <SelectContent>
-                {assessmentCollections.map((collection, key) => (
+                {assessmentCollections.map((collection, key) =>
                   <SelectItem value={collection.id.toString()} key={key}>
                     {collection.name}
                   </SelectItem>
-                ))}
+                )}
               </SelectContent>
             </Select>
             <Label>Collection</Label>
@@ -127,10 +123,7 @@ export default function EditForm({
         </div>
         <div className="flex flex-col max-md:space-y-4 md:flex-row md:space-x-4">
           <div className="min-w-60 flex flex-col space-y-2">
-            <Select
-              onValueChange={(value) => setStatus(value)}
-              disabled={!canEditStatus}
-            >
+            <Select onValueChange={(value) => setStatus(value)} disabled={!canEditStatus}>
               <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
                 <SelectValue placeholder={status} defaultValue={status} />
               </SelectTrigger>
@@ -177,8 +170,9 @@ export default function EditForm({
               name === ""
             }
           >
-            {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save
-            Changes
+            {saving &&
+              <Loader className="mr-2 h-4 w-4 animate-spin" />
+            } Save Changes
           </Button>
         </div>
       </div>

@@ -1,14 +1,13 @@
 "use server"
-
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentType from "@/app/utils/assessmentType"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
-import * as attribute from "@/app/utils/attribute"
 import * as level from "@/app/utils/level"
 import * as section from "@/app/utils/section"
 import { db } from "@/lib/db"
 import {
   Assessment,
+  AssessmentAttribute,
   AssessmentCollection,
   AssessmentCollectionUser,
   AssessmentPart,
@@ -90,8 +89,8 @@ export async function fetchAssessmentCollections(typeid: string): Promise<
 
 export async function fetchAssessmentCollection(collectionId: string): Promise<
   | (AssessmentCollection & {
-      assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[]
-    })
+    assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[]
+  })
   | null
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
@@ -119,10 +118,8 @@ export async function fetchAssessments(
   return collections.flatMap((collection) => collection.assessments)
 }
 
-export async function fetchAssessment(
-  assessmentId: string
-): Promise<
-  (Assessment & { assessmentParts: (AssessmentPart & { part: Part })[] }) | null
+export async function fetchAssessment(assessmentId: string): Promise<
+  (Assessment & { assessmentParts: (AssessmentPart & { part: Part })[], assessmentAttributes: AssessmentAttribute[] }) | null
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
@@ -133,7 +130,10 @@ export async function fetchAssessment(
 
   return await db.assessment.findUnique({
     where: { id: idAsInteger },
-    include: { assessmentParts: { include: { part: true } } },
+    include: {
+      assessmentParts: { include: { part: true } },
+      assessmentAttributes: true
+    }
   })
 }
 
@@ -161,10 +161,10 @@ export async function fetchPermissions(): Promise<Permission[]> {
 
 export async function fetchAssessmentUser(assessmentUserId: string): Promise<
   | (AssessmentUser & {
-      user: User & { assessmentUserResponse: AssessmentUserResponse[] }
-      permissions: Permission[]
-      participantParts: (AssessmentPart & { part: Part })[]
-    })
+    user: User & { assessmentUserResponse: AssessmentUserResponse[] }
+    permissions: Permission[]
+    participantParts: (AssessmentPart & { part: Part })[]
+  })
   | null
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
@@ -193,9 +193,7 @@ export async function fetchAssessmentUser(assessmentUserId: string): Promise<
 }
 
 export async function fetchAssessmentUsers(assessmentId: string): Promise<
-  (AssessmentUser & {
-    user: User & { assessmentUserResponse: AssessmentUserResponse[] }
-  })[]
+  (AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] }, participantParts: AssessmentPart[] })[]
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
@@ -209,36 +207,17 @@ export async function fetchAssessmentUsers(assessmentId: string): Promise<
     include: {
       user: {
         include: {
-          assessmentUserResponse: true,
-        },
+          assessmentUserResponse: true
+        }
       },
-    },
+      participantParts: true
+    }
   })
 }
 
-export async function fetchAssessmentParticipants(
-  assessmentId: string
-): Promise<(AssessmentUser & { user: User })[]> {
-  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
-  const idAsInteger = parseInt(assessmentId, 10)
-  // Technically, users could put anything into a URL, so we need to make sure it's a number
-  if (isNaN(idAsInteger)) {
-    return []
-  }
-
-  return await db.assessmentUser.findMany({
-    where: { assessmentId: idAsInteger, role: "Participant" },
-    include: { user: true },
-  })
-}
-
-export async function fetchUserResponses(
-  userId: string | undefined
-): Promise<AssessmentUserResponse[]> {
+export async function fetchUserResponses(userId: string | undefined): Promise<AssessmentUserResponse[]> {
   if (!userId) return []
-  return await assessmentUserResponse.findMany({
-    where: { userId: parseInt(userId, 10) },
-  })
+  return await assessmentUserResponse.findMany({ where: { userId: parseInt(userId, 10) } })
 }
 
 export async function fetchAllResponsesForAssessment(
@@ -340,9 +319,33 @@ export async function fetchAssessmentParts(assessmentId: string): Promise<
   })
 }
 
-export async function fetchPartsSectionsAttributes(
-  typeid: string
-): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
+export async function fetchAssessmentAttributes(assessmentId: string): Promise<(AssessmentAttribute & { attribute: Attribute })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentAttribute.findMany({ where: { assessmentId: idAsInteger }, include: { attribute: true } })
+}
+
+export async function fetchAssessmentAttribute(assessmentId: string, attributeId: string): Promise<
+  AssessmentAttribute & { attribute: Attribute } | null
+> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return null
+  }
+  return await db.assessmentAttribute.findUnique({
+    where: {
+      assessmentId_attributeId: { assessmentId: idAsInteger, attributeId }
+    }, include: { attribute: true }
+  })
+}
+
+export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -391,42 +394,20 @@ export async function fetchAttributes(
   })
 }
 
-export async function fetchAttribute(
-  attributeId: string
-): Promise<Attribute | null> {
-  return await attribute.findUnique({ where: { id: attributeId } })
-}
-
-export async function fetchPreviousAttribute(
-  typeid: string,
-  attributeId: string
-): Promise<Attribute | null> {
-  const assessmentParts = await fetchPartsSectionsAttributes(typeid)
-  const attributes = assessmentParts.flatMap((part) =>
-    part.sections.flatMap((section) => section.attributes)
-  )
-  const currentAttribute = attributes.find(
-    (attribute) => attribute.id === attributeId
-  )
+export async function fetchPreviousAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
+  const attributes = await fetchAssessmentAttributes(assessmentId)
+  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
 
   if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) - 1]
+  return attributes[attributes.indexOf(currentAttribute) - 1].attribute
 }
 
-export async function fetchNextAttribute(
-  typeid: string,
-  attributeId: string
-): Promise<Attribute | null> {
-  const assessmentParts = await fetchPartsSectionsAttributes(typeid)
-  const attributes = assessmentParts.flatMap((part) =>
-    part.sections.flatMap((section) => section.attributes)
-  )
-  const currentAttribute = attributes.find(
-    (attribute) => attribute.id === attributeId
-  )
+export async function fetchNextAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
+  const attributes = await fetchAssessmentAttributes(assessmentId)
+  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
 
   if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) + 1]
+  return attributes[attributes.indexOf(currentAttribute) + 1].attribute
 }
 
 export async function fetchLevels(attributeId: string): Promise<Level[]> {

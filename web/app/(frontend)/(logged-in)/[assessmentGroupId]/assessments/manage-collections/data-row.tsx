@@ -72,6 +72,11 @@ export default function DataTable({
         toast({
           title: "Assessment collection updated successfully.",
         })
+      }).catch(error => {
+        setSaving(false)
+        toast({
+          title: `Error updating assessment collection: ${error}`
+        })
       })
     }
   }

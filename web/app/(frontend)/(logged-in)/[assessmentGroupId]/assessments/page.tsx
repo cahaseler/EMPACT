@@ -13,7 +13,7 @@ import DataTable from "./data-table"
 export default async function Page(
   props: Readonly<{ params: { assessmentGroupId: string } }>
 ) {
-  const params = await props.params
+  const params = props.params
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
@@ -31,7 +31,7 @@ export default async function Page(
           <div className="space-y-4 max-lg:ml-2">
             <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
               <h1 className="text-3xl font-bold tracking-tighter">
-                {assessmentType.name}
+                {assessmentType.name} Assessments
               </h1>
               {canAdd && (
                 <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">

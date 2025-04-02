@@ -5,7 +5,7 @@ import { auth } from "@/auth"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import {
   fetchAssessment,
-  fetchAssessmentParticipants,
+  fetchAssessmentUsers,
   fetchAssessmentType,
   fetchPart,
 } from "../../../../../utils/dataFetchers"
@@ -45,12 +45,9 @@ export default async function RootLayout(
     params.assessmentId,
     params.roleName
   )
-  const assessmentParticipants = await fetchAssessmentParticipants(
-    params.assessmentId
-  )
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
 
   const isParticipant = params.roleName === "Participant"
-  const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
   const userResponses = await viewableResponses(
     session,
     params.assessmentId,
@@ -86,11 +83,12 @@ export default async function RootLayout(
         return (
           <SidebarProvider defaultOpen={false}>
             <AssessmentSidebar
-              assessmentType={assessmentType}
               assessment={assessment}
+              assessmentType={assessmentType}
+              assessmentUsers={assessmentUsers}
+              isParticipant={isParticipant}
               role={params.roleName}
               parts={parts}
-              numAssessmentUsers={numAssessmentUsers}
               userResponses={userResponses}
             />
             {children}

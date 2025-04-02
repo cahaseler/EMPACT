@@ -39,6 +39,11 @@ export default function AddGroup({
       toast({
         title: "Assessment user group added successfully.",
       })
+    }).catch(error => {
+      setSaving(false)
+      toast({
+        title: `Error adding assessment user group: ${error}`
+      })
     })
   }
 

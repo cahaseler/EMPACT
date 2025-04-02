@@ -16,12 +16,12 @@ export default function PageView({
   collections,
   assessmentType,
   isAdmin,
-}: {
-  readonly assessments: Assessment[]
-  readonly collections: (AssessmentCollection & { assessments: Assessment[] })[]
-  readonly assessmentType: AssessmentType
-  readonly isAdmin: boolean
-}) {
+}: Readonly<{
+  assessments: Assessment[]
+  collections: (AssessmentCollection & { assessments: Assessment[] })[]
+  assessmentType: AssessmentType
+  isAdmin: boolean
+}>) {
   const [assessmentsOrCollections, setAssessmentsOrCollections] = useState<
     "assessments" | "collections"
   >("assessments")
@@ -32,7 +32,7 @@ export default function PageView({
           <div className="flex flex-col max-md:space-y-2 md:flex-row md:space-x-4 justify-between">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter">
-                {assessmentType.name} Users
+                {assessmentType.name} Assessment Users
               </h1>
               <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                 Select an assessment{" "}

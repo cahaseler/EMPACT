@@ -8,16 +8,17 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table"
 import {
   Assessment,
+  AssessmentAttribute,
   AssessmentType,
   AssessmentUserResponse,
   Attribute,
   Level,
   Part,
-  Section,
+  Section
 } from "@/prisma/mssql/generated/client"
 
 // TODO: Convert to React-Table
@@ -32,55 +33,51 @@ export default function DataTable({
   attributes,
   userResponses,
   isParticipant,
-}: {
-  readonly assessment: Assessment
-  readonly assessmentType: AssessmentType
-  readonly role: string
-  readonly part: Part
-  readonly section: Section
-  readonly attributes: (Attribute & { levels: Level[] })[]
-  readonly userResponses: AssessmentUserResponse[]
-  readonly isParticipant: boolean
-}) {
+}: Readonly<{
+  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] },
+  assessmentType: AssessmentType,
+  role: string,
+  part: Part,
+  section: Section,
+  attributes: (Attribute & { levels: Level[] })[],
+  userResponses: AssessmentUserResponse[],
+  isParticipant: boolean
+}>) {
   const router = useRouter()
+
+  const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
+  const attributesInAssessment = attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
 
   return (
     <Table className="dark:bg-transparent">
       <TableHeader>
         <TableRow>
           <TableHead>{part.attributeType}</TableHead>
-          {isParticipant ? (
-            <>
-              <TableHead>Rating</TableHead>
-              <TableHead>Comments</TableHead>
-            </>
-          ) : (
-            <TableHead>Number of Submitted Responses</TableHead>
-          )}
+          {isParticipant ?
+            (
+              <>
+                <TableHead>Rating</TableHead>
+                <TableHead>Comments</TableHead>
+              </>
+            ) : (
+              <TableHead>Number of Submitted Responses</TableHead>
+            )
+          }
         </TableRow>
       </TableHeader>
       <TableBody className="cursor-pointer">
-        {attributes.map(
+        {attributesInAssessment.map(
           (attribute: Attribute & { levels: Level[] }, key: number) => {
             const attributeResponses = userResponses.filter(
-              (userResponse: AssessmentUserResponse) =>
-                userResponse.attributeId === attribute.id
+              (userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id
             )
-            const level =
-              attributeResponses.length > 0
-                ? attribute.levels.find(
-                    (level: Level) => level.id === attributeResponses[0].levelId
-                  )
-                : undefined
+            const level = attributeResponses.length > 0 ? attribute.levels.find(
+              (level: Level) => level.id === attributeResponses[0].levelId
+            ) : undefined
             return (
-              <TableRow
-                key={key}
-                onClick={() =>
-                  router.push(
-                    `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`
-                  )
-                }
-              >
+              <TableRow key={key} onClick={() =>
+                router.push(`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`)
+              }>
                 <TableCell className="w-1/2">
                   {attribute.id.toString().toUpperCase()}. {attribute.name}
                 </TableCell>
@@ -105,6 +102,6 @@ export default function DataTable({
           }
         )}
       </TableBody>
-    </Table>
+    </Table >
   )
 }

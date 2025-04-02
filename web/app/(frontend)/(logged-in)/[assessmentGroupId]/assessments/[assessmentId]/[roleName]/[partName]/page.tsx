@@ -2,8 +2,8 @@ import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import { auth } from "@/auth"
 import {
   fetchAssessment,
-  fetchAssessmentParticipants,
   fetchAssessmentType,
+  fetchAssessmentUsers,
   fetchPart,
 } from "../../../../../utils/dataFetchers"
 import { viewableResponses } from "../../../../../utils/permissions"
@@ -25,12 +25,9 @@ export default async function Page(
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
-  const assessmentParticipants = await fetchAssessmentParticipants(
-    params.assessmentId
-  )
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
 
   const isParticipant = params.roleName === "Participant"
-  const numAssessmentUsers = isParticipant ? 1 : assessmentParticipants.length
   const userResponses = await viewableResponses(
     session,
     params.assessmentId,
@@ -70,9 +67,10 @@ export default async function Page(
             <PartContent
               assessment={assessment}
               assessmentType={assessmentType}
-              part={part}
+              assessmentUsers={assessmentUsers}
+              isParticipant={isParticipant}
               role={params.roleName}
-              numAssessmentUsers={numAssessmentUsers}
+              part={part}
               userResponses={userResponses}
             />
           </section>

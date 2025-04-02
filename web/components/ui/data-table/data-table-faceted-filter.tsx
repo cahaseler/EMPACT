@@ -44,11 +44,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="default"
-          size="default"
-          className="h-8 px-3 text-white"
-        >
+        <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
           {title}
           {selectedValues?.size > 0 && (
@@ -56,7 +52,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
                 variant="secondary"
-                className="rounded-sm px-1 font-normal lg:hidden"
+                className="rounded-sm px-1 lg:hidden"
               >
                 {selectedValues.size}
               </Badge>
@@ -64,7 +60,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 {selectedValues.size > 2 ? (
                   <Badge
                     variant="secondary"
-                    className="rounded-sm px-1 font-normal"
+                    className="rounded-sm px-1"
                   >
                     {selectedValues.size} selected
                   </Badge>
@@ -75,7 +71,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                       <Badge
                         variant="secondary"
                         key={option.value}
-                        className="rounded-sm px-1 font-normal"
+                        className="rounded-sm px-1"
                       >
                         {option.label}
                       </Badge>
@@ -111,13 +107,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border-2 border-indigo-400/90",
                         isSelected
-                          ? "bg-primary text-primary-foreground"
+                          ? "bg-transparent text-indigo-400/90"
                           : "opacity-50 [&_svg]:invisible"
                       )}
                     >
-                      <Check className={cn("h-4 w-4")} />
+                      <Check className={cn("h-4 w-4 stroke-[3px]")} />
                     </div>
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (

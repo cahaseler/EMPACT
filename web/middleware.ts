@@ -49,7 +49,7 @@ function isAuthenticationRequired(req: NextRequest): boolean {
 }
 
 function isNewlyLoggedIn(sessionClaims: SessionClaims): boolean {
-  return !sessionClaims.metadata.databaseId
+  return !sessionClaims.metadata?.databaseId
 }
 
 /**
@@ -203,6 +203,8 @@ export default clerkMiddleware(async (auth, req) => {
     sessionClaims: SessionClaims
   }
 
+  const dbUser = await fetchUserFromDatabase(sessionClaims?.user?.email)
+
   // If the user is going to a non-public route, redirect them to the login page if they're not logged in
   if (isAuthenticationRequired(req)) {
     await auth.protect()
@@ -214,13 +216,15 @@ export default clerkMiddleware(async (auth, req) => {
   // type guard - this should never happen
   if (!userId) {
     throw new Error("User is logged in but userId is null")
+  } else {
+    // Update the our Session metadata with permissions information (and the database User ID) from the database
+    await updateClerkMetadata(dbUser, userId, null)
   }
 
   // Check if session metadata needs to be updated based on the database
   // (this is going to be the case on the first load after all new logins)
   // We'll also take the opportunity to update database user info if it's needed
   if (isNewlyLoggedIn(sessionClaims)) {
-    const dbUser = await fetchUserFromDatabase(sessionClaims?.user.email)
     let newUser: User | null = null
 
     if (!dbUser) {
@@ -239,7 +243,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (shouldConfirmRegistration(dbUser)) {
       // If the user hasn't actually been assigned any permissions at all in the system yet,
       // Send them to a page thanking them for signing up and telling them to wait for access
-      return NextResponse.redirect(new URL("/confirm-registered", req.url))
+      return NextResponse.redirect(new URL("/confirm-registered"))
     }
 
     // At this point, all of the following should be true:

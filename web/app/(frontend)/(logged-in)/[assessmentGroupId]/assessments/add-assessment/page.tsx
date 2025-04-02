@@ -58,6 +58,7 @@ export default async function Page(
             assessmentCollections={
               isAdmin(session) ? assessmentCollections : editableCollections
             }
+            assessmentType={assessmentType}
             parts={parts}
           />
         </div>

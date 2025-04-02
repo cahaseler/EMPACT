@@ -1,21 +1,25 @@
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+
 import { auth } from "@/auth"
+
 import {
   fetchAllResponsesForAssessment,
   fetchAssessment,
+  fetchAssessmentAttributes,
   fetchAssessmentCollections,
-  fetchAssessmentParticipants,
   fetchAssessmentParts,
   fetchAssessmentType,
-  fetchAssessmentUsers,
+  fetchAssessmentUsers
 } from "../../../../utils/dataFetchers"
 import {
   isAdmin,
   isCollectionManager,
   isLeadForAssessment,
   isManagerForCollection,
-  viewableCollections,
+  viewableCollections
 } from "../../../../utils/permissions"
+
+import AssessmentAttributes from "./attributes"
 import ArchiveModule from "../../archive-module"
 import EditForm from "./edit-form"
 import PartsTable from "./parts-table"
@@ -42,13 +46,10 @@ export default async function Page(
   )
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentParts = await fetchAssessmentParts(params.assessmentId)
+  const parts = assessmentParts.map(part => part.part)
+  const assessmentAttributes = await fetchAssessmentAttributes(params.assessmentId)
   const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
-  const assessmentParticipants = await fetchAssessmentParticipants(
-    params.assessmentId
-  )
-  const userResponses = await fetchAllResponsesForAssessment(
-    params.assessmentId
-  )
+  const userResponses = await fetchAllResponsesForAssessment(params.assessmentId)
 
   if (assessmentType && assessment) {
     const links = [
@@ -89,47 +90,47 @@ export default async function Page(
             <div className="space-y-4">
               <Breadcrumbs links={links} currentPage="Edit Assessment" />
               <div className="flex flex-row justify-between">
-                <h1 className="text-3xl font-bold tracking-tighter">
-                  Edit {assessment.name}
-                </h1>
+                <h1 className="text-3xl font-bold tracking-tighter">Edit {assessment.name}</h1>
                 <div className="flex flex-col sm:flex-row justify-end max-sm:space-y-4 sm:space-x-4 ml-4">
                   {canEditStatus && <SubmitModule assessment={assessment} />}
-                  {canArchive && (
+                  {canArchive &&
                     <ArchiveModule
                       assessment={assessment}
                       assessmentTypeId={assessmentType.id}
                       assessmentUsers={assessmentUsers}
                       buttonType="default"
                     />
-                  )}
+                  }
                 </div>
               </div>
             </div>
           </section>
           <section className="mb-8">
             <EditForm
+              assessmentType={assessmentType}
               assessment={assessment}
-              assessmentCollections={
-                canEditCollection ? editableCollections : assessmentCollections
-              }
+              assessmentCollections={canEditCollection ? editableCollections : assessmentCollections}
               canEditCollection={canEditCollection}
               canEditStatus={canEditStatus}
             />
           </section>
           <section className="mb-8">
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold max-lg:ml-2">
-                Assessment Parts
-              </h2>
+              <h2 className="text-2xl font-bold max-lg:ml-2">Assessment Parts</h2>
               <PartsTable
                 assessmentParts={assessmentParts}
                 canEditStatus={canEditStatus}
-                numAssessmentUsers={assessmentParticipants.length}
+                assessmentUsers={assessmentUsers}
                 userResponses={userResponses}
+              />
+              <AssessmentAttributes
+                assessmentId={assessment.id}
+                parts={parts}
+                assessmentAttributes={assessmentAttributes}
               />
             </div>
           </section>
-        </div>
+        </div >
       )
     }
     return (

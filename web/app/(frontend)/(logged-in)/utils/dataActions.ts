@@ -1,5 +1,4 @@
 "use server"
-
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentCollection from "@/app/utils/assessmentCollection"
 import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
@@ -9,6 +8,7 @@ import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
 import { db } from "@/lib/db"
 import {
   Assessment,
+  AssessmentAttribute,
   AssessmentCollection,
   AssessmentCollectionUser,
   AssessmentPart,
@@ -72,7 +72,7 @@ export async function createAssessment(
       assessmentCollectionId: collectionId,
       name,
       status,
-      completedDate: "",
+      completedDate: null,
       location,
       description,
     },
@@ -132,6 +132,20 @@ export async function updateAssessmentPart(
       partId,
     },
   })
+}
+
+export async function createAssessmentAttribute(
+  assessmentId: number,
+  attributeId: string
+): Promise<AssessmentAttribute> {
+  return await db.assessmentAttribute.create({ data: { assessmentId, attributeId } })
+}
+
+export async function deleteAssessmentAttribute(
+  assessmentId: number,
+  attributeId: string
+): Promise<AssessmentAttribute> {
+  return await db.assessmentAttribute.delete({ where: { assessmentId_attributeId: { assessmentId, attributeId } } })
 }
 
 export async function createAssessmentUserGroup(

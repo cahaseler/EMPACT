@@ -17,15 +17,18 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubItem,
-  SidebarTrigger,
+  SidebarTrigger
 } from "@/components/ui/sidebar"
 import {
   Assessment,
+  AssessmentAttribute,
+  AssessmentPart,
   AssessmentType,
+  AssessmentUser,
   AssessmentUserResponse,
   Attribute,
   Part,
-  Section,
+  Section
 } from "@/prisma/mssql/generated/client"
 
 export function AssessmentSidebar({
@@ -33,18 +36,23 @@ export function AssessmentSidebar({
   assessment,
   role,
   parts,
-  numAssessmentUsers,
+  assessmentUsers,
   userResponses,
+  isParticipant
 }: Readonly<{
   assessmentType: AssessmentType
-  assessment: Assessment
+  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] }
   role: string
   parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
-  numAssessmentUsers: number
+  assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[] })[]
   userResponses: AssessmentUserResponse[]
+  isParticipant: boolean
 }>) {
   const responseAttributeIds = userResponses.map(
     (userResponse) => userResponse.attributeId
+  )
+  const assessmentAttributeIds = assessment.assessmentAttributes.map(
+    (assessmentAttribute) => assessmentAttribute.attributeId
   )
   return (
     <Sidebar
@@ -70,30 +78,35 @@ export function AssessmentSidebar({
       </SidebarHeader>
       <SidebarContent className="group-data-[collapsible=icon]:hidden">
         {parts.map((part) => {
-          const partAttributeIds = part.sections.flatMap((section) =>
-            section.attributes.map((attribute) => attribute.id)
+          const partAttributeIds = part.sections.flatMap(
+            section => section.attributes.map(
+              attribute => attribute.id
+            )
+          )
+          const partAttributesInAssessmentIds = partAttributeIds.filter(
+            partAttributeId => assessmentAttributeIds.includes(partAttributeId)
           )
           const partResponseAttributeIds = responseAttributeIds.filter(
-            (responseAttributeId) =>
-              partAttributeIds.includes(responseAttributeId)
+            responseAttributeId => partAttributesInAssessmentIds.includes(responseAttributeId)
           )
+          const partParticipants = assessmentUsers.filter(
+            assessmentUser =>
+              assessmentUser.role === "Participant" ||
+              assessmentUser.participantParts.some(
+                participantPart => participantPart.partId === part.id
+              )
+          )
+          const numParticipants = isParticipant ? 1 : partParticipants.length
           const unfinishedPart =
-            partAttributeIds.length * numAssessmentUsers !==
-            partResponseAttributeIds.length * numAssessmentUsers
+            partAttributesInAssessmentIds.length * numParticipants !== partResponseAttributeIds.length * numParticipants
           return (
-            <Collapsible className="group/collapsible" key={part.id}>
+            <Collapsible className="group/collapsible">
               <SidebarGroup>
                 <div className="flex flex-row justify-between items-center">
                   <SidebarGroupLabel asChild>
-                    <a
-                      href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}`}
-                    >
-                      {!unfinishedPart && (
-                        <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
-                      )}
-                      <span className={unfinishedPart ? "" : "opacity-50"}>
-                        {part.name}
-                      </span>
+                    <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}`}>
+                      {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
+                      <span className={unfinishedPart ? "" : "opacity-50"}>{part.name}</span>
                     </a>
                   </SidebarGroupLabel>
                   <div className="ml-1 cursor-pointer">
@@ -106,38 +119,25 @@ export function AssessmentSidebar({
                   <SidebarGroupContent>
                     <SidebarMenu>
                       {part.sections.map((section) => {
-                        const sectionAttributeIds = section.attributes.map(
-                          (attribute) => attribute.id
+                        const sectionAttributesInAssessment = section.attributes.filter(
+                          attribute => assessmentAttributeIds.includes(attribute.id)
                         )
-                        const sectionResponseAttributeIds =
-                          responseAttributeIds.filter((responseAttributeId) =>
-                            sectionAttributeIds.includes(responseAttributeId)
-                          )
+                        const sectionAttributeIds = sectionAttributesInAssessment.map(
+                          attribute => attribute.id
+                        )
+                        const sectionResponseAttributeIds = responseAttributeIds.filter(
+                          responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
+                        )
                         const unfinishedSection =
-                          sectionAttributeIds.length * numAssessmentUsers !==
-                          sectionResponseAttributeIds.length *
-                            numAssessmentUsers
+                          sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
                         return (
-                          <Collapsible
-                            className="group/collapsible-2"
-                            key={section.id}
-                          >
+                          <Collapsible className="group/collapsible-2">
                             <SidebarMenuItem key={section.name}>
                               <div className="flex flex-row justify-between items-center">
                                 <SidebarMenuButton asChild>
-                                  <a
-                                    href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}
-                                  >
-                                    {!unfinishedSection && (
-                                      <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />
-                                    )}
-                                    <span
-                                      className={
-                                        unfinishedSection ? "" : "opacity-50"
-                                      }
-                                    >
-                                      {section.id.toUpperCase()}. {section.name}
-                                    </span>
+                                  <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}>
+                                    {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
+                                    <span className={unfinishedSection ? "" : "opacity-50"}>{section.id.toUpperCase()}. {section.name}</span>
                                   </a>
                                 </SidebarMenuButton>
                                 <div className="ml-1 py-2 px-1 cursor-pointer rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-700 hover:text-sidebar-accent-foreground">
@@ -148,33 +148,20 @@ export function AssessmentSidebar({
                               </div>
                               <CollapsibleContent>
                                 <SidebarMenuSub>
-                                  {section.attributes.map((attribute) => {
-                                    const attributeResponseAttributeIds =
-                                      responseAttributeIds.filter(
-                                        (responseAttributeId) =>
-                                          attribute.id === responseAttributeId
-                                      )
-                                    const unfinishedAttribute =
-                                      attributeResponseAttributeIds.length !==
-                                      numAssessmentUsers
+                                  {sectionAttributesInAssessment.map((attribute) => {
+                                    const attributeResponseAttributeIds = responseAttributeIds.filter(
+                                      responseAttributeId => attribute.id === responseAttributeId
+                                    )
+                                    const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
                                     return (
                                       <SidebarMenuSubItem key={attribute.name}>
                                         <SidebarMenuButton asChild>
-                                          <a
-                                            href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}
-                                          >
-                                            {!unfinishedAttribute && (
+                                          <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
+                                            {!unfinishedAttribute &&
                                               <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />
-                                            )}
-                                            <span
-                                              className={
-                                                unfinishedAttribute
-                                                  ? ""
-                                                  : "opacity-50"
-                                              }
-                                            >
-                                              {attribute.id.toUpperCase()}.{" "}
-                                              {attribute.name}
+                                            }
+                                            <span className={unfinishedAttribute ? "" : "opacity-50"}>
+                                              {attribute.id.toUpperCase()}. {attribute.name}
                                             </span>
                                           </a>
                                         </SidebarMenuButton>
