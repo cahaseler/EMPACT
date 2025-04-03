@@ -106,9 +106,11 @@ export default function EditForm({
               onValueChange={(value) => {
                 setRole(value)
                 setSelectedPermissions([])
-                if (value !== "Participant") setGroupId(null)
-                else {
-                  setGroupId(groups[0].id)
+                if (value !== "Participant") {
+                  setGroupId(null)
+                } else {
+                  // Set groupId safely using optional chaining and nullish coalescing
+                  setGroupId(groups[0]?.id ?? null)
                   setShouldFacParticipate(false)
                 }
               }}
@@ -166,9 +168,12 @@ export default function EditForm({
                   onCheckedChange={(checked) => {
                     if (checked) {
                       setShouldFacParticipate(true)
-                      setGroupId(groups[0].id)
-                      if (partsToParticipate.length === 1)
+                      // Set groupId safely using optional chaining and nullish coalescing
+                      setGroupId(groups[0]?.id ?? null)
+                      // Check if partsToParticipate[0] exists before accessing id
+                      if (partsToParticipate.length === 1 && partsToParticipate[0]) {
                         setSelectedParts([partsToParticipate[0].id])
+                      }
                     } else {
                       setShouldFacParticipate(false)
                       setGroupId(null)
@@ -178,7 +183,8 @@ export default function EditForm({
                 />
                 <Label>
                   Will Facilitator Also Participate
-                  {partsToParticipate.length === 1 &&
+                  {/* Safely access nested property using optional chaining */}
+                  {partsToParticipate.length === 1 && partsToParticipate[0]?.part?.name &&
                     ` in ${partsToParticipate[0].part.name}`}
                   ?
                 </Label>

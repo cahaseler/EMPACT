@@ -57,12 +57,17 @@ export default function DataTable({
       setSaving(true)
       try {
         for (let i = 0; i < usersToAdd.length; i++) {
-          await createAssessmentUser(
-            assessmentId,
-            usersToAdd[i].role,
-            usersToAdd[i].userId,
-            usersToAdd[i].groupId
-          )
+          const userToAdd = usersToAdd[i];
+          // Ensure userToAdd and its required properties are defined
+          if (userToAdd && userToAdd.role && userToAdd.userId) {
+            await createAssessmentUser(
+              assessmentId,
+              userToAdd.role,
+              userToAdd.userId,
+              // groupId can be null, so only check userToAdd itself
+              userToAdd.groupId
+            )
+          }
         }
         setSaving(false)
         router.refresh()
@@ -95,8 +100,9 @@ export default function DataTable({
             users.map((user: User, key: number) => {
               const [isChecked, setIsChecked] = useState<boolean>(false)
               const [role, setRole] = useState<string>("Participant")
+              // Initialize groupId safely using optional chaining and nullish coalescing
               const [groupId, setGroupId] = useState<number | null>(
-                groups[0].id
+                groups[0]?.id ?? null
               )
 
               const updateUsersToAdd = () => {
@@ -140,8 +146,12 @@ export default function DataTable({
                     <Select
                       onValueChange={(value) => {
                         setRole(value)
-                        if (value !== "Participant") setGroupId(null)
-                        else setGroupId(groups[0].id)
+                        if (value !== "Participant") {
+                          setGroupId(null)
+                        } else {
+                          // Set groupId safely using optional chaining and nullish coalescing
+                          setGroupId(groups[0]?.id ?? null)
+                        }
                         if (isChecked) updateUsersToAdd()
                       }}
                     >

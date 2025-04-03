@@ -40,7 +40,11 @@ export default function DataTable({
       setSaving(true)
       try {
         for (let i = 0; i < usersToAdd.length; i++) {
-          await createAssessmentCollectionUser(usersToAdd[i], collectionId)
+          const userId = usersToAdd[i];
+          // Ensure userId is defined before calling the function
+          if (userId !== undefined) {
+            await createAssessmentCollectionUser(userId, collectionId)
+          }
         }
         setSaving(false)
         router.refresh()

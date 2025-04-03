@@ -39,12 +39,18 @@ export default function AssessmentAttributes({
             try {
                 if (attributesToAdd.length > 0) {
                     for (var i = 0; i < attributesToAdd.length; i++) {
-                        await createAssessmentAttribute(assessmentId, attributesToAdd[i])
+                        const attributeId = attributesToAdd[i];
+                        if (attributeId) { // Check if attributeId is defined
+                            await createAssessmentAttribute(assessmentId, attributeId)
+                        }
                     }
                 }
                 if (attributesToRemove.length > 0) {
                     for (var i = 0; i < attributesToRemove.length; i++) {
-                        await deleteAssessmentAttribute(assessmentId, attributesToRemove[i])
+                        const attributeId = attributesToRemove[i];
+                        if (attributeId) { // Check if attributeId is defined
+                            await deleteAssessmentAttribute(assessmentId, attributeId)
+                        }
                     }
                 }
                 setSaving(false)
@@ -88,30 +94,33 @@ export default function AssessmentAttributes({
                                                     </AccordionTrigger>
                                                     <AccordionContent className="flex flex-col space-y-4 px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg [&_div:last-child]:border-0 [&_div:last-child]:pb-0">
                                                         {section.attributes.map((attribute: Attribute) => {
-                                                            const [isChecked, setIsChecked] = useState(attributeIds.includes(attribute.id))
+                                                            // Derive checked status instead of using local state
+                                                            const isInitiallyChecked = attributeIds.includes(attribute.id);
+                                                            const isChecked = (isInitiallyChecked && !attributesToRemove.includes(attribute.id)) || attributesToAdd.includes(attribute.id);
+
                                                             return (
                                                                 <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
-                                                                    <Checkbox 
+                                                                    <Checkbox
                                                                         checked={isChecked}
                                                                         onCheckedChange={(checked) => {
                                                                             if (checked) {
                                                                                 setAttributesToAdd([...attributesToAdd, attribute.id])
                                                                                 if (attributesToRemove.length > 0) {
-                                                                                    setAttributesToRemove(attributesToRemove.filter((id) => 
+                                                                                    setAttributesToRemove(attributesToRemove.filter((id) =>
                                                                                         id !== attribute.id
                                                                                     ))
                                                                                 }
-                                                                                setIsChecked(true)
+                                                                                // setIsChecked(true) // State is now derived
                                                                             } else {
                                                                                 setAttributesToRemove([...attributesToRemove, attribute.id])
                                                                                 if (attributesToAdd.length > 0) {
-                                                                                    setAttributesToAdd(attributesToAdd.filter((id) => 
+                                                                                    setAttributesToAdd(attributesToAdd.filter((id) =>
                                                                                         id !== attribute.id
                                                                                     ))
                                                                                 }
-                                                                                setIsChecked(false)
+                                                                                // setIsChecked(false) // State is now derived
                                                                             }
-                                                                        }} 
+                                                                        }}
                                                                     />
                                                                     <div>{attribute.id.toUpperCase()}. {attribute.name}</div>
                                                                 </div>

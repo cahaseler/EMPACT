@@ -35,7 +35,8 @@ export default function AddCollection({
 }) {
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const [name, setName] = useState<string>("")
-  const [managerId, setManagerId] = useState<string>(users[0].id.toString())
+  // Initialize managerId safely using optional chaining and nullish coalescing
+  const [managerId, setManagerId] = useState<string>(users[0]?.id?.toString() ?? "")
   const [saving, setSaving] = useState<boolean>(false)
 
   const router = useRouter()
@@ -123,7 +124,7 @@ export default function AddCollection({
                   <Select onValueChange={(value) => setManagerId(value)}>
                     <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
                       <SelectValue
-                        placeholder={`${users[0].lastName}, ${users[0].firstName}`}
+                        placeholder={users[0] ? `${users[0]?.lastName ?? ''}, ${users[0]?.firstName ?? ''}` : "Select Manager"}
                         defaultValue={managerId}
                       />
                     </SelectTrigger>

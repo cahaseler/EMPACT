@@ -72,7 +72,7 @@ export default function DataTable({
               (userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id
             )
             const level = attributeResponses.length > 0 ? attribute.levels.find(
-              (level: Level) => level.id === attributeResponses[0].levelId
+              (level: Level) => level.id === attributeResponses[0]?.levelId
             ) : undefined
             return (
               <TableRow key={key} onClick={() =>
@@ -88,7 +88,7 @@ export default function DataTable({
                     </TableCell>
                     <TableCell>
                       {attributeResponses.length > 0
-                        ? attributeResponses[0].notes
+                        ? attributeResponses[0]?.notes
                         : "---"}
                     </TableCell>
                   </>

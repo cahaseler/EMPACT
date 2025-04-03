@@ -33,7 +33,7 @@
         "cn",
         "cva"
       ],
-      "config": "web/tailwind.config.js",
+      "config": "web/tailwind.config.ts",
       "cssFiles": [
         "web/app/(frontend)/globals.css"
       ]
@@ -55,7 +55,7 @@
   },
   "ignorePatterns": [
     "node_modules/**",
-    "web_static/**",
+    
     "src-tauri/**",
     ".next/**",
     "web/.next/**",
