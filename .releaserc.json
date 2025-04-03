@@ -64,7 +64,7 @@
           },
           {
             "files": [
-              "web/app/(frontend)/components/version-indicator.tsx",
+              "web/app/(frontend)/components/version-indicator.tsx"
             ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
