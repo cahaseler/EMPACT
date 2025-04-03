@@ -18,7 +18,7 @@ EMPACT is an open-source implementation of the IP2M METRR Environmental and Matu
 
 ## Getting Started
 
-For detailed information on installation, usage, and contribution, please refer to our [Wiki](https://github.com/cahaseler/EMPACT/wiki).
+For detailed information on installation, usage, and contribution, please refer to our [Wiki](https://github.com/cahaseler/EMPACT/wiki). *(Note: The Wiki may require updates following the recent monorepo refactor described below).*
 
 - [Project Status](https://github.com/cahaseler/EMPACT/wiki/Project-Status)
 - [Quick Start Guide](https://github.com/cahaseler/EMPACT/wiki/Quick-Start-Guide)
@@ -26,6 +26,51 @@ For detailed information on installation, usage, and contribution, please refer 
 - [User Guide](https://github.com/cahaseler/EMPACT/wiki/User-Guide)
 - [Developer Documentation](https://github.com/cahaseler/EMPACT/wiki/Developer-Documentation)
 - [FAQs](https://github.com/cahaseler/EMPACT/wiki/FAQs)
+
+## Development Setup (Yarn Workspaces)
+
+This project uses Yarn Workspaces to manage the monorepo structure, containing the following main packages:
+
+- `web`: The Next.js frontend application.
+- `src-tauri`: The Tauri desktop application wrapper.
+
+**Installation:**
+
+1.  Ensure you have Node.js and Yarn installed.
+2.  Clone the repository.
+3.  Run the following command from the project root directory to install all dependencies for all workspaces:
+    ```bash
+    yarn install
+    ```
+
+**Common Commands:**
+
+All commands should be run from the project root directory.
+
+-   **Run the web development server:**
+    ```bash
+    yarn dev-web
+    ```
+    (This runs `yarn workspace empact_web dev`)
+-   **Build the web application:**
+    ```bash
+    yarn build-web
+    ```
+    (This runs `yarn workspace empact_web build`)
+-   **Run the Tauri app in development mode:** (Uses the web dev server)
+    ```bash
+    yarn dev-app
+    ```
+    (This runs `yarn workspace src-tauri tauri dev`)
+-   **Build the Tauri application:** (Currently deferred)
+    ```bash
+    yarn build-app
+    ```
+-   **Run commands within a specific workspace:**
+    Use the `yarn workspace <workspace_name> <command>` syntax. For example, to lint the web workspace (assuming a `lint` script exists in `web/package.json`):
+    ```bash
+    yarn workspace empact_web lint
+    ```
 
 ## Project Status
 

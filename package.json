@@ -15,31 +15,40 @@
     "url": "https://github.com/cahaseler"
   },
   "private": true,
+  "workspaces": [
+    "web",
+    "src-tauri"
+  ],
   "scripts": {
-    "install-all": "yarn install && cd web && yarn install && cd .. && yarn sync-app && cd web_static && yarn install && cd ..",
     "dev": "ECHO 'Use 'yarn dev-web' to edit the frontend in browser or 'yarn dev-app' to run the tauri app in dev mode.'",
-    "dev-web": "cd web && yarn dev",
-    "dev-app": "node warning_message.js && yarn sync-app && cd src-tauri && tauri dev",
-    "sync-app": "Xcopy \"web/app/(frontend)\" \"web_static/app/(frontend)\" /E /I /Y && Xcopy \"web/public\" \"web_static/public\" /E /I /Y && Xcopy \"web/components\" \"web_static/components\" /E /I /Y && Xcopy \"web/lib\" \"web_static/lib\" /E /I /Y",
-    "sync-app-linux": "cp -rf 'web/app/(frontend)' 'web_static/app/(frontend)' && cp -rf 'web/public' 'web_static/public' && cp -rf 'web/components' 'web_static/components' && cp -rf 'web/lib' 'web_static/lib'",
-    "build": "next build",
-    "build-all": "cd web && yarn build && cd .. && yarn sync-app && cd src-tauri && tauri build",
-    "build-web": "cd web && yarn install && yarn build && cd ..",
-    "build-static": "cd web_static && yarn install && yarn build && cd ..",
-    "build-app": "cd src-tauri && tauri build && cd .."
+    "dev-web": "yarn workspace empact_web dev",
+    "dev-app": "node warning_message.js && yarn workspace src-tauri tauri dev",
+    "build-all": "yarn workspace empact_web build && echo 'Tauri build step deferred'",
+    "build-web": "yarn workspace empact_web build",
+    "build-app": "echo 'Tauri build step deferred'"
   },
   "devDependencies": {
+    "autoprefixer": "latest",
     "@ianvs/prettier-plugin-sort-imports": "4.3.1",
     "@tauri-apps/cli": "1.6.0",
+    "@types/node": "20.14.15",
+    "@types/react": "19.0.12",
+    "@types/react-dom": "19.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "@tailwindcss/postcss": "latest",
     "eslint": "8.57.0",
     "eslint-config-next": "^15.2.4",
     "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-jsdoc": "48.11.0",
+    "eslint-plugin-jsdoc": "^50.6.8",
     "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-react": "7.35.0",
+    "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-tailwindcss": "3.17.4",
-    "prettier": "3.3.3",
-    "tailwindcss": "^4.0.14"
+    "postcss": "8.4.41",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "tailwindcss": "^4.0.14",
+    "typescript": "5.5.4"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

@@ -66,10 +66,34 @@ async function seedTestUsers(prisma: PrismaClientType) {
 
   // Create test users
   for (const [role, email] of Object.entries(testAccounts)) {
-    const [firstName, lastName] = email
-      .split("@")[0]
-      .split("_")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    let firstName = "Test"; // Default first name
+    let lastName = "User"; // Default last name
+
+    // Safely extract names only if email is a valid string containing '@'
+    if (typeof email === 'string' && email.includes('@')) {
+      const namePartBeforeAt = email.split("@")[0]; // Get part before '@'
+
+      if (namePartBeforeAt && typeof namePartBeforeAt === 'string') { // Check if it's a non-empty string
+        const nameSegments = namePartBeforeAt.split("_"); // Split by '_'
+
+        // Ensure segments are valid strings before mapping
+        const capitalizedSegments = nameSegments
+          .map(part => (part && typeof part === 'string' ? part.charAt(0).toUpperCase() + part.slice(1) : undefined))
+          .filter((part): part is string => part !== undefined); // Filter out any undefined results
+
+        if (capitalizedSegments.length >= 2) {
+          // Use nullish coalescing for safe assignment
+          firstName = capitalizedSegments[0] ?? "Test";
+          lastName = capitalizedSegments[1] ?? "User";
+        } else if (capitalizedSegments.length === 1) {
+          // Handle case with only one part (e.g., 'admin@example.com')
+          // Use nullish coalescing for safe assignment
+          firstName = capitalizedSegments[0] ?? "Test";
+          lastName = "Account"; // Assign a default last name
+        }
+        // If capitalizedSegments is empty, the initial defaults remain
+      }
+    }
 
     await (prisma.user.upsert as any)({
       where: { email },

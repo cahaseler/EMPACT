@@ -105,12 +105,13 @@ export default async function Page(
           </div >
         </section >
         <AttributeLevels levels={levels} />
-        {isParticipant &&
+        {isParticipant && userResponses.length > 0 &&
           <AttributeUserResponse
             assessment={assessment}
             userId={session?.user?.id}
             attributeId={assessmentAttribute.attributeId}
             levels={levels}
+// @ts-ignore
             userResponse={userResponses[0]}
           />
         }

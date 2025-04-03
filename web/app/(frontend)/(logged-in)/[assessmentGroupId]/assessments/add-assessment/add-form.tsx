@@ -90,18 +90,26 @@ export default function AddForm({
       ).then(
         async (assessment: Assessment) => {
           for (var i = 0; i < partsToAdd.length; i++) {
-            await createAssessmentPart(
-              partsToAdd[i].status,
-              partsToAdd[i].date,
-              assessment.id,
-              partsToAdd[i].partId
-            )
+            const partData = partsToAdd[i];
+            // Ensure partData and its required properties are defined
+            if (partData && partData.status && partData.date && partData.partId) {
+              await createAssessmentPart(
+                partData.status,
+                partData.date,
+                assessment.id,
+                partData.partId
+              )
+            }
           }
           for (var i = 0; i < attributesToAdd.length; i++) {
-            await createAssessmentAttribute(
-              assessment.id,
-              attributesToAdd[i]
-            )
+            const attributeId = attributesToAdd[i];
+            // Ensure attributeId is defined
+            if (attributeId) {
+              await createAssessmentAttribute(
+                assessment.id,
+                attributeId
+              )
+            }
           }
           setSaving(false)
           router.refresh()

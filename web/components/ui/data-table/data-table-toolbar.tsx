@@ -34,16 +34,18 @@ export function DataTableToolbar<TData>({
   const isFiltered = table.getState().columnFilters.length > 0
 
   // Local state for the search input to debounce
-  const [searchValue, setSearchValue] = useState<string>(
-    (table.getColumn(searchableColumns[0]?.id)?.getFilterValue() as string) ??
-    ""
-  )
+  const initialSearchColumnId = searchableColumns[0]?.id;
+  const initialFilterValue = initialSearchColumnId
+    ? (table.getColumn(initialSearchColumnId)?.getFilterValue() as string)
+    : undefined;
+  const [searchValue, setSearchValue] = useState<string>(initialFilterValue ?? "");
 
   // Debounce search input to avoid lag on every keystroke
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
-      if (searchableColumns.length > 0) {
-        table.getColumn(searchableColumns[0].id)?.setFilterValue(searchValue)
+      // Use the safely calculated initialSearchColumnId
+      if (initialSearchColumnId) {
+        table.getColumn(initialSearchColumnId)?.setFilterValue(searchValue)
       }
     }, 300) // 300ms debounce delay
 

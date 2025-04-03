@@ -2,9 +2,9 @@
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
     "beforeBuildCommand": "",
-    "beforeDevCommand": "cd web_static && yarn dev && cd ..",
+    "beforeDevCommand": "",
     "devPath": "http://localhost:3000",
-    "distDir": "../web_static/out"
+    "distDir": "../web/dist-placeholder"
   },
   "package": {
     "productName": "EMPACT",
