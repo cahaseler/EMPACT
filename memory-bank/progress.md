@@ -19,7 +19,9 @@ This file tracks the project's progress using a task list format.
 *   [X] Analyze UI Components (`web/components/`) (2025-04-03)
 *   [X] Analyze Authentication (`web/auth.ts`, `web/middleware.ts`) (2025-04-03)
 *   [X] Analyze Tauri Backend (`src-tauri/src/main.rs`) (2025-04-03)
+*   [X] Commit resolved merge conflict (main into fix-unique-keys) (2025-04-03)
 
+*   [X] Push `fix-unique-keys` branch to remote origin (2025-04-03)
 ## Current Tasks
 
 *   [ ] Perform further research to comprehensively populate Memory Bank (as requested by user) - Step 8: Configuration Files
