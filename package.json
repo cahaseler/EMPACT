@@ -32,7 +32,7 @@
     "@ianvs/prettier-plugin-sort-imports": "4.3.1",
     "@tauri-apps/cli": "1.6.0",
     "eslint": "8.57.0",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "^15.2.4",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-jsdoc": "48.11.0",
     "eslint-plugin-prettier": "5.2.1",
@@ -40,5 +40,6 @@
     "eslint-plugin-tailwindcss": "3.17.4",
     "prettier": "3.3.3",
     "tailwindcss": "^4.0.14"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

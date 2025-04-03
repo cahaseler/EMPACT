@@ -111,7 +111,6 @@ export default async function RootLayout(
             >
               <header>
                 <Nav
-                  name={session?.user?.name}
                   isAdmin={isAdmin(session)}
                   canViewUsers={canViewUsers(session)}
                 />
