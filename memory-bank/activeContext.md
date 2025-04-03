@@ -28,7 +28,9 @@ This file tracks the project's current status, including recent changes, current
 *   Standardized ESLint, TypeScript, Tailwind configurations (root and web/), removed web_static configs (2025-04-03 10:48).
 *   Completed Monorepo Refactor Plan Step 7 (Testing): Web dev server started successfully after removing Turbopack flag. E2E tests (`yarn workspace empact_web test`) were skipped as they are currently non-functional per user report. (2025-04-03)
 *   Completed Monorepo Refactor Plan (Yarn Workspaces) and updated documentation (README.md, progress.md, activeContext.md) (2025-04-03)
+*   Committed resolved merge conflict (main into fix-unique-keys) (2025-04-03)
 
+*   Pushed `fix-unique-keys` branch to remote origin (2025-04-03)
 ## Open Questions/Issues
 
 *   How will the dynamic Next.js application in `web/` be adapted for static export or integration with Tauri for the offline desktop version? (Marked for future revisit).
