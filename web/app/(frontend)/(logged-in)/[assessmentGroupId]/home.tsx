@@ -37,7 +37,7 @@ export default function Home({
       .filter((assessment: Assessment) => assessment.status === "Active")
       .sort(
         (a: Assessment, b: Assessment) =>
-          b.completedDate.valueOf() - a.completedDate.valueOf()
+          (b.completedDate?.valueOf() ?? 0) - (a.completedDate?.valueOf() ?? 0)
       )[0]
     const mostRecentResponseAttributeIds = userResponses
       .filter(
@@ -105,21 +105,23 @@ export default function Home({
             <h2 className="text-2xl font-bold">Previous Assessments</h2>
             <div className="grid gap-4">
               {completedAssessments.length > 0 ? (
-                completedAssessments.map(
-                  (assessment: Assessment, key: number) => {
-                    return (
-                      <AssessmentCard
-                        key={key}
-                        groupId={assessmentType.id}
-                        id={assessment.id}
-                        name={assessment.name}
-                        completedDate={assessment.completedDate}
-                        parts={parts}
-                        session={session}
-                      />
-                    )
-                  }
-                )
+                completedAssessments
+                  .filter((assessment): assessment is Assessment & { completedDate: Date } => assessment.completedDate !== null)
+                  .map(
+                    (assessment, key: number) => {
+                      return (
+                        <AssessmentCard
+                          key={key}
+                          groupId={assessmentType.id}
+                          id={assessment.id}
+                          name={assessment.name}
+                          completedDate={assessment.completedDate}
+                          parts={parts}
+                          session={session}
+                        />
+                      )
+                    }
+                  )
               ) : (
                 <p className="text-md text-muted-foreground dark:text-indigo-300/80">
                   No completed assessments.

@@ -84,7 +84,7 @@ export default function DataTable({
               <TableCell onClick={() =>
                 router.push(`/${assessmentType.id}/assessments/${assessment.id}`)
               }>
-                {assessment.status === "Final" ? format(assessment.completedDate, "MM/dd/yyyy") : "N/A"}
+                {assessment.status === "Final" && assessment.completedDate ? format(assessment.completedDate, "MM/dd/yyyy") : "N/A"}
               </TableCell>
               <TableCell>
                 <AssessmentActions
