@@ -65,7 +65,6 @@
           {
             "files": [
               "web/app/(frontend)/components/version-indicator.tsx",
-              "web_static/app/(frontend)/components/version-indicator.tsx"
             ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
