@@ -1,15 +1,17 @@
 {
   "parser": "@typescript-eslint/parser", // Keep parser specific to this workspace if needed
-  "plugins": ["@typescript-eslint"], // Only plugins specific to this workspace
+  "plugins": ["@typescript-eslint", "react-hooks"], // Add react-hooks plugin
   "extends": [
     // Root config is NOT applied due to --no-eslintrc in the script.
     // We need to explicitly extend the necessary base configs here.
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended"
-    // Consider adding "plugin:react-hooks/recommended" and "next/core-web-vitals" if needed
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended" // Extend recommended react-hooks rules
+    // Consider adding "next/core-web-vitals" if needed
   ],
   "rules": {
+    // The rule is already included via "plugin:react-hooks/recommended", but keeping it explicitly won't hurt
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": "warn",
