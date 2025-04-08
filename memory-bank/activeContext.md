@@ -30,8 +30,10 @@ This file tracks the project's current status, including recent changes, current
 *   Completed Monorepo Refactor Plan (Yarn Workspaces) and updated documentation (README.md, progress.md, activeContext.md) (2025-04-03)
 *   Committed resolved merge conflict (main into fix-unique-keys) (2025-04-03)
 
+*   [2025-04-03 16:48] Fixed Docker build error in `web/Dockerfile` by removing `npx` from prisma generate command.
 *   Pushed `fix-unique-keys` branch to remote origin (2025-04-03)
 ## Open Questions/Issues
+*   Fixed GitHub Action workflow (`on_main.yml`) to specify the correct Dockerfile path (`web/Dockerfile`) (2025-04-03)
 
 *   How will the dynamic Next.js application in `web/` be adapted for static export or integration with Tauri for the offline desktop version? (Marked for future revisit).
 *   Confirm the primary source of documentation (assumed to be GitHub Wiki based on README/docs).

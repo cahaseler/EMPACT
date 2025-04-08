@@ -21,8 +21,11 @@ This file tracks the project's progress using a task list format.
 *   [X] Analyze Tauri Backend (`src-tauri/src/main.rs`) (2025-04-03)
 *   [X] Commit resolved merge conflict (main into fix-unique-keys) (2025-04-03)
 
+*   [X] Commit GitHub Action and Dockerfile updates (`fix: update github action and dockerfile for yarn workspaces`) (2025-04-03)
+*   [X] Fix GitHub Action Docker build error by specifying Dockerfile path (2025-04-03)
 *   [X] Push `fix-unique-keys` branch to remote origin (2025-04-03)
 ## Current Tasks
+*   [X] Fix Docker build error in `web/Dockerfile` (remove npx) (2025-04-03)
 
 *   [ ] Perform further research to comprehensively populate Memory Bank (as requested by user) - Step 8: Configuration Files
 *   [X] Implement Monorepo Refactor Plan (Yarn Workspaces) - Completed (2025-04-03)
