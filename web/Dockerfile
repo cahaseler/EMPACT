@@ -3,47 +3,62 @@ FROM node:22.11.0-slim AS builder
 
 WORKDIR /app
 
-# Copy root and web package files
+# Copy root dependency files
 COPY package.json yarn.lock ./
+# Copy workspace dependency file
 COPY web/package.json ./web/
-# Add copies for any other workspaces if their package.json is needed for install logic
-# Install dependencies
+# Copy necessary config files (adjust if others are needed for build)
+COPY tsconfig.json ./
+COPY web/tsconfig.json ./web/
+COPY web/next.config.mjs ./web/
+COPY prettier.config.cjs ./
+COPY web/prettier.config.cjs ./web/
+COPY tailwind.config.ts ./
+COPY web/tailwind.config.ts ./web/
+COPY web/postcss.config.mjs ./web/
+
+# Install dependencies using workspaces
 RUN yarn install --frozen-lockfile
 
-# Copy the source code
-COPY . .
+# Copy the rest of the web source code needed for the build
+COPY web/ ./web/
+# Copy any other shared source code if needed by the web build
+# e.g., COPY shared/ ./shared/
 
-# Generate Prisma client
+# Generate Prisma client for the required schema
 RUN yarn workspace empact_web prisma generate --schema=prisma/mssql/schema.prisma
 
-# Build Next.js app
+# Build Next.js app (will create standard .next output now)
 RUN yarn workspace empact_web build
 
-# Set up standalone Next.js output
-RUN cp -rf web/public web/.next/standalone/public && \
-    cp -rf web/.next/static web/.next/standalone/.next/static && \
-    mkdir -p web/.next/standalone/.prisma && \
-    cp -rf node_modules/.prisma/client web/.next/standalone/.prisma/ && \
-    cp -rf web/prisma web/.next/standalone/prisma && \
-    find web/.next/standalone -name "libquery_engine-*" -exec chmod +x {} \; || true && \
-    ls -la web/.next/standalone/.prisma/client/
+# Standalone setup steps removed as output mode is no longer standalone
 
 # Production stage
-FROM node:22.11.0-slim AS production
+# Use the standard Node image which includes more common libraries like OpenSSL
+FROM node:22.11.0 AS production
 
-WORKDIR /usr/src/app
+# Set working directory to match builder root for consistency
+WORKDIR /app
 
-# Copy built app from builder stage
-COPY --from=builder /app/web/.next/standalone /usr/src/app
-COPY --from=builder /app/web/.next/static /usr/src/app/.next/static
-COPY --from=builder /app/web/public /usr/src/app/public
-COPY --from=builder /app/node_modules/.prisma /usr/src/app/.prisma
-COPY --from=builder /app/web/prisma /usr/src/app/prisma
+# Copy necessary package files for running the app
+COPY package.json yarn.lock ./
+COPY web/package.json ./web/
 
-# Install production dependencies
-RUN apt-get update && apt-get install -y openssl ca-certificates && \
-    chmod -R +x /usr/src/app/.prisma/client && \
-    ls -la /usr/src/app/.prisma/client/
+# Copy the entire node_modules from the builder stage
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy the built Next.js app from the web workspace
+COPY --from=builder /app/web/.next ./web/.next
+
+# Copy public assets
+COPY --from=builder /app/web/public ./web/public
+
+# Copy Prisma schema and generated client
+COPY --from=builder /app/web/prisma ./web/prisma
+
+# No need to install OS dependencies like openssl unless specifically required
+# RUN apt-get update && apt-get install -y openssl ca-certificates --no-install-recommends && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
 ENV NODE_ENV=production \
@@ -52,4 +67,5 @@ ENV NODE_ENV=production \
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Use yarn workspace to run the start script defined in web/package.json
+CMD ["yarn", "workspace", "empact_web", "start"]
