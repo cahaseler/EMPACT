@@ -14,7 +14,7 @@ RUN yarn install --frozen-lockfile
 COPY . .
 
 # Generate Prisma client
-RUN yarn workspace empact_web npx prisma generate --schema=prisma/mssql/schema.prisma
+RUN yarn workspace empact_web prisma generate --schema=prisma/mssql/schema.prisma
 
 # Build Next.js app
 RUN yarn workspace empact_web build
