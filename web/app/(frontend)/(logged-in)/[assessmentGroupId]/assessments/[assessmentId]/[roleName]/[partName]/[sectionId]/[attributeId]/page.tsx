@@ -111,7 +111,6 @@ export default async function Page(
             userId={session?.user?.id}
             attributeId={assessmentAttribute.attributeId}
             levels={levels}
-// @ts-ignore
             userResponse={userResponses[0]}
           />
         }
