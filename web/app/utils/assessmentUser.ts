@@ -29,6 +29,12 @@ export async function create(
   return await db.assessmentUser.create(args)
 }
 
+export async function createMany(
+  args: PrismaClient.Prisma.AssessmentUserCreateManyArgs
+) {
+  return await db.assessmentUser.createMany(args)
+}
+
 export async function update(
   args: PrismaClient.Prisma.AssessmentUserUpdateArgs
 ) {

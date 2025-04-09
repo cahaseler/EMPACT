@@ -14,10 +14,26 @@ import {
   AssessmentPart,
   AssessmentUser,
   AssessmentUserGroup,
-  AssessmentUserResponse,
+  AssessmentUserResponse
 } from "@/prisma/mssql/generated/client"
 
 type idObject = { id: number }
+
+type BatchPayload = {
+  count: number
+}
+
+type NewAssessmentAttribute = {
+  assessmentId: number;
+  attributeId: string;
+}
+
+type NewAssessmentUser = {
+  role: string;
+  userId: number;
+  assessmentId: number;
+  assessmentUserGroupId: number | null;
+}
 
 export async function createAssessmentCollection(
   name: string,
@@ -141,11 +157,31 @@ export async function createAssessmentAttribute(
   return await db.assessmentAttribute.create({ data: { assessmentId, attributeId } })
 }
 
+export async function createAssessmentAttributes(
+  assessmentAttributes: NewAssessmentAttribute[]
+): Promise<BatchPayload> {
+  return await db.assessmentAttribute.createMany({ data: assessmentAttributes })
+}
+
 export async function deleteAssessmentAttribute(
   assessmentId: number,
   attributeId: string
 ): Promise<AssessmentAttribute> {
   return await db.assessmentAttribute.delete({ where: { assessmentId_attributeId: { assessmentId, attributeId } } })
+}
+
+export async function deleteAssessmentAttributes(
+  assessmentId: number,
+  assessmentAttributeIds: string[]
+): Promise<BatchPayload> {
+  return await db.assessmentAttribute.deleteMany({
+    where: {
+      assessmentId,
+      attributeId: {
+        in: assessmentAttributeIds
+      }
+    }
+  })
 }
 
 export async function createAssessmentUserGroup(
@@ -186,6 +222,12 @@ export async function createAssessmentUser(
   return await assessmentUser.create({
     data: { assessmentId, role, userId, assessmentUserGroupId },
   })
+}
+
+export async function createAssessmentUsers(
+  users: NewAssessmentUser[]
+): Promise<BatchPayload> {
+  return await assessmentUser.createMany({ data: users })
 }
 
 export async function updateAssessmentUser(

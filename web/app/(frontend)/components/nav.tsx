@@ -44,6 +44,7 @@ export function Nav({
   // Function to toggle between light and dark themes
   const cycleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light")
+    document.body.dataset.agThemeMode = theme === "light" ? "dark" : "light";
   }
   return (
     <NavigationMenu

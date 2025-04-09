@@ -23,7 +23,7 @@ export function DataTableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>
+        <Button className="ml-2">
           <SlidersHorizontal className="mr-2 h-4 w-4" />
           View
         </Button>
@@ -41,7 +41,7 @@ export function DataTableViewOptions<TData>({
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className="capitalize"
+                className="capitalize focus:bg-indigo-50 hover:bg-indigo-50 dark:hover:bg-indigo-900/50"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
