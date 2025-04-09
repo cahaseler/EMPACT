@@ -32,7 +32,7 @@ import { Part } from "@/prisma/mssql/generated/client"
 type AssessmentPartToAdd = {
   partId: number
   status: string
-  date: Date
+  date: Date | undefined
 }
 
 export default function PartsTable({
@@ -42,7 +42,7 @@ export default function PartsTable({
 }: {
   readonly parts: Part[]
   readonly partsToAdd: AssessmentPartToAdd[]
-  readonly setPartsToAdd: Function
+  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>>
 }) {
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
