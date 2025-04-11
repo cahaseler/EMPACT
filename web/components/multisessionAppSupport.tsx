@@ -5,7 +5,7 @@ import React from "react"
 export function MultisessionAppSupport({
   children,
 }: {
-  children: React.ReactNode
+  readonly children: React.ReactNode
 }) {
   const { session } = useSession()
 

@@ -111,7 +111,7 @@ export default async function RootLayout(
             >
               <header>
                 <Nav
-                  name={session?.user?.name}
+                  // name prop removed as it's not accepted by Nav component
                   isAdmin={isAdmin(session)}
                   canViewUsers={canViewUsers(session)}
                 />

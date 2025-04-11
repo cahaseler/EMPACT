@@ -12,9 +12,7 @@ RUN yarn install --frozen-lockfile
 # Copy the source code
 COPY . .
 
-# Generate Prisma client
-RUN npx prisma generate --schema=prisma/mssql/schema.prisma
-
+# Prisma client generation is handled by the 'yarn build' script below
 # Build Next.js app
 RUN yarn build
 
@@ -36,7 +34,8 @@ WORKDIR /usr/src/app
 COPY --from=builder /app/.next/standalone /usr/src/app
 COPY --from=builder /app/.next/static /usr/src/app/.next/static
 COPY --from=builder /app/public /usr/src/app/public
-COPY --from=builder /app/node_modules/.prisma /usr/src/app/.prisma
+# Copy Prisma client and schema files prepared in the standalone output
+COPY --from=builder /app/.next/standalone/.prisma /usr/src/app/.prisma
 COPY --from=builder /app/prisma /usr/src/app/prisma
 
 # Install production dependencies

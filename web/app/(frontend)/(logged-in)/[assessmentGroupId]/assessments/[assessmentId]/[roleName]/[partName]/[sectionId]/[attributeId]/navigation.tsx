@@ -14,11 +14,11 @@ export default function Navigation({
   isParticipant,
   userResponses
 }: {
-  urlHead: string,
-  prevAttribute: Attribute | null,
-  nextAttribute: Attribute | null,
-  isParticipant: boolean,
-  userResponses: (AssessmentUserResponse & { user?: User })[]
+  readonly urlHead: string,
+  readonly prevAttribute: Attribute | null,
+  readonly nextAttribute: Attribute | null,
+  readonly isParticipant: boolean,
+  readonly userResponses: (AssessmentUserResponse & { user?: User })[]
 }) {
   return (
     <section className="mb-8 space-y-4">

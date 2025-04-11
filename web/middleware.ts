@@ -60,6 +60,10 @@ function isNewlyLoggedIn(sessionClaims: SessionClaims): boolean {
 async function fetchUserFromDatabase(
   email: string
 ): Promise<DbUserWithRelations | null> {
+
+  if(!email) {
+    return null
+  }
   try {
     const dbUser = await db.user.findUnique({
       where: { email },
@@ -202,6 +206,8 @@ export default clerkMiddleware(async (auth, req) => {
     userId: string | null
     sessionClaims: SessionClaims
   }
+
+  console.log("Session claims:", sessionClaims)
 
   const dbUser = await fetchUserFromDatabase(sessionClaims?.user?.email)
 

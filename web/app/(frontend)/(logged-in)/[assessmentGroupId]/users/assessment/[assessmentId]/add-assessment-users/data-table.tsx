@@ -39,10 +39,10 @@ export default function DataTable({
   users,
   groups
 }: {
-  assessmentTypeId: number
-  assessmentId: number
-  users: User[],
-  groups: AssessmentUserGroup[]
+  readonly assessmentTypeId: number
+  readonly assessmentId: number
+  readonly users: User[],
+  readonly groups: AssessmentUserGroup[]
 }) {
   const usersWithRoleGroup = users.map((user) => ({
     user,

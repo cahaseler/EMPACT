@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/accordion"
 
 export default function AttributeLevels({ levels }: {
-  levels: Level[]
+  readonly levels: Level[]
 }) {
   return (
     <section className="mb-8 space-y-4">

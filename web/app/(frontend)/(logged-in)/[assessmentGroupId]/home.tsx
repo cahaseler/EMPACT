@@ -36,8 +36,20 @@ export default function Home({
     const mostRecentAssessment = assessments
       .filter((assessment: Assessment) => assessment.status === "Active")
       .sort(
-        (a: Assessment, b: Assessment) =>
-          b.completedDate.valueOf() - a.completedDate.valueOf()
+        (a: Assessment, b: Assessment) => {
+          // Handle null cases for completedDate
+          if (a.completedDate === null && b.completedDate === null) {
+            return 0; // Both null, treat as equal
+          }
+          if (a.completedDate === null) {
+            return 1; // a is null, b is not; b comes first (newer)
+          }
+          if (b.completedDate === null) {
+            return -1; // b is null, a is not; a comes first (newer)
+          }
+          // Neither is null, compare by date value (descending)
+          return b.completedDate.valueOf() - a.completedDate.valueOf();
+        }
       )[0]
     const mostRecentResponseAttributeIds = userResponses
       .filter(
@@ -105,21 +117,21 @@ export default function Home({
             <h2 className="text-2xl font-bold">Previous Assessments</h2>
             <div className="grid gap-4">
               {completedAssessments.length > 0 ? (
-                completedAssessments.map(
-                  (assessment: Assessment, key: number) => {
+                completedAssessments
+                  .filter((assessment): assessment is Assessment & { completedDate: Date } => assessment.completedDate !== null) // Filter out null dates and assert type
+                  .map((assessment, key: number) => {
                     return (
                       <AssessmentCard
                         key={key}
                         groupId={assessmentType.id}
                         id={assessment.id}
                         name={assessment.name}
-                        completedDate={assessment.completedDate}
+                        completedDate={assessment.completedDate} // Now guaranteed to be Date
                         parts={parts}
                         session={session}
                       />
-                    )
-                  }
-                )
+                    );
+                  })
               ) : (
                 <p className="text-md text-muted-foreground dark:text-indigo-300/80">
                   No completed assessments.
@@ -145,7 +157,7 @@ function AssessmentCard({
   readonly id: number
   readonly name: string
   readonly completedDate: Date
-  readonly parts: any[]
+  readonly parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
   readonly session: Session | null
 }) {
   const role = isParticipantForAssessment(session, id.toString())
