@@ -100,7 +100,7 @@ export function AssessmentSidebar({
           const unfinishedPart =
             partAttributesInAssessmentIds.length * numParticipants !== partResponseAttributeIds.length * numParticipants
           return (
-            <Collapsible className="group/collapsible">
+            <Collapsible className="group/collapsible" key={part.id}>
               <SidebarGroup>
                 <div className="flex flex-row justify-between items-center">
                   <SidebarGroupLabel asChild>
@@ -131,7 +131,7 @@ export function AssessmentSidebar({
                         const unfinishedSection =
                           sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
                         return (
-                          <Collapsible className="group/collapsible-2">
+                          <Collapsible className="group/collapsible-2" key={section.id}>
                             <SidebarMenuItem key={section.name}>
                               <div className="flex flex-row justify-between items-center">
                                 <SidebarMenuButton asChild>
@@ -154,7 +154,7 @@ export function AssessmentSidebar({
                                     )
                                     const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
                                     return (
-                                      <SidebarMenuSubItem key={attribute.name}>
+                                      <SidebarMenuSubItem key={attribute.id}>
                                         <SidebarMenuButton asChild>
                                           <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
                                             {!unfinishedAttribute &&

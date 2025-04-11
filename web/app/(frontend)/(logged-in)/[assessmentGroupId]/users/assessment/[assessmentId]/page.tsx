@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/tooltip"
 import {
   fetchAssessment,
+  fetchAssessmentParts,
   fetchAssessmentType,
   fetchAssessmentUserGroups,
   fetchAssessmentUsers,
+  fetchPermissions
 } from "../../../../utils/dataFetchers"
 import {
   isAdmin,
@@ -34,6 +36,8 @@ export default async function Page(
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const groups = await fetchAssessmentUserGroups(params.assessmentId)
+  const parts = await fetchAssessmentParts(params.assessmentId)
+  const allPermissions = await fetchPermissions()
   const permissions = session?.user?.assessmentUser.find(
     (assessmentUser) =>
       assessmentUser.assessmentId === parseInt(params.assessmentId, 10)
@@ -60,6 +64,10 @@ export default async function Page(
       permissions?.find(
         (permission) => permission.name === "Manage user groups"
       ) !== undefined
+    const canEditPermissions =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, assessment.id.toString())
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -101,10 +109,12 @@ export default async function Page(
           <div className="space-y-4">
             <DataTable
               users={users}
-              assessment={assessment}
-              assessmentType={assessmentType}
+              assessmentTypeId={assessmentType.id}
               groups={groups}
+              parts={parts}
+              permissions={allPermissions}
               canEdit={canAddEdit}
+              canEditPermissions={canEditPermissions}
             />
           </div>
         </section>

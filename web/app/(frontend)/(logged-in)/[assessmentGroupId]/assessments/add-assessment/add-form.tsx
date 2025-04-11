@@ -29,6 +29,7 @@ import {
 import {
   createAssessment,
   createAssessmentAttribute,
+  createAssessmentAttributes,
   createAssessmentPart
 } from "../../../utils/dataActions"
 
@@ -97,11 +98,13 @@ export default function AddForm({
               partsToAdd[i].partId
             )
           }
-          for (var i = 0; i < attributesToAdd.length; i++) {
-            await createAssessmentAttribute(
-              assessment.id,
-              attributesToAdd[i]
+          if (attributesToAdd.length === 1) {
+            await createAssessmentAttribute(assessment.id, attributesToAdd[0])
+          } else {
+            const newAttributes = attributesToAdd.map(
+              attribute => ({ assessmentId: assessment.id, attributeId: attribute })
             )
+            await createAssessmentAttributes(newAttributes)
           }
           setSaving(false)
           router.refresh()

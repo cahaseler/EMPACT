@@ -193,7 +193,14 @@ export async function fetchAssessmentUser(assessmentUserId: string): Promise<
 }
 
 export async function fetchAssessmentUsers(assessmentId: string): Promise<
-  (AssessmentUser & { user: User & { assessmentUserResponse: AssessmentUserResponse[] }, participantParts: AssessmentPart[] })[]
+  (AssessmentUser & {
+    user: User & {
+      assessmentUserResponse: AssessmentUserResponse[]
+    },
+    assessmentUserGroup: AssessmentUserGroup | null,
+    participantParts: AssessmentPart[],
+    permissions: Permission[]
+  })[]
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
@@ -210,7 +217,9 @@ export async function fetchAssessmentUsers(assessmentId: string): Promise<
           assessmentUserResponse: true
         }
       },
-      participantParts: true
+      assessmentUserGroup: true,
+      participantParts: true,
+      permissions: true
     }
   })
 }

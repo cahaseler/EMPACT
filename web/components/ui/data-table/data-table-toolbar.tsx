@@ -39,6 +39,13 @@ export function DataTableToolbar<TData>({
     ""
   )
 
+  const hidableColumns = table
+    .getAllColumns()
+    .filter(
+      (column) =>
+        typeof column.accessorFn !== "undefined" && column.getCanHide()
+    )
+
   // Debounce search input to avoid lag on every keystroke
   useEffect(() => {
     const debounceTimeout = setTimeout(() => {
@@ -55,10 +62,10 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 items-center space-x-2">
         {searchableColumns.length > 0 && (
           <Input
-            placeholder="Search users..."
+            placeholder="Search..."
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
-            className="w-[150px] lg:w-[250px]"
+            className="w-1/2"
           />
         )}
         {filterableColumns.length > 0 &&
@@ -82,7 +89,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      {hidableColumns.length > 0 && <DataTableViewOptions table={table} />}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { fetchAssessmentType } from "../../utils/dataFetchers"
 import { viewableAssessments } from "../../utils/permissions"
-import { DataTable } from "./data-table"
+import AssessmentsDataTable from "./data-table"
 
 export default async function Page(
   props: Readonly<{ params: { assessmentGroupId: string } }>
@@ -30,7 +30,7 @@ export default async function Page(
         </section>
         <section className="mb-16">
           <div className="space-y-4">
-            <DataTable
+            <AssessmentsDataTable
               assessments={assessments}
               assessmentType={assessmentType}
             />

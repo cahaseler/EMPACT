@@ -1,12 +1,17 @@
 "use client"
 import { useState } from "react"
 import { AssessmentAttribute, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
-import { createAssessmentAttribute, deleteAssessmentAttribute } from "../../../../utils/dataActions"
+import {
+    createAssessmentAttribute,
+    createAssessmentAttributes,
+    deleteAssessmentAttribute,
+    deleteAssessmentAttributes
+} from "../../../../utils/dataActions"
 
 import {
-    Accordion, 
-    AccordionItem, 
-    AccordionTrigger, 
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
     AccordionContent
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,8 +20,8 @@ import { Loader } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
- 
-export default function AssessmentAttributes({ 
+
+export default function AssessmentAttributes({
     assessmentId,
     parts,
     assessmentAttributes
@@ -38,13 +43,20 @@ export default function AssessmentAttributes({
             setSaving(true)
             try {
                 if (attributesToAdd.length > 0) {
-                    for (var i = 0; i < attributesToAdd.length; i++) {
-                        await createAssessmentAttribute(assessmentId, attributesToAdd[i])
+                    if (attributesToAdd.length === 1) {
+                        await createAssessmentAttribute(assessmentId, attributesToAdd[0])
+                    } else {
+                        const newAttributes = attributesToAdd.map(
+                            attribute => ({ assessmentId, attributeId: attribute })
+                        )
+                        await createAssessmentAttributes(newAttributes)
                     }
                 }
                 if (attributesToRemove.length > 0) {
-                    for (var i = 0; i < attributesToRemove.length; i++) {
-                        await deleteAssessmentAttribute(assessmentId, attributesToRemove[i])
+                    if (attributesToRemove.length === 1) {
+                        await deleteAssessmentAttribute(assessmentId, attributesToRemove[0])
+                    } else {
+                        await deleteAssessmentAttributes(assessmentId, attributesToRemove)
                     }
                 }
                 setSaving(false)
@@ -59,13 +71,13 @@ export default function AssessmentAttributes({
             }
         }
     }
-    
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-4">
-                <Accordion 
-                    type="single" 
-                    collapsible={true} 
+                <Accordion
+                    type="single"
+                    collapsible={true}
                     className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                 >
                     {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
@@ -75,9 +87,9 @@ export default function AssessmentAttributes({
                                     {part.name} {part.attributeType}s
                                 </AccordionTrigger>
                                 <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
-                                    <Accordion 
-                                        type="single" 
-                                        collapsible={true} 
+                                    <Accordion
+                                        type="single"
+                                        collapsible={true}
                                         className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                                     >
                                         {part.sections.map((section: Section & { attributes: Attribute[] }) => {
@@ -91,13 +103,13 @@ export default function AssessmentAttributes({
                                                             const [isChecked, setIsChecked] = useState(attributeIds.includes(attribute.id))
                                                             return (
                                                                 <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
-                                                                    <Checkbox 
+                                                                    <Checkbox
                                                                         checked={isChecked}
                                                                         onCheckedChange={(checked) => {
                                                                             if (checked) {
                                                                                 setAttributesToAdd([...attributesToAdd, attribute.id])
                                                                                 if (attributesToRemove.length > 0) {
-                                                                                    setAttributesToRemove(attributesToRemove.filter((id) => 
+                                                                                    setAttributesToRemove(attributesToRemove.filter((id) =>
                                                                                         id !== attribute.id
                                                                                     ))
                                                                                 }
@@ -105,13 +117,13 @@ export default function AssessmentAttributes({
                                                                             } else {
                                                                                 setAttributesToRemove([...attributesToRemove, attribute.id])
                                                                                 if (attributesToAdd.length > 0) {
-                                                                                    setAttributesToAdd(attributesToAdd.filter((id) => 
+                                                                                    setAttributesToAdd(attributesToAdd.filter((id) =>
                                                                                         id !== attribute.id
                                                                                     ))
                                                                                 }
                                                                                 setIsChecked(false)
                                                                             }
-                                                                        }} 
+                                                                        }}
                                                                     />
                                                                     <div>{attribute.id.toUpperCase()}. {attribute.name}</div>
                                                                 </div>
@@ -129,7 +141,7 @@ export default function AssessmentAttributes({
                 </Accordion>
                 <div className="flex flex-col items-center">
                     <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
-                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Save Changes
+                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes
                     </Button>
                 </div>
             </div>
