@@ -3,7 +3,7 @@ FROM node:22.11.0-slim AS builder
 WORKDIR /app
 
 # Copy package files first for better caching
-COPY package.json yarn.lock ./
+COPY web/package.json web/yarn.lock ./
 
 # Install ALL dependencies (including devDependencies needed for build)
 RUN yarn install --frozen-lockfile
@@ -19,7 +19,7 @@ FROM node:22.11.0-slim AS production
 WORKDIR /usr/src/app
 
 # Copy package files
-COPY package.json yarn.lock ./
+COPY web/package.json web/yarn.lock ./
 
 # Install ONLY production dependencies
 RUN yarn install --production --frozen-lockfile
