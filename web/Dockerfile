@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:22.11.0-slim AS builder
+FROM node:22.14.0-slim AS builder
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ RUN cp -rf public .next/standalone/public && \
     ls -la .next/standalone/.prisma/client/
 
 # Production stage
-FROM node:22.11.0-slim AS production
+FROM node:22.14.0-slim AS production
 
 WORKDIR /usr/src/app
 
