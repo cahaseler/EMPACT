@@ -1,5 +1,5 @@
 # Builder stage: Install all dependencies, copy source, build the app
-FROM node:22.11.0-slim AS builder
+FROM node:22.11.0-bookworm AS builder
 WORKDIR /app
 
 # Copy package files first for better caching
@@ -15,7 +15,7 @@ COPY . .
 RUN yarn build
 
 # Production stage: Install only production dependencies, copy build artifacts
-FROM node:22.11.0-slim AS production
+FROM node:22.11.0-bookworm AS production
 WORKDIR /usr/src/app
 
 # Copy package files
