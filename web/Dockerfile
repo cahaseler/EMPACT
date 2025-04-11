@@ -9,7 +9,7 @@ COPY web/package.json web/yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 # Copy the rest of the source code
-COPY . .
+COPY web/. .
 
 # Build the Next.js app (includes prisma generate)
 RUN yarn build
