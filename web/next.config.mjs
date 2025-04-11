@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "standalone", // Removed standalone output mode
+  // output: "standalone", // Reverted: Keep standalone output disabled due to Prisma issues
   experimental: {
     nodeMiddleware: true,
   },
