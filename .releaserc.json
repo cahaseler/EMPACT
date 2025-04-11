@@ -55,7 +55,6 @@
         "replacements": [
           {
             "files": [
-              "package.json",
               "web/package.json",
               "src-tauri/tauri.conf.json"
             ],
@@ -93,7 +92,6 @@
       "@semantic-release/git",
       {
         "assets": [
-          "package.json",
           "web/package.json",
           "web/app/api/version/route.ts",
           "web/app/(frontend)/components/version-indicator.tsx",
