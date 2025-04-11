@@ -40,30 +40,32 @@ export default function DataTable({
   readonly users: (AssessmentCollectionUser & { user: User })[]
 }) {
   return (
-    <Table className="table-fixed dark:bg-transparent">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-32">User ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead className="w-32">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map((user: AssessmentCollectionUser & { user: User }) => (
-          <TableRow key={user.id}>
-            <TableCell>{user.id}</TableCell>
-            <TableCell>
-              {user.user.lastName}, {user.user.firstName}
-            </TableCell>
-            <TableCell>{user.user.email}</TableCell>
-            <TableCell>
-              <DeleteModule user={user} numUsers={users.length} />
-            </TableCell>
+    <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
+      <Table className="table-fixed dark:bg-transparent">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-32">User ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead className="w-32">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {users.map((user: AssessmentCollectionUser & { user: User }) => (
+            <TableRow key={user.id}>
+              <TableCell>{user.id}</TableCell>
+              <TableCell>
+                {user.user.lastName}, {user.user.firstName}
+              </TableCell>
+              <TableCell>{user.user.email}</TableCell>
+              <TableCell>
+                <DeleteModule user={user} numUsers={users.length} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
 

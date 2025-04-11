@@ -30,14 +30,14 @@ export default async function Page(
   const groups = await fetchAssessmentUserGroups(params.assessmentId)
   const users = await fetchUsers()
 
-  if (assessmentType && assessment) {
+  if (assessmentType && assessment && users) {
     const links = [
       {
         url: `/${assessmentType.id}/users`,
         name: `${assessmentType.name} Users`,
       },
       {
-        url: `/${assessmentType.id}/users/${assessment.id}`,
+        url: `/${assessmentType.id}/users/assessment/${assessment.id}`,
         name: `${assessment.name} Users`,
       },
     ]
@@ -53,6 +53,7 @@ export default async function Page(
             (uc) => uc.assessmentId === parseInt(params.assessmentId, 10)
           ) === undefined
       )
+
       return (
         <div className="w-full max-w-4xl mx-auto">
           <section className="mb-8">
@@ -67,10 +68,10 @@ export default async function Page(
           </section>
           <section className="mb-8">
             <DataTable
-              users={usersNotInAssessment}
-              assessmentId={assessment.id}
-              assessmentTypeId={assessmentType.id}
+              assessmentTypeId={parseInt(params.assessmentGroupId, 10)}
+              assessmentId={parseInt(params.assessmentId, 10)}
               groups={groups}
+              users={usersNotInAssessment}
             />
           </section>
         </div>

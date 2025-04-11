@@ -1,134 +1,95 @@
 "use client"
 
-import { SquarePen } from "lucide-react"
-import Link from "next/link"
-
-import { Button } from "@/components/ui/button"
+import { DataTable } from "@/components/ui/data-table/data-table"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Assessment,
-  AssessmentType,
+  AssessmentPart,
   AssessmentUser,
   AssessmentUserGroup,
   AssessmentUserResponse,
-  User,
+  Part,
+  Permission,
+  User
 } from "@/prisma/mssql/generated/client"
-import DeleteModule from "./delete-module"
+import { columns } from "./columns"
 
-// TODO: Convert to React-Table
-// TODO: Filtering, sorting, search, pagination
-
-export default function DataTable({
+export default function UsersDataTable({
   users,
-  assessment,
-  assessmentType,
+  assessmentTypeId,
   groups,
+  parts,
+  permissions,
   canEdit,
+  canEditPermissions
 }: Readonly<{
   users: (AssessmentUser & {
-    user: User & { assessmentUserResponse: AssessmentUserResponse[] }
+    user: User & {
+      assessmentUserResponse: AssessmentUserResponse[]
+    },
+    assessmentUserGroup: AssessmentUserGroup | null,
+    participantParts: AssessmentPart[],
+    permissions: Permission[]
   })[]
-  assessment: Assessment
-  assessmentType: AssessmentType
+  assessmentTypeId: number
   groups: AssessmentUserGroup[]
+  parts: (AssessmentPart & { part: Part })[]
+  permissions: Permission[]
   canEdit: boolean
+  canEditPermissions: boolean
 }>) {
-  return (
-    <Table className="dark:bg-transparent">
-      <TableHeader>
-        <TableRow>
-          <TableHead>User ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Group</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.length > 0 ? (
-          users.map(
-            (
-              user: AssessmentUser & {
-                user: User & {
-                  assessmentUserResponse: AssessmentUserResponse[]
-                }
-              },
-              key: number
-            ) => {
-              const group = groups.find(
-                (group: AssessmentUserGroup) =>
-                  group.id === user.assessmentUserGroupId
-              )
-              return (
-                <TableRow key={key}>
-                  <TableCell>{user.user.id}</TableCell>
-                  <TableCell>
-                    {user.user.lastName}, {user.user.firstName}
-                  </TableCell>
-                  <TableCell>{user.user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>{group ? group.name : "N/A"}</TableCell>
-                  <TableCell>
-                    {canEdit && (
-                      <UserActions
-                        assessmentTypeId={assessmentType.id}
-                        assessmentId={assessment.id}
-                        assessmentUser={user}
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
-              )
-            }
-          )
-        ) : (
-          <TableRow>
-            <TableCell
-              colSpan={6}
-              className="h-20 text-muted-foreground dark:text-indigo-300/80"
-            >
-              No users have been assigned to this assessment.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-  )
-}
+  // Define searchable and filterable columns
+  const searchableColumns = [
+    {
+      id: "name",
+      title: "Name",
+    },
+  ]
 
-function UserActions({
-  assessmentTypeId,
-  assessmentId,
-  assessmentUser,
-}: {
-  readonly assessmentTypeId: number
-  readonly assessmentId: number
-  readonly assessmentUser: AssessmentUser & {
-    user: User & { assessmentUserResponse: AssessmentUserResponse[] }
-  }
-}) {
+  const filterableColumns = [
+    {
+      id: "role",
+      title: "Role",
+      options: [
+        {
+          label: "Lead Facilitator",
+          value: "Lead Facilitator",
+        },
+        {
+          label: "Facilitator",
+          value: "Facilitator",
+        },
+        {
+          label: "Participant",
+          value: "Participant",
+        },
+      ],
+    },
+    {
+      id: "group",
+      title: "Group",
+      options: groups.map(
+        group => ({
+          label: group.name,
+          value: group.name
+        })
+      ),
+    },
+  ]
+
   return (
-    <div className="grid grid-cols-2 gap-2 w-20">
-      <Link
-        href={`/${assessmentTypeId}/users/assessment/${assessmentId}/${assessmentUser.id}`}
-      >
-        <Button size="icon">
-          <SquarePen className="w-5 h-5 text-white" />
-        </Button>
-      </Link>
-      <DeleteModule
-        assessmentUser={assessmentUser}
-        assessmentTypeId={assessmentTypeId}
-        assessmentId={assessmentId}
-        buttonType="icon"
+    <div className="space-y-4">
+      <DataTable
+        columns={columns({
+          assessmentTypeId,
+          groups,
+          parts,
+          permissions,
+          canEdit,
+          canEditPermissions
+        })}
+        data={users}
+        selectable={false}
+        searchableColumns={searchableColumns}
+        filterableColumns={filterableColumns}
       />
     </div>
   )

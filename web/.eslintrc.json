@@ -1,30 +1,37 @@
 {
-  "parser": "@typescript-eslint/parser", // Keep parser specific to this workspace if needed
-  "plugins": ["@typescript-eslint", "react-hooks"], // Add react-hooks plugin
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react", "jsdoc"],
   "extends": [
-    // Root config is NOT applied due to --no-eslintrc in the script.
-    // We need to explicitly extend the necessary base configs here.
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended" // Extend recommended react-hooks rules
-    // Consider adding "next/core-web-vitals" if needed
+    "next/core-web-vitals"
   ],
   "rules": {
-    // The rule is already included via "plugin:react-hooks/recommended", but keeping it explicitly won't hurt
     "react/react-in-jsx-scope": "off",
+    "no-extra-semi": "off",
+    "react/display-name": "warn",
+    "react/prefer-read-only-props": "warn",
+    "jsdoc/check-alignment": 1,
+    "jsdoc/no-types": 1,
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unused-vars": "warn",
     "react/no-unescaped-entities": "warn",
-    "@typescript-eslint/no-unused-expressions":"warn",
-    "no-var": "warn",
-    "react/jsx-key": "warn",
-    "@typescript-eslint/no-empty-object-type": "warn",
-    "react/no-unknown-property": "warn",
-    "react/prop-types": "warn",
-    "@typescript-eslint/no-require-imports": "warn",
-    "@typescript-eslint/no-unsafe-function-type": "warn",
-    "react-hooks/rules-of-hooks": "warn"
+    "@typescript-eslint/no-unused-expressions":"warn"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ],
+  "globals": {
+    "React": "writable",
+    "JSX": "readonly"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
   },
   "parserOptions": {
     "ecmaVersion": 2020,
@@ -32,23 +39,29 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    // Explicitly set project path for Next.js build integration
     "project": "./tsconfig.json"
   },
   "settings": {
-    // Keep specific settings
     "react": {
       "version": "detect"
+    },
+    // Settings from root .eslintrc.json, paths adjusted for web/ directory
+    "tailwindcss": {
+      "callees": [
+        "cn",
+        "cva"
+      ],
+      "config": "./tailwind.config.ts", // Adjusted path
+      "cssFiles": [
+        "./app/(frontend)/globals.css" // Adjusted path
+      ]
     }
-    // Tailwind settings are in the root config
   },
   "ignorePatterns": [
-    // Keep patterns specific to this workspace, relative to this file
-    // "node_modules/**", // Covered by root ignore
-    // ".next/**", // Covered by root ignore
+    "node_modules/**",
+    ".next/**",
     "public/**",
-    // "**/components/ui/**", // Covered by root ignore
+    "**/components/ui/**",
     "prisma/**/generated/**"
-    // Add other web-specific ignores if necessary
   ]
 }

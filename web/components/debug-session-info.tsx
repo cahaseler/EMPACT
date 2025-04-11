@@ -1,4 +1,5 @@
-import { auth } from "@clerk/nextjs/server"
+import { auth } from "@clerk/nextjs/server";
+import { AssessmentCollectionUser, AssessmentUser, SystemRole } from "@/auth";
 
 export async function DebugSessionInfo() {
   if (!(process.env.SHOW_DEBUG_SESSION_INFO === "true")) return null
@@ -90,7 +91,7 @@ export async function DebugSessionInfo() {
                     </p>
                     <ul className="list-disc list-inside pl-2">
                       {sessionClaims.metadata.systemRoles.map(
-                        (role: any, index: number) => (
+                        (role: SystemRole, index: number) => (
                           <li
                             key={index}
                             className="text-xs text-gray-600 dark:text-gray-400"
@@ -112,7 +113,7 @@ export async function DebugSessionInfo() {
                     </p>
                     <div className="pl-2 text-xs text-gray-600 dark:text-gray-400">
                       {sessionClaims.metadata.assessmentCollectionUser.map(
-                        (user: any, index: number) => (
+                        (user: AssessmentCollectionUser, index: number) => (
                           <details key={index} className="mb-1">
                             <summary className="cursor-pointer">
                               Collection User {index + 1}
@@ -136,7 +137,7 @@ export async function DebugSessionInfo() {
                     </p>
                     <div className="pl-2 text-xs text-gray-600 dark:text-gray-400">
                       {sessionClaims.metadata.assessmentUser.map(
-                        (user: any, index: number) => (
+                        (user: AssessmentUser, index: number) => (
                           <details key={index} className="mb-1">
                             <summary className="cursor-pointer">
                               Assessment User {index + 1}

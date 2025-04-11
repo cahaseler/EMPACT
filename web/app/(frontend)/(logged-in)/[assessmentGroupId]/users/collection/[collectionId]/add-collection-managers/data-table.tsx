@@ -61,48 +61,50 @@ export default function DataTable({
 
   return (
     <form onSubmit={handleSubmit}>
-      <Table className="dark:bg-transparent">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-20" />
-            <TableHead>User ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.length > 0 ? (
-            users.map((user: User, key: number) => {
-              return (
-                <TableRow key={key}>
-                  <TableCell>
-                    <Checkbox
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setUsersToAdd([...usersToAdd, user.id])
-                        } else {
-                          setUsersToAdd(
-                            usersToAdd.filter((userId) => userId !== user.id)
-                          )
-                        }
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>
-                    {user.lastName}, {user.firstName}
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                </TableRow>
-              )
-            })
-          ) : (
+      <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
+        <Table className="dark:bg-transparent">
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={4}>No users found</TableCell>
+              <TableHead className="w-20" />
+              <TableHead>User ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {users.length > 0 ? (
+              users.map((user: User, key: number) => {
+                return (
+                  <TableRow key={key}>
+                    <TableCell>
+                      <Checkbox
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setUsersToAdd([...usersToAdd, user.id])
+                          } else {
+                            setUsersToAdd(
+                              usersToAdd.filter((userId) => userId !== user.id)
+                            )
+                          }
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>{user.id}</TableCell>
+                    <TableCell>
+                      {user.lastName}, {user.firstName}
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                  </TableRow>
+                )
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4}>No users found</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
       <div className="mt-4 flex flex-col items-center">
         <Button type="submit" disabled={saving || usersToAdd.length === 0}>
           {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Add

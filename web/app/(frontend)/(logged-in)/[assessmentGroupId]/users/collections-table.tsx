@@ -29,41 +29,43 @@ export default function CollectionsTable({
   const router = useRouter()
 
   return (
-    <Table className="cursor-pointer dark:bg-transparent">
-      <TableHeader>
-        <TableRow>
-          <TableHead>Collection ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead>Asessments</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {collections.map(
-          (
-            collection: AssessmentCollection & { assessments: Assessment[] },
-            key: number
-          ) => (
-            <TableRow
-              key={key}
-              onClick={() =>
-                router.push(
-                  `/${assessmentType.id}/users/collection/${collection.id}`
-                )
-              }
-            >
-              <TableCell>{collection.id}</TableCell>
-              <TableCell>{collection.name}</TableCell>
-              <TableCell>
-                <ul className="list-none">
-                  {collection.assessments.map((assessment: Assessment) => (
-                    <li key={assessment.id}>{assessment.name}</li>
-                  ))}
-                </ul>
-              </TableCell>
-            </TableRow>
-          )
-        )}
-      </TableBody>
-    </Table>
+    <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
+      <Table className="cursor-pointer dark:bg-transparent">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Collection ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Asessments</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {collections.map(
+            (
+              collection: AssessmentCollection & { assessments: Assessment[] },
+              key: number
+            ) => (
+              <TableRow
+                key={key}
+                onClick={() =>
+                  router.push(
+                    `/${assessmentType.id}/users/collection/${collection.id}`
+                  )
+                }
+              >
+                <TableCell>{collection.id}</TableCell>
+                <TableCell>{collection.name}</TableCell>
+                <TableCell>
+                  <ul className="list-none">
+                    {collection.assessments.map((assessment: Assessment) => (
+                      <li key={assessment.id}>{assessment.name}</li>
+                    ))}
+                  </ul>
+                </TableCell>
+              </TableRow>
+            )
+          )}
+        </TableBody>
+      </Table>
+    </div>
   )
 }

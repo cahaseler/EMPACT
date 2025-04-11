@@ -1,12 +1,17 @@
 "use client"
 import { useState } from "react"
 import { AssessmentAttribute, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
-import { createAssessmentAttribute, deleteAssessmentAttribute } from "../../../../utils/dataActions"
+import {
+    createAssessmentAttribute,
+    createAssessmentAttributes,
+    deleteAssessmentAttribute,
+    deleteAssessmentAttributes
+} from "../../../../utils/dataActions"
 
 import {
-    Accordion, 
-    AccordionItem, 
-    AccordionTrigger, 
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
     AccordionContent
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -15,8 +20,8 @@ import { Loader } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
- 
-export default function AssessmentAttributes({ 
+
+export default function AssessmentAttributes({
     assessmentId,
     parts,
     assessmentAttributes
@@ -32,46 +37,80 @@ export default function AssessmentAttributes({
 
     const router = useRouter()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (attributesToAdd.length > 0 || attributesToRemove.length > 0) {
-            setSaving(true)
-            try {
-                if (attributesToAdd.length > 0) {
-                    for (var i = 0; i < attributesToAdd.length; i++) {
-                        const attributeId = attributesToAdd[i];
-                        if (attributeId) { // Check if attributeId is defined
-                            await createAssessmentAttribute(assessmentId, attributeId)
-                        }
-                    }
-                }
-                if (attributesToRemove.length > 0) {
-                    for (var i = 0; i < attributesToRemove.length; i++) {
-                        const attributeId = attributesToRemove[i];
-                        if (attributeId) { // Check if attributeId is defined
-                            await deleteAssessmentAttribute(assessmentId, attributeId)
-                        }
-                    }
-                }
-                setSaving(false)
-                router.refresh()
-                toast({
-                    title: "Assessment updated successfully."
-                })
-            } catch (error) {
-                toast({
-                    title: `Error updating assessment: ${error}`
-                })
+    // Handler for when an attribute checkbox changes state
+    const handleAttributeCheckedChange = (attributeId: string, checked: boolean) => {
+        // Determine if the attribute was originally checked
+        const wasOriginallyChecked = attributeIds.includes(attributeId);
+
+        if (checked) {
+            // If checked:
+            // - Remove from 'attributesToRemove' if it was there
+            setAttributesToRemove(prev => prev.filter(id => id !== attributeId));
+            // - Add to 'attributesToAdd' only if it wasn't originally checked
+            if (!wasOriginallyChecked) {
+                setAttributesToAdd(prev => [...new Set([...prev, attributeId])]); // Use Set to prevent duplicates
+            }
+        } else {
+            // If unchecked:
+            // - Remove from 'attributesToAdd' if it was there
+            setAttributesToAdd(prev => prev.filter(id => id !== attributeId));
+            // - Add to 'attributesToRemove' only if it was originally checked
+            if (wasOriginallyChecked) {
+                setAttributesToRemove(prev => [...new Set([...prev, attributeId])]); // Use Set to prevent duplicates
             }
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const finalAttributesToAdd = attributesToAdd.filter(id => !attributeIds.includes(id));
+        const finalAttributesToRemove = attributesToRemove.filter(id => attributeIds.includes(id));
+
+        if (finalAttributesToAdd.length > 0 || finalAttributesToRemove.length > 0) {
+            setSaving(true)
+            try {
+                // Perform add operations
+                if (finalAttributesToAdd.length > 0) {
+                    const newAttributes = finalAttributesToAdd.map(
+                        attributeId => ({ assessmentId, attributeId })
+                    )
+                    await createAssessmentAttributes(newAttributes)
+                }
+                // Perform remove operations
+                if (finalAttributesToRemove.length > 0) {
+                    await deleteAssessmentAttributes(assessmentId, finalAttributesToRemove)
+                }
+
+                // Reset local state tracking changes
+                setAttributesToAdd([]);
+                setAttributesToRemove([]);
+                setSaving(false)
+                router.refresh() // Refresh data from server
+                toast({
+                    title: "Assessment attributes updated successfully."
+                })
+            } catch (error) {
+                 setSaving(false) // Ensure saving is reset on error
+                 console.error("Error updating assessment attributes:", error); // Log error for debugging
+                 toast({
+                     variant: "destructive", // Use destructive variant for errors
+                     title: "Error updating assessment attributes.",
+                     description: error instanceof Error ? error.message : String(error)
+                 })
+            }
+        } else {
+             toast({
+                 title: "No changes detected."
+             })
+        }
     }
-    
+
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-4">
-                <Accordion 
-                    type="single" 
-                    collapsible={true} 
+                <Accordion
+                    type="single"
+                    collapsible={true}
                     className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                 >
                     {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
@@ -81,9 +120,9 @@ export default function AssessmentAttributes({
                                     {part.name} {part.attributeType}s
                                 </AccordionTrigger>
                                 <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
-                                    <Accordion 
-                                        type="single" 
-                                        collapsible={true} 
+                                    <Accordion
+                                        type="single"
+                                        collapsible={true}
                                         className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                                     >
                                         {part.sections.map((section: Section & { attributes: Attribute[] }) => {
@@ -93,39 +132,14 @@ export default function AssessmentAttributes({
                                                         {section.id.toUpperCase()}. {section.name}
                                                     </AccordionTrigger>
                                                     <AccordionContent className="flex flex-col space-y-4 px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg [&_div:last-child]:border-0 [&_div:last-child]:pb-0">
-                                                        {section.attributes.map((attribute: Attribute) => {
-                                                            // Derive checked status instead of using local state
-                                                            const isInitiallyChecked = attributeIds.includes(attribute.id);
-                                                            const isChecked = (isInitiallyChecked && !attributesToRemove.includes(attribute.id)) || attributesToAdd.includes(attribute.id);
-
-                                                            return (
-                                                                <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
-                                                                    <Checkbox
-                                                                        checked={isChecked}
-                                                                        onCheckedChange={(checked) => {
-                                                                            if (checked) {
-                                                                                setAttributesToAdd([...attributesToAdd, attribute.id])
-                                                                                if (attributesToRemove.length > 0) {
-                                                                                    setAttributesToRemove(attributesToRemove.filter((id) =>
-                                                                                        id !== attribute.id
-                                                                                    ))
-                                                                                }
-                                                                                // setIsChecked(true) // State is now derived
-                                                                            } else {
-                                                                                setAttributesToRemove([...attributesToRemove, attribute.id])
-                                                                                if (attributesToAdd.length > 0) {
-                                                                                    setAttributesToAdd(attributesToAdd.filter((id) =>
-                                                                                        id !== attribute.id
-                                                                                    ))
-                                                                                }
-                                                                                // setIsChecked(false) // State is now derived
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                    <div>{attribute.id.toUpperCase()}. {attribute.name}</div>
-                                                                </div>
-                                                            )
-                                                        })}
+                                                        {section.attributes.map((attribute: Attribute) => (
+                                                            <AttributeCheckbox
+                                                                key={attribute.id} // Add unique key prop
+                                                                attribute={attribute}
+                                                                initialChecked={attributeIds.includes(attribute.id)}
+                                                                onCheckedChange={handleAttributeCheckedChange}
+                                                            />
+                                                        ))}
                                                     </AccordionContent>
                                                 </AccordionItem>
                                             )
@@ -138,10 +152,51 @@ export default function AssessmentAttributes({
                 </Accordion>
                 <div className="flex flex-col items-center">
                     <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
-                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin"/>} Save Changes
+                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes
                     </Button>
                 </div>
             </div>
         </form>
+    )
+}
+
+
+// Define the new AttributeCheckbox component
+const AttributeCheckbox = ({
+    attribute,
+    initialChecked,
+    onCheckedChange
+}: {
+    attribute: Attribute
+    initialChecked: boolean
+    onCheckedChange: (attributeId: string, checked: boolean) => void
+}) => {
+    // State is now managed within this component
+    const [isChecked, setIsChecked] = useState(initialChecked)
+
+    const handleCheckedChange = (checked: boolean | "indeterminate") => {
+        // Ensure checked is boolean, handle indeterminate if necessary
+        const newCheckedState = typeof checked === 'boolean' ? checked : false;
+        setIsChecked(newCheckedState);
+        // Notify parent component of the change
+        onCheckedChange(attribute.id, newCheckedState);
+    }
+
+    // Generate a unique ID for the checkbox for label association
+    const checkboxId = `attr-checkbox-${attribute.id}`;
+
+    return (
+        // Apply styling to the container div, ensuring it doesn't add extra borders if it's the last item
+        <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900 last:border-b-0 last:pb-0">
+            <Checkbox
+                checked={isChecked}
+                onCheckedChange={handleCheckedChange}
+                id={checkboxId} // Associate checkbox with label
+            />
+            {/* Use a label for better accessibility, associate it with the checkbox using htmlFor */}
+            <label htmlFor={checkboxId} className="cursor-pointer flex-grow"> {/* flex-grow allows label to take available space */}
+                {attribute.id.toUpperCase()}. {attribute.name}
+            </label>
+        </div>
     )
 }

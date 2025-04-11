@@ -25,27 +25,29 @@ export default function DataTable({
   })[]
 }) {
   return (
-    <Table className="table-fixed dark:bg-transparent">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-32">Group ID</TableHead>
-          <TableHead>Name</TableHead>
-          <TableHead className="w-48">Status</TableHead>
-          <TableHead className="w-48">Number of Assigned Users</TableHead>
-          <TableHead className="w-32">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {groups.map(
-          (
-            group: AssessmentUserGroup & {
-              assessmentUser: (AssessmentUser & { user: User })[]
-            }
-          ) => (
-            <DataRow group={group} key={group.id} />
-          )
-        )}
-      </TableBody>
-    </Table>
+    <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
+      <Table className="table-fixed dark:bg-transparent">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-32">Group ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead className="w-48">Status</TableHead>
+            <TableHead>Number of Assigned Users</TableHead>
+            <TableHead className="w-32">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {groups.map(
+            (
+              group: AssessmentUserGroup & {
+                assessmentUser: (AssessmentUser & { user: User })[]
+              }
+            ) => (
+              <DataRow group={group} key={group.id} />
+            )
+          )}
+        </TableBody>
+      </Table>
+    </div>
   )
 }

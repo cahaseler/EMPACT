@@ -8,8 +8,10 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogHeader,
   AlertDialogOverlay,
   AlertDialogPortal,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
@@ -30,22 +32,20 @@ import { deleteAssessmentUser } from "../../../../utils/dataActions"
 export default function DeleteModule({
   assessmentUser,
   assessmentTypeId,
-  assessmentId,
-  buttonType,
+  assessmentId
 }: {
   readonly assessmentUser: AssessmentUser & {
     user: User & { assessmentUserResponse: AssessmentUserResponse[] }
   }
   readonly assessmentTypeId: number
   readonly assessmentId: number
-  readonly buttonType: "icon" | "default"
 }) {
   const router = useRouter()
 
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault()
     await deleteAssessmentUser(assessmentUser.id).then(() => {
-      router.push(`/${assessmentTypeId}/users/${assessmentId}`)
+      router.push(`/${assessmentTypeId}/users/assessment/${assessmentId}`)
       toast({
         title: "User successfully removed from assessment."
       })
@@ -60,12 +60,8 @@ export default function DeleteModule({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button size={buttonType} className="cursor-default opacity-50">
-            {buttonType === "icon" ? (
-              <Trash2 className="w-5 h-5 text-white" />
-            ) : (
-              "Remove User from Assessment"
-            )}
+          <Button size="icon" className="cursor-default opacity-50">
+            <Trash2 className="w-5 h-5 text-white" />
           </Button>
         </TooltipTrigger>
         <TooltipContent className="w-60 text-center">
@@ -77,17 +73,18 @@ export default function DeleteModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={buttonType}>
-          {buttonType === "icon" ? (
-            <Trash2 className="w-5 h-5 text-white" />
-          ) : (
-            "Remove User from Assessment"
-          )}
+        <Button size="icon">
+          <Trash2 className="w-5 h-5 text-white" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Remove Assessment User
+            </AlertDialogTitle>
+          </AlertDialogHeader>
           <div className="flex flex-col space-y-6 text center">
             <p>
               Are you sure you want to remove this user from this assessment?

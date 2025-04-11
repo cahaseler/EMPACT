@@ -29,6 +29,7 @@ import {
 import {
   createAssessment,
   createAssessmentAttribute,
+  createAssessmentAttributes,
   createAssessmentPart
 } from "../../../utils/dataActions"
 
@@ -101,14 +102,20 @@ export default function AddForm({
               )
             }
           }
-          for (var i = 0; i < attributesToAdd.length; i++) {
-            const attributeId = attributesToAdd[i];
-            // Ensure attributeId is defined
-            if (attributeId) {
-              await createAssessmentAttribute(
-                assessment.id,
-                attributeId
-              )
+          if (attributesToAdd.length === 1) {
+            const attributeId = attributesToAdd[0];
+            // Add explicit check to satisfy TypeScript, although length check implies it's defined
+            if (attributeId !== undefined) {
+              await createAssessmentAttribute(assessment.id, attributeId)
+            }
+          } else if (attributesToAdd.length > 1) { // Use else if for clarity
+            const newAttributes = attributesToAdd.map(
+              attributeId => ({ assessmentId: assessment.id, attributeId })
+            );
+            // Ensure attributeId is defined before passing to bulk create
+            const validAttributes = newAttributes.filter(attr => attr.attributeId !== undefined) as { assessmentId: number, attributeId: string }[];
+            if (validAttributes.length > 0) {
+               await createAssessmentAttributes(validAttributes);
             }
           }
           setSaving(false)
