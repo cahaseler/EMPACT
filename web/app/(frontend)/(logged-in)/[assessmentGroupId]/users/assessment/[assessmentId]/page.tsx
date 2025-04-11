@@ -82,7 +82,7 @@ export default async function Page(
                   <Link
                     href={`/${assessmentType.id}/users/assessment/${assessment.id}/manage-user-groups`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button>Manage User Groups</Button>
                   </Link>
                 )}
@@ -109,7 +109,7 @@ export default async function Page(
           </div>
         </section>
       </div>
-    )
+    );
   }
 }
 
@@ -126,7 +126,7 @@ function AddUsersButton({
     <Link
       href={`/${assessmentTypeId}/users/assessment/${assessmentId}/add-assessment-users`}
       prefetch={false}
-    >
+      legacyBehavior>
       <Button>Add Users to Assessment</Button>
     </Link>
   ) : (
@@ -143,5 +143,5 @@ function AddUsersButton({
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  )
+  );
 }

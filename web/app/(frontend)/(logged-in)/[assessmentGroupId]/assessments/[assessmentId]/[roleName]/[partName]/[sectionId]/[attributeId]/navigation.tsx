@@ -22,26 +22,26 @@ export default function Navigation({
 }) {
   return (
     <section className="mb-8 space-y-4">
-        <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
-          {prevAttribute && 
-            <Link href={`${urlHead}/${prevAttribute.id}`}>
-              <Button>Previous</Button>
-            </Link>
-          }
-          {nextAttribute && (
-            isParticipant && userResponses.length === 0 ?
-              <Button disabled={true}>
+      <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
+        {prevAttribute && 
+          <Link href={`${urlHead}/${prevAttribute.id}`} legacyBehavior>
+            <Button>Previous</Button>
+          </Link>
+        }
+        {nextAttribute && (
+          isParticipant && userResponses.length === 0 ?
+            <Button disabled={true}>
+              Next
+            </Button> 
+          :
+            <Link href={`${urlHead}/${nextAttribute.id}`} legacyBehavior>
+              <Button>
                 Next
-              </Button> 
-            :
-              <Link href={`${urlHead}/${nextAttribute.id}`}>
-                <Button>
-                  Next
-                </Button>
-              </Link>
-            )
-          }
-          </div>
+              </Button>
+            </Link>
+          )
+        }
+        </div>
     </section>
-  )
+  );
 }

@@ -68,7 +68,7 @@ export default function AssessmentContent({
                   <Link
                     href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button variant="secondary">Enter as Facilitator</Button>
                   </Link>
                 )}
@@ -76,15 +76,15 @@ export default function AssessmentContent({
                   <Link
                     href={`/${assessmentType.id}/assessments/${assessment.id}/Participant/${part.part.name}`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button variant="secondary">Enter as Participant</Button>
                   </Link>
                 )}
               </div>
             </CardHeader>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

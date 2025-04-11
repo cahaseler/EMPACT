@@ -123,7 +123,7 @@ export default function DataTable({
               {isAdmin && (
                 <Link
                   href={`/${assessmentType.id}/users/collection/${collection.id}`}
-                >
+                  legacyBehavior>
                   <Button size="icon">
                     <Users className="w-5 h-5 text-white" />
                   </Button>
@@ -160,7 +160,7 @@ export default function DataTable({
         </div>
       </TableCell>
     </TableRow>
-  )
+  );
 }
 
 function DeleteModule({

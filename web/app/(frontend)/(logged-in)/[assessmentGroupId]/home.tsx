@@ -106,7 +106,7 @@ export default function Home({
                     // Construct the URL only if all parts are valid
                     const continueLink = `/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${targetPartName}/${targetSectionId}/${targetAttributeId}`;
                     return (
-                      <Link href={continueLink} prefetch={false}>
+                      <Link href={continueLink} prefetch={false} legacyBehavior>
                         <Button>{mostRecentAssessment.name}</Button>
                       </Link>
                     );
@@ -148,7 +148,7 @@ export default function Home({
           </div>
         </section>
       </div>
-    )
+    );
   }
 }
 
@@ -179,7 +179,7 @@ function AssessmentCard({
               href={`/${groupId}/assessments/${id}`}
               className="hover:opacity-60"
               prefetch={false}
-            >
+              legacyBehavior>
               {name}
             </Link>
           </CardTitle>
@@ -188,7 +188,7 @@ function AssessmentCard({
           </CardDescription>
         </div>
         <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
-          <Link href={`/${groupId}/reports/${id}`} prefetch={false}>
+          <Link href={`/${groupId}/reports/${id}`} prefetch={false} legacyBehavior>
             <Button variant="secondary">View Report</Button>
           </Link>
           {parts.map((part: Part) => {
@@ -197,13 +197,13 @@ function AssessmentCard({
                 href={`/${groupId}/assessments/${id}/${role}/${part.name}`}
                 prefetch={false}
                 key={part.name}
-              >
+                legacyBehavior>
                 <Button variant="secondary">{part.name}</Button>
               </Link>
-            )
+            );
           })}
         </div>
       </CardHeader>
     </Card>
-  )
+  );
 }

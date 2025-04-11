@@ -62,7 +62,7 @@ export default function PartContent({
             key={key}
             href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}
             prefetch={false}
-          >
+            legacyBehavior>
             <Button size="xl">
               <div className="w-full flex flex-col space-y-2">
                 <h2 className="text-xl font-bold text-indigo-50">
@@ -74,8 +74,8 @@ export default function PartContent({
               </div>
             </Button>
           </Link>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

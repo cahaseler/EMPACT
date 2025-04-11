@@ -65,7 +65,7 @@ export default async function Page(
                   <Link
                     href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button>Edit Assessment</Button>
                   </Link>
                 </div>
@@ -82,6 +82,6 @@ export default async function Page(
           />
         </section>
       </div>
-    )
+    );
   }
 }

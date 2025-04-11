@@ -38,13 +38,13 @@ export default async function Page(
                   <Link
                     href={`/${assessmentType.id}/assessments/manage-collections`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button>Manage Assessment Collections</Button>
                   </Link>
                   <Link
                     href={`/${assessmentType.id}/assessments/add-assessment`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button>Add Assessment</Button>
                   </Link>
                 </div>
@@ -62,6 +62,6 @@ export default async function Page(
           </div>
         </section>
       </div>
-    )
+    );
   }
 }

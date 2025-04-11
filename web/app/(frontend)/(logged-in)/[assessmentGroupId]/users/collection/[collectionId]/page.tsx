@@ -47,7 +47,7 @@ export default async function Page(
                   <Link
                     href={`/${assessmentType.id}/users/collection/${collection.id}/add-collection-managers`}
                     prefetch={false}
-                  >
+                    legacyBehavior>
                     <Button>Add Collection Managers</Button>
                   </Link>
                 </div>
@@ -60,7 +60,7 @@ export default async function Page(
             </div>
           </section>
         </div>
-      )
+      );
     }
     return (
       <div className="w-full max-w-4xl mx-auto">

@@ -134,19 +134,21 @@ function AssessmentActions({
       {canEdit && (
         <Link
           href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`}
-        >
+          legacyBehavior>
           <Button size="icon">
             <SquarePen className="w-5 h-5 text-white" />
           </Button>
         </Link>
       )}
-      <Link href={`/${assessmentTypeId}/reports/${assessment.id}`}>
+      <Link href={`/${assessmentTypeId}/reports/${assessment.id}`} legacyBehavior>
         <Button size="icon">
           <FileChartColumn className="w-5 h-5 text-white" />
         </Button>
       </Link>
       {canView && (
-        <Link href={`/${assessmentTypeId}/users/assessment/${assessment.id}`}>
+        <Link
+          href={`/${assessmentTypeId}/users/assessment/${assessment.id}`}
+          legacyBehavior>
           <Button size="icon">
             <Users className="w-5 h-5 text-white" />
           </Button>
@@ -161,5 +163,5 @@ function AssessmentActions({
         />
       )}
     </div>
-  )
+  );
 }
