@@ -4,10 +4,11 @@ const config: Config = {
   darkMode: "class",
   content: [
     // Paths relative to the web directory
-    "./pages/**/*.{ts,tsx}",
+    "./pages/**/*.{ts,tsx}", // Keep if using pages dir alongside app dir
     "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}", // General app directory
+    "./app/(frontend)/**/*.{ts,tsx}", // Explicitly include frontend route group content
+    "./src/**/*.{ts,tsx}", // Keep if src dir is used elsewhere
   ],
   prefix: "", // Keep web-specific prefix if needed
   theme: {
