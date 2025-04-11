@@ -91,20 +91,32 @@ export default function AddForm({
       ).then(
         async (assessment: Assessment) => {
           for (var i = 0; i < partsToAdd.length; i++) {
-            await createAssessmentPart(
-              partsToAdd[i].status,
-              partsToAdd[i].date,
-              assessment.id,
-              partsToAdd[i].partId
-            )
+            const partData = partsToAdd[i];
+            // Ensure partData and its required properties are defined
+            if (partData && partData.status && partData.date && partData.partId) {
+              await createAssessmentPart(
+                partData.status,
+                partData.date,
+                assessment.id,
+                partData.partId
+              )
+            }
           }
           if (attributesToAdd.length === 1) {
-            await createAssessmentAttribute(assessment.id, attributesToAdd[0])
-          } else {
+            const attributeId = attributesToAdd[0];
+            // Add explicit check to satisfy TypeScript, although length check implies it's defined
+            if (attributeId !== undefined) {
+              await createAssessmentAttribute(assessment.id, attributeId)
+            }
+          } else if (attributesToAdd.length > 1) { // Use else if for clarity
             const newAttributes = attributesToAdd.map(
-              attribute => ({ assessmentId: assessment.id, attributeId: attribute })
-            )
-            await createAssessmentAttributes(newAttributes)
+              attributeId => ({ assessmentId: assessment.id, attributeId })
+            );
+            // Ensure attributeId is defined before passing to bulk create
+            const validAttributes = newAttributes.filter(attr => attr.attributeId !== undefined) as { assessmentId: number, attributeId: string }[];
+            if (validAttributes.length > 0) {
+               await createAssessmentAttributes(validAttributes);
+            }
           }
           setSaving(false)
           router.refresh()

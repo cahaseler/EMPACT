@@ -54,7 +54,8 @@ export default function Home({
     const mostRecentResponseAttributeIds = userResponses
       .filter(
         (userResponse: AssessmentUserResponse) =>
-          userResponse.assessmentId === mostRecentAssessment.id
+          // Check if mostRecentAssessment is defined before accessing its id
+          mostRecentAssessment && userResponse.assessmentId === mostRecentAssessment.id
       )
       .sort(
         (a: AssessmentUserResponse, b: AssessmentUserResponse) =>
@@ -103,12 +104,33 @@ export default function Home({
                 <h2 className="text-2xl font-bold">
                   Continue Recent Assessment
                 </h2>
-                <Link
-                  href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}`}
-                  prefetch={false}
-                >
-                  <Button>{mostRecentAssessment.name}</Button>
-                </Link>
+                {(() => {
+                  // Determine target IDs safely, providing fallbacks only if parts exist
+                  const targetPartName = nextPart?.name ?? parts?.[0]?.name;
+                  const targetSectionId = (nextSection?.id ?? parts?.[0]?.sections?.[0]?.id)?.toString();
+                  const targetAttributeId = (nextAttribute?.id ?? parts?.[0]?.sections?.[0]?.attributes?.[0]?.id)?.toString();
+
+                  // Check if all necessary components for the URL are defined and valid strings
+                  const canConstructLink =
+                    assessmentType?.id &&
+                    mostRecentAssessment?.id && // Already checked outside, but good practice
+                    targetPartName &&
+                    targetSectionId &&
+                    targetAttributeId;
+
+                  if (canConstructLink) {
+                    // Construct the URL only if all parts are valid
+                    const continueLink = `/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${targetPartName}/${targetSectionId}/${targetAttributeId}`;
+                    return (
+                      <Link href={continueLink} prefetch={false}>
+                        <Button>{mostRecentAssessment.name}</Button>
+                      </Link>
+                    );
+                  }
+                  // Return null or some fallback UI if the link cannot be constructed
+                  // For now, returning null means the button won't render if link is invalid
+                  return null;
+                })()}
               </div>
             </section>
           )}

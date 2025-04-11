@@ -57,7 +57,6 @@
             "files": [
               "package.json",
               "web/package.json",
-              "web_static/package.json",
               "src-tauri/tauri.conf.json"
             ],
             "from": "\"version\": \"(.*?)\"",
@@ -65,8 +64,7 @@
           },
           {
             "files": [
-              "web/app/(frontend)/components/version-indicator.tsx",
-              "web_static/app/(frontend)/components/version-indicator.tsx"
+              "web/app/(frontend)/components/version-indicator.tsx"
             ],
             "from": "version: \"(.*?)\"",
             "to": "version: \"${nextRelease.version}\"",
@@ -97,7 +95,6 @@
         "assets": [
           "package.json",
           "web/package.json",
-          "web_static/package.json",
           "web/app/api/version/route.ts",
           "web/app/(frontend)/components/version-indicator.tsx",
           "src-tauri/Cargo.toml",
