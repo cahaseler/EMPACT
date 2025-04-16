@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react" // Import useEffect
+import { useState, useEffect, useCallback } from "react" // Import useEffect and useCallback
 
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -29,21 +29,48 @@ import {
 } from "@/components/ui/table"
 import { Part } from "@/prisma/mssql/generated/client"
 
-type AssessmentPartToAdd = {
-  partId: number
-  status: string
-  date: Date | undefined
-}
+// Import the shared type definition from the central types file
+import type { AssessmentPartToAdd } from "@/types/assessment"
 
 export default function PartsTable({
   parts,
-  partsToAdd,
+  partsToAdd, // This prop isn't actually used in the refactored version, but kept for type consistency if needed elsewhere
   setPartsToAdd,
 }: {
   readonly parts: Part[]
-  readonly partsToAdd: AssessmentPartToAdd[]
-  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>>
+  readonly partsToAdd: AssessmentPartToAdd[] // Uses imported type
+  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>> // Uses imported type
 }) {
+  // Initialize the state in the parent component when the table mounts
+  // This ensures the parent state reflects the initial default values from PartRow
+  useEffect(() => {
+    const initialParts = parts.map(part => ({
+      partId: part.id,
+      status: "Planned", // Default status from PartRow
+      date: new Date()    // Default date from PartRow
+    }));
+    setPartsToAdd(initialParts);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parts, setPartsToAdd]); // Run only when parts array changes
+
+  // Callback to update the parent state
+  const handlePartChange = useCallback((partId: number, status: string, date: Date) => {
+    setPartsToAdd(prevParts => {
+      const existingPartIndex = prevParts.findIndex(p => p.partId === partId);
+      const updatedPart = { partId, status, date };
+
+      if (existingPartIndex > -1) {
+        // Update existing part
+        const newParts = [...prevParts];
+        newParts[existingPartIndex] = updatedPart;
+        return newParts;
+      } else {
+        // This case should ideally not happen if initialized correctly, but handles edge cases
+        return [...prevParts, updatedPart];
+      }
+    });
+  }, [setPartsToAdd]);
+
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
       <Table className="table-fixed dark:bg-transparent">
@@ -61,23 +88,7 @@ export default function PartsTable({
               part={part}
               initialStatus="Planned" // Default status
               initialDate={new Date()} // Default date
-              onPartChange={(partId, status, date) => {
-                // Update the partsToAdd state in the parent component
-                setPartsToAdd(prevParts => {
-                  const existingPartIndex = prevParts.findIndex(p => p.partId === partId);
-                  const updatedPart = { partId, status, date };
-
-                  if (existingPartIndex > -1) {
-                    // Update existing part
-                    const newParts = [...prevParts];
-                    newParts[existingPartIndex] = updatedPart;
-                    return newParts;
-                  } else {
-                    // Add new part (shouldn't happen if initialized correctly, but safe)
-                    return [...prevParts, updatedPart];
-                  }
-                });
-              }}
+              onPartChange={handlePartChange} // Pass the memoized callback
             />
           ))}
         </TableBody>
@@ -102,13 +113,7 @@ function PartRow({
   const [status, setStatus] = useState<string>(initialStatus)
   const [date, setDate] = useState<Date>(initialDate)
 
-  // Effect to initialize the parent state when the component mounts or props change
-  useEffect(() => {
-    onPartChange(part.id, initialStatus, initialDate);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [part.id, initialStatus, initialDate, onPartChange]); // Add dependencies
-  // Handler functions MUST be inside the component function scope
-  // Handler functions MUST be inside the component function scope
+  // Note: The useEffect to initialize parent state was moved to the parent PartsTable component
 
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus)
@@ -116,7 +121,8 @@ function PartRow({
   }
 
   const handleDateChange = (selectedDate: Date | undefined) => {
-    const newDate = selectedDate || new Date(); // Fallback to current date if undefined
+    // Ensure a valid Date is always used. Fallback to current state's date if selectedDate is undefined.
+    const newDate = selectedDate || date;
     setDate(newDate)
     onPartChange(part.id, status, newDate) // Notify parent of the change
   }
