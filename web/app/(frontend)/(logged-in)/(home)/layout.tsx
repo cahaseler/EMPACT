@@ -1,7 +1,6 @@
+import React from 'react';
 import type { Metadata } from "next"
-
-
-export const dynamic = "force-dynamic"; // Force dynamic rendering, disable static caching
+export const dynamic = "force-dynamic";
 import { GeistSans } from "geist/font/sans"
 
 import { cn } from "@/lib/utils"
@@ -16,6 +15,7 @@ import { DebugSessionInfo } from "@/components/debug-session-info"
 import { MultisessionAppSupport } from "@/components/multisessionAppSupport"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { ThemeProvider } from "@/components/theme-provider"
+import { UserbackProviderClient } from '@/components/userback-provider-client'; // Added static import
 import { Footer } from "../../components/footer"
 import { Nav } from "../../components/nav"
 import { isAdmin } from "../utils/permissions"
@@ -25,6 +25,7 @@ export const metadata: Metadata = {
   description: "Environmental and Maturity Program Assessment and Control Tool",
 }
 
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -32,9 +33,19 @@ export default async function RootLayout({
 }>) {
   const session = await auth()
 
+  if(!process.env.USERBACK_TOKEN) {
+    throw new Error("USERBACK_TOKEN is not defined")
+  }
+
+  console.log(session)
+
   return (
     <ClerkProvider afterMultiSessionSingleSignOutUrl="/">
       <MultisessionAppSupport>
+      <UserbackProviderClient token={process.env.USERBACK_TOKEN} options={{
+        name: session.user.first_name,
+        email: session.user.email,
+      }}>
         <html lang="en" suppressHydrationWarning>
           <head />
           <body
@@ -72,6 +83,7 @@ export default async function RootLayout({
             <SpeedInsights />
           </body>
         </html>
+      </UserbackProviderClient>
       </MultisessionAppSupport>
     </ClerkProvider>
   )
