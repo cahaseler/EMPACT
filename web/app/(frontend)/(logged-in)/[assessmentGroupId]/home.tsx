@@ -33,6 +33,7 @@ export default function Home({
   session: Session | null
 }>) {
   if (assessmentType) {
+    // Corrected logic from 'main' branch for finding mostRecentAssessment
     const mostRecentAssessment = assessments
       .filter((assessment: Assessment) => assessment.status === "Active")
       .sort(
@@ -50,7 +51,8 @@ export default function Home({
           // Neither is null, compare by date value (descending)
           return b.completedDate.valueOf() - a.completedDate.valueOf();
         }
-      )[0]
+      )[0] // Get the first element after sorting
+
     const mostRecentResponseAttributeIds = userResponses
       .filter(
         (userResponse: AssessmentUserResponse) =>
@@ -62,6 +64,7 @@ export default function Home({
           a.levelId - b.levelId
       )
       .map((userResponse: AssessmentUserResponse) => userResponse.attributeId)
+
     const nextPart = parts.find((part) =>
       part.sections.find((section) =>
         section.attributes.find(
@@ -104,6 +107,7 @@ export default function Home({
                 <h2 className="text-2xl font-bold">
                   Continue Recent Assessment
                 </h2>
+                {/* Corrected logic from 'main' branch for the continue link */}
                 {(() => {
                   // Determine target IDs safely, providing fallbacks only if parts exist
                   const targetPartName = nextPart?.name ?? parts?.[0]?.name;
@@ -148,6 +152,7 @@ export default function Home({
                         groupId={assessmentType.id}
                         id={assessment.id}
                         name={assessment.name}
+                        // Corrected logic from 'main' branch for completedDate
                         completedDate={assessment.completedDate} // Now guaranteed to be Date
                         parts={parts}
                         session={session}
@@ -165,6 +170,8 @@ export default function Home({
       </div>
     )
   }
+  // Return null or some fallback if assessmentType is null
+  return null;
 }
 
 function AssessmentCard({

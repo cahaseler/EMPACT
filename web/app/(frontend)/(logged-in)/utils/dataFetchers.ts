@@ -155,6 +155,11 @@ export async function fetchAssessmentUserGroups(assessmentId: string): Promise<
   })
 }
 
+export async function fetchAssessmentUserGroup(groupId: number | null | undefined): Promise<AssessmentUserGroup | null> {
+  if (!groupId) return null
+  return await db.assessmentUserGroup.findUnique({ where: { id: groupId } })
+}
+
 export async function fetchPermissions(): Promise<Permission[]> {
   return await db.permission.findMany({})
 }
@@ -265,7 +270,7 @@ export async function fetchUserResponsesForAssessment(
 export async function fetchAllResponsesForAssessmentAttribute(
   assessmentId: string,
   attributeId: string
-): Promise<(AssessmentUserResponse & { user: User })[]> {
+): Promise<(AssessmentUserResponse & { user: User, level: Level })[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -274,7 +279,7 @@ export async function fetchAllResponsesForAssessmentAttribute(
   }
   return await db.assessmentUserResponse.findMany({
     where: { assessmentId: idAsInteger, attributeId: attributeId },
-    include: { user: true },
+    include: { user: true, level: true },
   })
 }
 

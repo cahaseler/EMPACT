@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { AssessmentUserGroup, User } from "@/prisma/mssql/generated/client"
 
-import type { ColDef } from "ag-grid-community";
+import type { ColDef } from "ag-grid-community"
 import {
   AllCommunityModule,
   ModuleRegistry,
   RowSelectionOptions
 } from "ag-grid-community";
-import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
+import { AgGridReact, CustomCellRendererProps } from "ag-grid-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -114,16 +114,16 @@ export default function DataTable({
   }
 
   const [colDefs] = useState<ColDef<UserWithRoleGroup>[]>([
-    { field: "user.id", headerName: "User ID", resizable: false, width: 80 },
+    { field: "user.id", headerName: "User ID", resizable: false, flex: 1 },
     {
       colId: "name",
       headerName: "Name",
       valueGetter: (params) => `${params.data?.user.lastName}, ${params.data?.user.firstName}`,
       filter: true,
       resizable: false,
-      width: 150
+      flex: 2
     },
-    { field: "user.email", headerName: "Email", filter: true, width: 213 },
+    { field: "user.email", headerName: "Email", filter: true, flex: 3 },
     {
       field: "role",
       editable: true,
@@ -140,7 +140,8 @@ export default function DataTable({
         return true;
       },
       resizable: false,
-      sortable: false
+      sortable: false,
+      flex: 2
     },
     {
       field: "groupName",
@@ -153,7 +154,8 @@ export default function DataTable({
         values: groups.map((group) => group.name),
       },
       resizable: false,
-      sortable: false
+      sortable: false,
+      flex: 2
     },
   ]);
 

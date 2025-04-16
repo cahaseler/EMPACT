@@ -32,7 +32,7 @@ import { Part } from "@/prisma/mssql/generated/client"
 type AssessmentPartToAdd = {
   partId: number
   status: string
-  date: Date
+  date: Date | undefined
 }
 
 export default function PartsTable({

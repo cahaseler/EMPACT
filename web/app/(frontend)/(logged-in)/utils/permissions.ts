@@ -5,6 +5,7 @@ import {
   AssessmentUser,
   AssessmentUserResponse,
   Attribute,
+  Level,
   Part,
   Section,
   User,
@@ -97,7 +98,7 @@ export function canUserParticipateInPart(
   const participantPart = assessmentUser?.participantParts.find(
     (part) => part.id === partId
   )
-  return participantPart !== undefined
+  return participantPart !== undefined || assessmentUser?.role === "Participant"
 }
 
 export function isParticipantForAssessment(
@@ -206,13 +207,16 @@ export async function viewableParts(
       const assessmentUser = session.user.assessmentUser?.find(
         (uc) => uc.assessmentId === idAsInteger
       )
-      const participantPartIds = assessmentUser?.participantParts.map(
-        (part) => part.partId
-      )
-      const viewableParts = parts.filter((part) =>
-        participantPartIds?.includes(part.id)
-      )
-      return viewableParts
+      if (assessmentUser?.role !== "Participant") {
+        const participantPartIds = assessmentUser?.participantParts.map(
+          (part) => part.partId
+        )
+        const viewableParts = parts.filter((part) =>
+          participantPartIds?.includes(part.id)
+        )
+        return viewableParts
+      }
+      return parts
     } else {
       return parts
     }
@@ -243,7 +247,7 @@ export async function viewableAttributeResponses(
   assessmentId: string,
   attributeId: string,
   role: string
-): Promise<(AssessmentUserResponse & { user?: User })[]> {
+): Promise<(AssessmentUserResponse & { user?: User, level?: Level })[]> {
   if (session) {
     if (role === "Participant") {
       const response = await fetchUserResponseForAssessmentAttribute(

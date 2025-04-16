@@ -14,6 +14,7 @@ import {
   Assessment,
   AssessmentPart,
   AssessmentType,
+  AssessmentUserGroup,
   Part,
 } from "@/prisma/mssql/generated/client"
 import {
@@ -27,11 +28,13 @@ import {
 export default function AssessmentContent({
   assessment,
   assessmentType,
+  group,
   parts,
   session,
 }: Readonly<{
   assessment: Assessment
   assessmentType: AssessmentType
+  group: AssessmentUserGroup | null
   parts: (AssessmentPart & { part: Part })[]
   session: Session | null
 }>) {
@@ -65,20 +68,36 @@ export default function AssessmentContent({
               </div>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
                 {canEnterAsFac && (
-                  <Link
-                    href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
-                    prefetch={false}
-                  >
-                    <Button variant="secondary">Enter as Facilitator</Button>
-                  </Link>
+                  part.status === "Active" ? (
+                    <Link
+                      href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
+                      prefetch={false}
+                    >
+                      <Button variant="secondary">
+                        Enter as Facilitator
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button variant="secondary" disabled>
+                      Enter as Facilitator
+                    </Button>
+                  )
                 )}
                 {canEnterAsParticipant && (
-                  <Link
-                    href={`/${assessmentType.id}/assessments/${assessment.id}/Participant/${part.part.name}`}
-                    prefetch={false}
-                  >
-                    <Button variant="secondary">Enter as Participant</Button>
-                  </Link>
+                  part.status === "Active" && group?.status === "Active" ? (
+                    <Link
+                      href={`/${assessmentType.id}/assessments/${assessment.id}/Participant/${part.part.name}`}
+                      prefetch={false}
+                    >
+                      <Button variant="secondary">
+                        Enter as Participant
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button variant="secondary" disabled>
+                      Enter as Participant
+                    </Button>
+                  )
                 )}
               </div>
             </CardHeader>
