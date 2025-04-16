@@ -410,18 +410,26 @@ export async function fetchAttributes(
 
 export async function fetchPreviousAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
+  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
 
-  if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) - 1].attribute
+  // Check if current attribute exists and if there is a previous attribute (index > 0)
+  if (currentAttributeIndex === -1 || currentAttributeIndex === 0) return null
+
+  // Safely access the previous attribute
+  const previousAssessmentAttribute = attributes[currentAttributeIndex - 1];
+  return previousAssessmentAttribute?.attribute ?? null;
 }
 
 export async function fetchNextAttribute(assessmentId: string, attributeId: string): Promise<Attribute | null> {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttribute = attributes.find(attribute => attribute.attributeId === attributeId)
+  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
 
-  if (!currentAttribute) return null
-  return attributes[attributes.indexOf(currentAttribute) + 1].attribute
+  // Check if current attribute exists and if there is a next attribute (index < length - 1)
+  if (currentAttributeIndex === -1 || currentAttributeIndex >= attributes.length - 1) return null
+
+  // Safely access the next attribute
+  const nextAssessmentAttribute = attributes[currentAttributeIndex + 1];
+  return nextAssessmentAttribute?.attribute ?? null;
 }
 
 export async function fetchLevels(attributeId: string): Promise<Level[]> {

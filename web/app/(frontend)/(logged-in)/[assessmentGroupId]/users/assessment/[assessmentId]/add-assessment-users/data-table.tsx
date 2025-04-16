@@ -39,15 +39,15 @@ export default function DataTable({
   users,
   groups
 }: {
-  assessmentTypeId: number
-  assessmentId: number
-  users: User[],
-  groups: AssessmentUserGroup[]
+  readonly assessmentTypeId: number
+  readonly assessmentId: number
+  readonly users: User[],
+  readonly groups: AssessmentUserGroup[]
 }) {
   const usersWithRoleGroup = users.map((user) => ({
     user,
     role: "Participant",
-    groupName: groups[0].name,
+    groupName: groups?.[0]?.name ?? null, // Safely access name, fallback to null
   }))
 
   const rowSelection = React.useMemo<
@@ -82,12 +82,16 @@ export default function DataTable({
       setSaving(true)
       try {
         if (usersToAdd.length === 1) {
-          await createAssessmentUser(
-            assessmentId,
-            usersToAdd[0].role,
-            usersToAdd[0].user.id,
-            groups.find(group => group.name === usersToAdd[0].groupName)?.id || null
-          )
+          const userToAdd = usersToAdd[0];
+          // Add explicit check for userToAdd to satisfy TypeScript
+          if (userToAdd) {
+            await createAssessmentUser(
+              assessmentId,
+              userToAdd.role,
+              userToAdd.user.id,
+              groups.find(group => group.name === userToAdd.groupName)?.id || null
+            )
+          }
         } else {
           const assessmentUsers = usersToAdd.map(user => ({
             assessmentId,
@@ -131,7 +135,7 @@ export default function DataTable({
       },
       valueSetter: params => {
         params.data.role = params.newValue;
-        if (params.newValue === "Participant") params.data.groupName = groups[0].name
+        if (params.newValue === "Participant") params.data.groupName = groups?.[0]?.name ?? null // Safely access name, fallback to null
         else params.data.groupName = null
         return true;
       },

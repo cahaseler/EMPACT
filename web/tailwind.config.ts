@@ -1,15 +1,18 @@
 import type { Config } from "tailwindcss"
 
-const config = {
-  darkMode: ["class"],
+const config: Config = {
+  darkMode: "class",
   content: [
-    "./pages/**/*.{ts,tsx}",
+    // Paths relative to the web directory
+    "./pages/**/*.{ts,tsx}", // Keep if using pages dir alongside app dir
     "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}", // General app directory
+    "./app/(frontend)/**/*.{ts,tsx}", // Explicitly include frontend route group content
+    "./src/**/*.{ts,tsx}", // Keep if src dir is used elsewhere
   ],
-  prefix: "",
+  prefix: "", // Keep web-specific prefix if needed
   theme: {
+    // Keep web-specific container settings
     container: {
       center: true,
       padding: "2rem",
@@ -17,6 +20,7 @@ const config = {
         "2xl": "1400px",
       },
     },
+    // Extend the theme
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -70,20 +74,12 @@ const config = {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useCallback, useMemo, useRef } from "react" // Consolidate imports
 
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -9,8 +9,8 @@ import { User } from "@/prisma/mssql/generated/client"
 import type { ColDef } from "ag-grid-community"
 import {
   AllCommunityModule,
-  ModuleRegistry,
-  RowSelectionOptions
+  ModuleRegistry
+  // RowSelectionOptions // Type not needed directly for state if just storing string
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react"
 
@@ -31,26 +31,21 @@ export default function DataTable({
   assessmentCollectionId: number
   users: User[]
 }) {
-  const rowSelection = React.useMemo<
-    RowSelectionOptions | "single" | "multiple"
-  >(() => {
-    return {
-      mode: "multiRow",
-    };
-  }, []);
+  // Store the selection mode directly as a string
+  const rowSelectionMode = "multiple";
 
-  const paginationPageSizeSelector = React.useMemo<number[] | boolean>(() => {
+  const paginationPageSizeSelector = useMemo<number[] | boolean>(() => {
     return [10, 20, 30, 40, 50];
   }, []);
 
-  const [rowData] = React.useState<User[]>(users);
-  const [selectedLength, setSelectedLength] = React.useState<number>(0)
-  const [saving, setSaving] = React.useState<boolean>(false)
+  const [rowData] = useState<User[]>(users);
+  const [selectedLength, setSelectedLength] = useState<number>(0)
+  const [saving, setSaving] = useState<boolean>(false)
 
   const router = useRouter()
-  const gridRef = React.useRef<AgGridReact<User>>(null);
+  const gridRef = useRef<AgGridReact<User>>(null);
 
-  const onSelectionChanged = React.useCallback(() => {
+  const onSelectionChanged = useCallback(() => {
     if (gridRef.current) {
       setSelectedLength(gridRef.current.api.getSelectedRows().length)
     }
@@ -63,16 +58,25 @@ export default function DataTable({
       setSaving(true)
       try {
         if (usersToAdd.length === 1) {
-          await createAssessmentCollectionUser(
-            usersToAdd[0].id,
-            assessmentCollectionId
-          )
+          // Add check to satisfy TypeScript
+          const user = usersToAdd[0];
+          if (user) {
+            await createAssessmentCollectionUser(
+              user.id, // Pass user ID
+              assessmentCollectionId // Use correct prop name
+            )
+          } else {
+             throw new Error("Selected user is undefined."); // Should not happen
+          }
         } else {
-          const assessmentUsers = usersToAdd.map(user => ({
-            userId: user.id,
-            role: "Collection Manager",
-            assessmentCollectionId
-          }))
+          const assessmentUsers = usersToAdd.map(user => {
+             if (!user) throw new Error("Undefined user found in selection."); // Add check in map
+             return {
+                userId: user.id, // Pass user ID
+                role: "Collection Manager",
+                assessmentCollectionId // Use correct prop name
+             }
+          });
           await createAssessmentCollectionUsers(assessmentUsers)
         }
         router.push(`/${assessmentTypeId}/users/collection/${assessmentCollectionId}`)
@@ -80,19 +84,37 @@ export default function DataTable({
           title: "Manager(s) added to assessment collection successfully.",
         })
       } catch (error) {
+        console.error("Error adding managers:", error); // Log the error for debugging
         toast({
-          title: `Error adding manager(s) to assessment collection: ${error}`,
+          title: "Error adding manager(s)",
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive"
         })
+      } finally {
+        setSaving(false)
       }
+    } else {
+      toast({
+        title: "No users selected",
+        description: "Please select at least one user to add as a manager.",
+      })
     }
   }
 
   const [colDefs] = useState<ColDef<User>[]>([
-    { field: "id", headerName: "User ID", resizable: false, flex: 1 },
+    // Add checkbox selection to the ID column
+    {
+        field: "id",
+        headerName: "User ID",
+        resizable: false,
+        flex: 1,
+        checkboxSelection: true, // Enable checkbox selection for this column
+        headerCheckboxSelection: true // Enable header checkbox for select/deselect all
+    },
     {
       colId: "name",
       headerName: "Name",
-      valueGetter: (params) => `${params.data?.lastName}, ${params.data?.firstName}`,
+      valueGetter: (params) => params.data ? `${params.data.lastName}, ${params.data.firstName}` : '', // Add null check for params.data
       filter: true,
       resizable: false,
       flex: 2
@@ -108,12 +130,12 @@ export default function DataTable({
           theme={theme}
           rowData={rowData}
           columnDefs={colDefs}
-          rowSelection={rowSelection}
+          rowSelection={rowSelectionMode} // Pass the mode string directly
           onSelectionChanged={onSelectionChanged}
           pagination={true}
           paginationPageSize={10}
           paginationPageSizeSelector={paginationPageSizeSelector}
-          suppressClickEdit={true}
+          suppressRowClickSelection={true} // Keep row click selection disabled when using checkboxes
           domLayout="autoHeight"
         />
         <div className="mt-4 flex flex-col items-center">

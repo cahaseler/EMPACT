@@ -36,7 +36,7 @@ export default function AttributeUserResponse({
   readonly userId: string | undefined
   readonly attributeId: string
   readonly levels: Level[]
-  readonly userResponse: AssessmentUserResponse
+  readonly userResponse: AssessmentUserResponse | undefined
 }) {
   const userResponseLevel = levels.find(
     (level: Level) => level.id === userResponse?.levelId

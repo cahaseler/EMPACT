@@ -2,9 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "react", "jsdoc"],
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended"
+    "next/core-web-vitals"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
@@ -46,6 +44,17 @@
   "settings": {
     "react": {
       "version": "detect"
+    },
+    // Settings from root .eslintrc.json, paths adjusted for web/ directory
+    "tailwindcss": {
+      "callees": [
+        "cn",
+        "cva"
+      ],
+      "config": "./tailwind.config.ts", // Adjusted path
+      "cssFiles": [
+        "./app/(frontend)/globals.css" // Adjusted path
+      ]
     }
   },
   "ignorePatterns": [

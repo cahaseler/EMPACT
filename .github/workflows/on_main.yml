@@ -79,7 +79,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./web
+          context: .
+          file: ./web/Dockerfile
           push: true
           tags: ${{ steps.docker_tags.outputs.tags }}
           cache-from: type=registry,ref=cahaseler/empact:buildcache
