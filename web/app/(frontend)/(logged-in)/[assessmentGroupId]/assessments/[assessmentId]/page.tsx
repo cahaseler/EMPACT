@@ -7,6 +7,7 @@ import {
   fetchAssessment,
   fetchAssessmentParts,
   fetchAssessmentType,
+  fetchAssessmentUserGroup
 } from "../../../utils/dataFetchers"
 import {
   isAdmin,
@@ -26,17 +27,19 @@ export default async function Page(
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const parts = await fetchAssessmentParts(params.assessmentId)
-  const permissions = session?.user?.assessmentUser.find(
+  const assessmentUser = session?.user?.assessmentUser.find(
     (assessmentUser) =>
       assessmentUser.assessmentId === parseInt(params.assessmentId, 10)
-  )?.permissions
+  )
+  const permissions = assessmentUser?.permissions
+  const group = await fetchAssessmentUserGroup(assessmentUser?.assessmentUserGroupId)
 
   const canEdit =
     isAdmin(session) ||
     isManagerForCollection(session, assessment?.assessmentCollectionId) ||
     isLeadForAssessment(session, params.assessmentId) ||
     permissions?.find((permission) => permission.name === "Edit assessment") !==
-      undefined
+    undefined
 
   if (assessmentType && assessment) {
     const links = [
@@ -77,6 +80,7 @@ export default async function Page(
           <AssessmentContent
             assessment={assessment}
             assessmentType={assessmentType}
+            group={group}
             parts={parts}
             session={session}
           />

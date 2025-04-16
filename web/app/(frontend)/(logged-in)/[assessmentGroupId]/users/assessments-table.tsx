@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/ui/data-table/data-table"
 import { AssessmentType, Assessment } from "@/prisma/mssql/generated/client"
-import { columns } from "./columns"
+import { columns } from "./assessments-columns"
 
 export default function AssessmentsDataTable({
   assessments,

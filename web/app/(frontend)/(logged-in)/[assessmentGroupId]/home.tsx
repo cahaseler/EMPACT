@@ -34,10 +34,13 @@ export default function Home({
 }>) {
   if (assessmentType) {
     const mostRecentAssessment = assessments
-      .filter((assessment: Assessment) => assessment.status === "Active")
-      .sort(
-        (a: Assessment, b: Assessment) =>
-          b.completedDate.valueOf() - a.completedDate.valueOf()
+      .filter(
+        (assessment: Assessment) => {
+          if (userResponses[userResponses.length - 1]) {
+            return assessment.status === "Active" && userResponses[userResponses.length - 1]?.assessmentId === assessment.id
+          }
+          return assessment.status === "Active"
+        }
       )[0]
     const mostRecentResponseAttributeIds = userResponses
       .filter(
@@ -92,7 +95,7 @@ export default function Home({
                   Continue Recent Assessment
                 </h2>
                 <Link
-                  href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}`}
+                  href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/Participant/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}`}
                   prefetch={false}
                 >
                   <Button>{mostRecentAssessment.name}</Button>
@@ -113,7 +116,7 @@ export default function Home({
                         groupId={assessmentType.id}
                         id={assessment.id}
                         name={assessment.name}
-                        completedDate={assessment.completedDate}
+                        completedDate={assessment.completedDate || new Date()}
                         parts={parts}
                         session={session}
                       />

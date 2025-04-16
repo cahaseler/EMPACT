@@ -28,6 +28,12 @@ type NewAssessmentAttribute = {
   attributeId: string;
 }
 
+type NewAssessmentCollectionUser = {
+  role: string;
+  assessmentCollectionId: number;
+  userId: number;
+}
+
 type NewAssessmentUser = {
   role: string;
   userId: number;
@@ -66,6 +72,12 @@ export async function createAssessmentCollectionUser(
   return await assessmentCollectionUser.create({
     data: { userId, role: "Collection Manager", assessmentCollectionId },
   })
+}
+
+export async function createAssessmentCollectionUsers(
+  newCollectionUsers: NewAssessmentCollectionUser[]
+): Promise<BatchPayload> {
+  return await assessmentCollectionUser.createMany({ data: newCollectionUsers })
 }
 
 export async function deleteAssessmentCollectionUser(
@@ -137,6 +149,7 @@ export async function createAssessmentPart(
 export async function updateAssessmentPart(
   assessmentPartId: number,
   status: string,
+  date: Date,
   assessmentId: number,
   partId: number
 ): Promise<AssessmentPart> {
@@ -144,6 +157,7 @@ export async function updateAssessmentPart(
     where: { id: assessmentPartId },
     data: {
       status,
+      date,
       assessmentId,
       partId,
     },

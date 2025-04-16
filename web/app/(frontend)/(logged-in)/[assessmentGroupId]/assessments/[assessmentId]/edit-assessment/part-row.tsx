@@ -72,10 +72,12 @@ export default function DataTable({
       await updateAssessmentPart(
         assessmentPart.id,
         status,
+        date,
         assessmentId,
         assessmentPart.part.id
       ).then(() => {
         setSaving(false)
+        setIsEditing(false)
         router.refresh()
         toast({
           title: "Assessment part updated successfully.",
@@ -208,6 +210,7 @@ function SubmitModule({
     await updateAssessmentPart(
       assessmentPart.id,
       "Submitted",
+      assessmentPart.date,
       assessmentId,
       assessmentPart.part.id
     ).then(() => {

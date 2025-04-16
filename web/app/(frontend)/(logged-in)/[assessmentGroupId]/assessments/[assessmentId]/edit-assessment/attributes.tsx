@@ -102,7 +102,7 @@ export default function AssessmentAttributes({
                                                         {section.attributes.map((attribute: Attribute) => {
                                                             const [isChecked, setIsChecked] = useState(attributeIds.includes(attribute.id))
                                                             return (
-                                                                <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
+                                                                <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900" key={attribute.id}>
                                                                     <Checkbox
                                                                         checked={isChecked}
                                                                         onCheckedChange={(checked) => {

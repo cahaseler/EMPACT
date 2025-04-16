@@ -1,69 +1,54 @@
 "use client"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { DataTable } from "@/components/ui/data-table/data-table"
+
 import {
   AssessmentUserResponse,
   Level,
   User,
 } from "@/prisma/mssql/generated/client"
 
-// TODO: Convert to React-Table
-// TODO: Filtering, sorting, search, pagination
+import { columns } from "./columns"
 
 export default function AttributeResponseTable({
   userResponses,
   levels,
 }: {
-  readonly userResponses: (AssessmentUserResponse & { user?: User })[]
+  readonly userResponses: (AssessmentUserResponse & { user?: User, level?: Level })[]
   readonly levels: Level[]
 }) {
+  // Define searchable and filterable columns
+  const searchableColumns = [
+    {
+      id: "name",
+      title: "Name",
+    },
+  ]
+
+  const filterableColumns = [
+    {
+      id: "level",
+      title: "Rating",
+      options: levels.map(
+        level => ({
+          label: level.level.toString(),
+          value: level.level.toString()
+        })
+      ),
+    },
+  ]
+
   return (
     <section className="mb-16 flex flex-col space-y-4">
       <h2 className="text-2xl font-bold max-lg:ml-2">Participant Responses</h2>
-      <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
-        <Table className="dark:bg-transparent">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20">User ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Comments</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {userResponses.length > 0 ? (
-              userResponses.map(
-                (userResponse: AssessmentUserResponse & { user?: User }) => {
-                  const userResponseLevel = levels.find(
-                    (level: Level) => level.id === userResponse?.levelId
-                  )
-                  return (
-                    <TableRow key={userResponse.id}>
-                      <TableCell>{userResponse.userId}</TableCell>
-                      <TableCell>
-                        {userResponse.user?.lastName},{" "}
-                        {userResponse.user?.firstName}
-                      </TableCell>
-                      <TableCell>{userResponseLevel?.level}</TableCell>
-                      <TableCell>{userResponse.notes}</TableCell>
-                    </TableRow>
-                  )
-                }
-              )
-            ) : (
-              <TableRow className="text-muted-foreground dark:text-indigo-300/80">
-                <TableCell colSpan={4}>No responses found.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+      <div className="space-y-4">
+        <DataTable
+          columns={columns}
+          data={userResponses}
+          selectable={false}
+          searchableColumns={searchableColumns}
+          filterableColumns={filterableColumns}
+        />
       </div>
     </section>
   )
