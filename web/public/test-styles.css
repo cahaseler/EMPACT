@@ -1,0 +1,23 @@
+/* Test CSS file loaded from public folder */
+.test-css-class {
+  color: purple;
+  font-weight: bold;
+  background-color: #f0e6ff;
+  padding: 10px;
+  border: 2px dashed purple;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+body::after {
+  content: "External CSS loaded successfully";
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 1000;
+}
