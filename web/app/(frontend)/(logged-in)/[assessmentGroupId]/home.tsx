@@ -124,7 +124,7 @@ export default function Home({
 
                   if (canConstructLink) {
                     // Construct the URL only if all parts are valid
-                    const continueLink = `/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${targetPartName}/${targetSectionId}/${targetAttributeId}`;
+                    const continueLink = `/${assessmentType.id}/assessments/${mostRecentAssessment.id}/Participant/${targetPartName}/${targetSectionId}/${targetAttributeId}`;
                     return (
                       <Link href={continueLink} prefetch={false}>
                         <Button>{mostRecentAssessment.name}</Button>
