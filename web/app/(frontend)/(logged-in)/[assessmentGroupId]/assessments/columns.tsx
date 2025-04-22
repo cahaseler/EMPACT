@@ -77,7 +77,6 @@ function AssessmentActions({
                 <ArchiveModule
                     assessment={assessment}
                     assessmentTypeId={assessmentTypeId}
-                    assessmentUsers={assessmentUsers}
                     buttonType="icon"
                 />
             )}

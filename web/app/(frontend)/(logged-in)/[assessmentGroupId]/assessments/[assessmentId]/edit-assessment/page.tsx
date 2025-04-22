@@ -97,7 +97,6 @@ export default async function Page(
                     <ArchiveModule
                       assessment={assessment}
                       assessmentTypeId={assessmentType.id}
-                      assessmentUsers={assessmentUsers}
                       buttonType="default"
                     />
                   }

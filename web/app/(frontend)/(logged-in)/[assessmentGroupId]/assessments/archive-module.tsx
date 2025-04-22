@@ -20,18 +20,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
-import { Assessment, AssessmentUser } from "@/prisma/mssql/generated/client"
+import { Assessment } from "@/prisma/mssql/generated/client"
 import { updateAssessment } from "../../utils/dataActions"
 
 export default function ArchiveModule({
   assessment,
   assessmentTypeId,
-  assessmentUsers,
   buttonType,
 }: {
   readonly assessment: Assessment
   readonly assessmentTypeId: number
-  readonly assessmentUsers: AssessmentUser[]
   readonly buttonType: "icon" | "default"
 }) {
   const router = useRouter()
@@ -53,7 +51,7 @@ export default function ArchiveModule({
     })
   }
 
-  return assessmentUsers?.length === 0 || assessment.status === "Final" ? (
+  return assessment.status !== "Active" ? (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button size={buttonType}>
@@ -96,8 +94,7 @@ export default function ArchiveModule({
           </Button>
         </TooltipTrigger>
         <TooltipContent className="w-60 text-center">
-          In order to archive this assessment, it must either be finalized or
-          have no assigned users.
+          In order to archive this assessment, it must not be active.
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
