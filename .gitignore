@@ -73,3 +73,7 @@ web_static/lib/**/*
 web/.env
 web/.env.local
 web/.env.test
+
+# Roo Cline configuration
+.roo/
+

@@ -25,12 +25,12 @@ export async function auth() {
   return session
 }
 
-type SystemRole = {
+export type SystemRole = {
   name: string
   id: number
 }
 
-type AssessmentUser = {
+export type AssessmentUser = {
   id: number
   role: string
   assessmentId: number
@@ -49,7 +49,7 @@ type AssessmentUser = {
   }[]
 }
 
-type AssessmentCollectionUser = {
+export type AssessmentCollectionUser = {
   id: number
   role: string
   assessmentCollectionId: number

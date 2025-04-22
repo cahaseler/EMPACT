@@ -60,6 +60,10 @@ function isNewlyLoggedIn(sessionClaims: SessionClaims): boolean {
 async function fetchUserFromDatabase(
   email: string
 ): Promise<DbUserWithRelations | null> {
+
+  if(!email) {
+    return null
+  }
   try {
     const dbUser = await db.user.findUnique({
       where: { email },
@@ -203,6 +207,8 @@ export default clerkMiddleware(async (auth, req) => {
     sessionClaims: SessionClaims
   }
 
+  console.log("Session claims:", sessionClaims)
+
   const dbUser = await fetchUserFromDatabase(sessionClaims?.user?.email)
 
   // If the user is going to a non-public route, redirect them to the login page if they're not logged in
@@ -243,7 +249,9 @@ export default clerkMiddleware(async (auth, req) => {
     if (shouldConfirmRegistration(dbUser)) {
       // If the user hasn't actually been assigned any permissions at all in the system yet,
       // Send them to a page thanking them for signing up and telling them to wait for access
-      return NextResponse.redirect(new URL("/confirm-registered"))
+      // Construct the absolute URL for the redirect using the request's base URL
+      const redirectUrl = new URL("/confirm-registered", req.url)
+      return NextResponse.redirect(redirectUrl)
     }
 
     // At this point, all of the following should be true:

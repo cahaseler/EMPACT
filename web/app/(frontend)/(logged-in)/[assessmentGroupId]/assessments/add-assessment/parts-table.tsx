@@ -1,127 +1,165 @@
 "use client"
 
-import React, { useState } from "react"
-
-import { Part } from "@/prisma/mssql/generated/client"
-
-import type { ColDef } from "ag-grid-community"
-import {
-  AllCommunityModule,
-  ModuleRegistry
-} from "ag-grid-community";
-import { AgGridReact, CustomCellRendererProps } from "ag-grid-react"
+import { useState, useEffect, useCallback } from "react" // Import useEffect and useCallback
 
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Select,
+  SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { theme } from "@/components/ui/data-table/data-table-theme"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Part } from "@/prisma/mssql/generated/client"
 
-import { AssessmentPartToAdd } from "./add-form"
-
-ModuleRegistry.registerModules([AllCommunityModule]);
+// Import the shared type definition from the central types file
+import type { AssessmentPartToAdd } from "@/types/assessment"
 
 export default function PartsTable({
   parts,
-  gridRef
+  partsToAdd, // This prop isn't actually used in the refactored version, but kept for type consistency if needed elsewhere
+  setPartsToAddAction,
 }: {
   readonly parts: Part[]
-  readonly gridRef: React.RefObject<AgGridReact<AssessmentPartToAdd> | null>
+  readonly partsToAdd: AssessmentPartToAdd[] // Uses imported type
+  readonly setPartsToAddAction: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>> // Uses imported type
 }) {
-  const partsToAdd = parts.map((part) => ({
-    name: part.name,
-    partId: part.id,
-    status: "Planned",
-    date: new Date(),
-  }))
+  // Initialize the state in the parent component when the table mounts
+  // This ensures the parent state reflects the initial default values from PartRow
+  useEffect(() => {
+    const initialParts = parts.map(part => ({
+      partId: part.id,
+      status: "Planned", // Default status from PartRow
+      date: new Date()    // Default date from PartRow
+    }));
+    setPartsToAddAction(initialParts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parts, setPartsToAddAction]); // Run only when parts array changes
 
-  const [rowData] = React.useState<AssessmentPartToAdd[]>(partsToAdd);
+  // Callback to update the parent state
+  const handlePartChange = useCallback((partId: number, status: string, date: Date) => {
+    setPartsToAddAction(prevParts => {
+      const existingPartIndex = prevParts.findIndex(p => p.partId === partId);
+      const updatedPart = { partId, status, date };
 
-  const [colDefs] = useState<ColDef<AssessmentPartToAdd>[]>([
-    { field: "name", suppressHeaderFilterButton: true, resizable: false, sortable: false, flex: 2 },
-    {
-      field: "status",
-      editable: true,
-      cellEditor: "agSelectCellEditor",
-      cellRenderer: selectCellRenderer,
-      cellStyle: { padding: 0 },
-      cellEditorParams: {
-        values: ["Planned", "Active", "Inactive"],
-      },
-      suppressHeaderFilterButton: true,
-      resizable: false,
-      sortable: false,
-      flex: 2
-    },
-    {
-      field: "date",
-      editable: true,
-      cellEditor: "agDateCellEditor",
-      cellRenderer: dateCellRenderer,
-      cellStyle: { padding: 0 },
-      suppressHeaderFilterButton: true,
-      resizable: false,
-      sortable: false,
-      flex: 2
-    },
-  ]);
-
-  return (
-    <div>
-      <AgGridReact
-        ref={gridRef}
-        theme={theme}
-        rowData={rowData}
-        columnDefs={colDefs}
-        pagination={false}
-        suppressClickEdit={true}
-        domLayout="autoHeight"
-      />
-    </div>
-  );
-};
-
-function selectCellRenderer(props: CustomCellRendererProps) {
-  const handleClick = () => {
-    props.api.startEditingCell({
-      rowIndex: props.node.rowIndex!,
-      colKey: props.column!.getId(),
+      if (existingPartIndex > -1) {
+        // Update existing part
+        const newParts = [...prevParts];
+        newParts[existingPartIndex] = updatedPart;
+        return newParts;
+      } else {
+        // This case should ideally not happen if initialized correctly, but handles edge cases
+        return [...prevParts, updatedPart];
+      }
     });
-  };
+  }, [setPartsToAddAction]);
+
   return (
-    <Select>
-      <SelectTrigger
-        onClick={handleClick}
-        className="h-full w-full focus:ring-offset-indigo-400 focus:ring-transparent rounded-sm border-indigo-200"
-      >
-        <SelectValue placeholder={props.value} />
-      </SelectTrigger>
-    </Select>
-  );
+    <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
+      <Table className="table-fixed dark:bg-transparent">
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Date</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {parts.map((part: Part) => (
+            <PartRow
+              key={part.id}
+              part={part}
+              initialStatus="Planned" // Default status
+              initialDate={new Date()} // Default date
+              onPartChange={handlePartChange} // Pass the memoized callback
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
 }
 
-function dateCellRenderer(props: CustomCellRendererProps) {
-  const handleClick = () => {
-    props.api.startEditingCell({
-      rowIndex: props.node.rowIndex!,
-      colKey: props.column!.getId(),
-    });
-  };
+// New component for handling each row's state and logic
+function PartRow({
+  part,
+  initialStatus,
+  initialDate,
+  onPartChange,
+}: {
+  part: Part
+  initialStatus: string
+  initialDate: Date
+  onPartChange: (partId: number, status: string, date: Date) => void
+}) {
+  // State is now managed within this component
+  const [status, setStatus] = useState<string>(initialStatus)
+  const [date, setDate] = useState<Date>(initialDate)
+
+  // Note: The useEffect to initialize parent state was moved to the parent PartsTable component
+
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus)
+    onPartChange(part.id, newStatus, date) // Notify parent of the change
+  }
+
+  const handleDateChange = (selectedDate: Date | undefined) => {
+    // Ensure a valid Date is always used. Fallback to current state's date if selectedDate is undefined.
+    const newDate = selectedDate || date;
+    setDate(newDate)
+    onPartChange(part.id, status, newDate) // Notify parent of the change
+  }
+
   return (
-    <Button
-      onClick={handleClick}
-      variant="dateInput"
-      size="offset"
-      className="h-full focus:ring-offset-indigo-400 focus:ring-transparent rounded-sm border-indigo-200 text-left"
-    >
-      <span className="w-full flex flex-row justify-between">
-        {props.value ? format(props.value, "MM/dd/yyyy") : ""}
-        <CalendarIcon className="mr-2 h-4 w-4" />
-      </span>
-    </Button>
-  );
+    <TableRow>
+      <TableCell>{part.name}</TableCell>
+      <TableCell>
+        <Select value={status} onValueChange={handleStatusChange}>
+          <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Planned">Planned</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </TableCell>
+      <TableCell>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="dateInput" size="offset">
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {format(date, "MM/dd/yyyy")}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={handleDateChange}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </TableCell>
+    </TableRow>
+  )
 }

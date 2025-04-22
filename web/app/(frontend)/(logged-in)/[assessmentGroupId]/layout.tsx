@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 
+
+export const dynamic = "force-dynamic"; // Force dynamic rendering, disable static caching
 import { GeistSans } from "geist/font/sans"
 
 import { cn } from "@/lib/utils"

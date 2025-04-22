@@ -104,7 +104,7 @@ export default function DataTable({
                       </TableCell>
                       <TableCell>
                         {attributeResponses.length > 0
-                          ? attributeResponses[0].notes
+                          ? attributeResponses[0]?.notes
                           : "---"}
                       </TableCell>
                     </>

@@ -58,8 +58,9 @@ export default async function Page(
           </section>
           <section className="mb-8">
             <DataTable
+              assessmentTypeId={assessmentType.id}
+              assessmentCollectionId={collection.id}
               users={usersNotInCollection}
-              collectionId={collection.id}
             />
           </section>
         </div>

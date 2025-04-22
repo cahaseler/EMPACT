@@ -33,25 +33,38 @@ export default function Home({
   session: Session | null
 }>) {
   if (assessmentType) {
+    // Corrected logic from 'main' branch for finding mostRecentAssessment
     const mostRecentAssessment = assessments
-      .filter(
-        (assessment: Assessment) => {
-          if (userResponses[userResponses.length - 1]) {
-            return assessment.status === "Active" && userResponses[userResponses.length - 1]?.assessmentId === assessment.id
+      .filter((assessment: Assessment) => assessment.status === "Active")
+      .sort(
+        (a: Assessment, b: Assessment) => {
+          // Handle null cases for completedDate
+          if (a.completedDate === null && b.completedDate === null) {
+            return 0; // Both null, treat as equal
           }
-          return assessment.status === "Active"
+          if (a.completedDate === null) {
+            return 1; // a is null, b is not; b comes first (newer)
+          }
+          if (b.completedDate === null) {
+            return -1; // b is null, a is not; a comes first (newer)
+          }
+          // Neither is null, compare by date value (descending)
+          return b.completedDate.valueOf() - a.completedDate.valueOf();
         }
-      )[0]
+      )[0] // Get the first element after sorting
+
     const mostRecentResponseAttributeIds = userResponses
       .filter(
         (userResponse: AssessmentUserResponse) =>
-          userResponse.assessmentId === mostRecentAssessment.id
+          // Check if mostRecentAssessment is defined before accessing its id
+          mostRecentAssessment && userResponse.assessmentId === mostRecentAssessment.id
       )
       .sort(
         (a: AssessmentUserResponse, b: AssessmentUserResponse) =>
           a.levelId - b.levelId
       )
       .map((userResponse: AssessmentUserResponse) => userResponse.attributeId)
+
     const nextPart = parts.find((part) =>
       part.sections.find((section) =>
         section.attributes.find(
@@ -94,12 +107,34 @@ export default function Home({
                 <h2 className="text-2xl font-bold">
                   Continue Recent Assessment
                 </h2>
-                <Link
-                  href={`/${assessmentType.id}/assessments/${mostRecentAssessment.id}/Participant/${nextPart ? nextPart.name : parts[0].name}/${nextSection ? nextSection.id : parts[0].sections[0].id}/${nextAttribute ? nextAttribute.id : parts[0].sections[0].attributes[0].id}`}
-                  prefetch={false}
-                >
-                  <Button>{mostRecentAssessment.name}</Button>
-                </Link>
+                {/* Corrected logic from 'main' branch for the continue link */}
+                {(() => {
+                  // Determine target IDs safely, providing fallbacks only if parts exist
+                  const targetPartName = nextPart?.name ?? parts?.[0]?.name;
+                  const targetSectionId = (nextSection?.id ?? parts?.[0]?.sections?.[0]?.id)?.toString();
+                  const targetAttributeId = (nextAttribute?.id ?? parts?.[0]?.sections?.[0]?.attributes?.[0]?.id)?.toString();
+
+                  // Check if all necessary components for the URL are defined and valid strings
+                  const canConstructLink =
+                    assessmentType?.id &&
+                    mostRecentAssessment?.id && // Already checked outside, but good practice
+                    targetPartName &&
+                    targetSectionId &&
+                    targetAttributeId;
+
+                  if (canConstructLink) {
+                    // Construct the URL only if all parts are valid
+                    const continueLink = `/${assessmentType.id}/assessments/${mostRecentAssessment.id}/${targetPartName}/${targetSectionId}/${targetAttributeId}`;
+                    return (
+                      <Link href={continueLink} prefetch={false}>
+                        <Button>{mostRecentAssessment.name}</Button>
+                      </Link>
+                    );
+                  }
+                  // Return null or some fallback UI if the link cannot be constructed
+                  // For now, returning null means the button won't render if link is invalid
+                  return null;
+                })()}
               </div>
             </section>
           )}
@@ -108,21 +143,22 @@ export default function Home({
             <h2 className="text-2xl font-bold">Previous Assessments</h2>
             <div className="grid gap-4">
               {completedAssessments.length > 0 ? (
-                completedAssessments.map(
-                  (assessment: Assessment, key: number) => {
+                completedAssessments
+                  .filter((assessment): assessment is Assessment & { completedDate: Date } => assessment.completedDate !== null) // Filter out null dates and assert type
+                  .map((assessment, key: number) => {
                     return (
                       <AssessmentCard
                         key={key}
                         groupId={assessmentType.id}
                         id={assessment.id}
                         name={assessment.name}
-                        completedDate={assessment.completedDate || new Date()}
+                        // Corrected logic from 'main' branch for completedDate
+                        completedDate={assessment.completedDate} // Now guaranteed to be Date
                         parts={parts}
                         session={session}
                       />
-                    )
-                  }
-                )
+                    );
+                  })
               ) : (
                 <p className="text-md text-muted-foreground dark:text-indigo-300/80">
                   No completed assessments.
@@ -134,6 +170,8 @@ export default function Home({
       </div>
     )
   }
+  // Return null or some fallback if assessmentType is null
+  return null;
 }
 
 function AssessmentCard({
@@ -148,7 +186,7 @@ function AssessmentCard({
   readonly id: number
   readonly name: string
   readonly completedDate: Date
-  readonly parts: any[]
+  readonly parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
   readonly session: Session | null
 }) {
   const role = isParticipantForAssessment(session, id.toString())

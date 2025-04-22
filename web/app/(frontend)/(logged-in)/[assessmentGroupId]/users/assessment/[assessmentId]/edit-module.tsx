@@ -127,7 +127,7 @@ export default function EditModule({
                                         setGroupId(null)
                                     }
                                     else {
-                                        setGroupId(groups[0].id)
+                                        setGroupId(groups?.[0]?.id ?? null) // Safely access id, fallback to null
                                         setShouldFacParticipate(false)
                                     }
                                 }}
@@ -184,9 +184,9 @@ export default function EditModule({
                                         onCheckedChange={(checked) => {
                                             if (checked) {
                                                 setShouldFacParticipate(true)
-                                                setGroupId(groups[0].id)
+                                                setGroupId(groups?.[0]?.id ?? null) // Safely access id, fallback to null
                                                 if (partsToParticipate.length === 1)
-                                                    setSelectedParts([partsToParticipate[0].id])
+                                                    setSelectedParts(partsToParticipate?.[0]?.id ? [partsToParticipate[0].id] : []) // Safely access id, fallback to empty array
                                             } else {
                                                 setShouldFacParticipate(false)
                                                 setGroupId(null)
@@ -197,7 +197,7 @@ export default function EditModule({
                                     <Label>
                                         Will Facilitator Also Participate
                                         {partsToParticipate.length === 1 &&
-                                            ` in ${partsToParticipate[0].part.name}`}
+                                            (partsToParticipate?.[0]?.part?.name ? ` in ${partsToParticipate[0].part.name}` : '')} {/* Safely access name, fallback to empty string */}
                                         ?
                                     </Label>
                                 </div>

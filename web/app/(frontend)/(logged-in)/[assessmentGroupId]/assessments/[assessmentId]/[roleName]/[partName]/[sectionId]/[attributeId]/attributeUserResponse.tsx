@@ -36,7 +36,7 @@ export default function AttributeUserResponse({
   readonly userId: string | undefined
   readonly attributeId: string
   readonly levels: Level[]
-  readonly userResponse: AssessmentUserResponse
+  readonly userResponse: AssessmentUserResponse | undefined
 }) {
   const userResponseLevel = levels.find(
     (level: Level) => level.id === userResponse?.levelId
@@ -127,7 +127,6 @@ export default function AttributeUserResponse({
       </section>
       <section className="mb-8 flex flex-col space-y-4 justify-center">
         <h2 className="text-2xl font-bold max-lg:ml-2">Comments</h2>
-        {/* TODO: Convert to WYSIWYG */}
         <Textarea
           className="h-40 border-indigo-100 dark:border-indigo-900 focus-visible:outline-indigo-400 dark:focus-visible:ring-indigo-400 rounded-lg p-4 placeholder:text-indigo-900/50 dark:placeholder:text-indigo-400/40 resize-none"
           placeholder="Notes for rating (required)"
