@@ -41,7 +41,7 @@ export default async function Page(
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
-        name: assessmentType.name,
+        name: `${assessmentType.name} Assessments`,
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}`,
@@ -49,7 +49,7 @@ export default async function Page(
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`,
-        name: part.name,
+        name: `${part.name} Assessment`,
       },
     ]
     return (

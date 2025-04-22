@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
+
+import { AgGridReact } from "ag-grid-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,9 +37,9 @@ import {
 
 import PartsTable from "./parts-table"
 import AssessmentAttributes from "./attributes"
-import { error } from "console"
 
-type AssessmentPartToAdd = {
+export type AssessmentPartToAdd = {
+  name: string
   partId: number
   status: string
   date: Date
@@ -64,7 +66,6 @@ export default function AddForm({
   const [status, setStatus] = useState<string>("Planned")
   const [location, setLocation] = useState<string>("")
   const [description, setDescription] = useState<string>("")
-  const [partsToAdd, setPartsToAdd] = useState<AssessmentPartToAdd[]>([])
   const allAttributeIds = parts.flatMap(
     part => part.sections.flatMap(
       section => section.attributes.map(
@@ -72,10 +73,12 @@ export default function AddForm({
       )
     )
   )
-  const [attributesToAdd, setAttributesToAdd] = useState<string[]>(allAttributeIds)
+  const attributesToAdd = useRef<string[]>(allAttributeIds)
   const [saving, setSaving] = useState<boolean>(false)
 
   const router = useRouter()
+
+  const partsTableGridRef = useRef<AgGridReact<AssessmentPartToAdd>>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,24 +93,27 @@ export default function AddForm({
         description
       ).then(
         async (assessment: Assessment) => {
-          for (var i = 0; i < partsToAdd.length; i++) {
-            await createAssessmentPart(
-              partsToAdd[i].status,
-              partsToAdd[i].date,
-              assessment.id,
-              partsToAdd[i].partId
-            )
+          if (partsTableGridRef.current) {
+            const partsToAdd = partsTableGridRef.current.api.getSelectedRows()
+            for (var i = 0; i < partsToAdd.length; i++) {
+              await createAssessmentPart(
+                partsToAdd[i].status,
+                partsToAdd[i].date,
+                assessment.id,
+                partsToAdd[i].partId
+              )
+            }
           }
-          if (attributesToAdd.length === 1) {
-            await createAssessmentAttribute(assessment.id, attributesToAdd[0])
+          if (attributesToAdd.current.length === 1) {
+            await createAssessmentAttribute(assessment.id, attributesToAdd.current[0])
           } else {
-            const newAttributes = attributesToAdd.map(
+            const newAttributes = attributesToAdd.current.map(
               attribute => ({ assessmentId: assessment.id, attributeId: attribute })
             )
             await createAssessmentAttributes(newAttributes)
           }
           setSaving(false)
-          router.refresh()
+          router.push(`/${assessmentType.id}/assessments`)
           toast({
             title: "Assessment created successfully."
           })
@@ -209,13 +215,11 @@ export default function AddForm({
           <h2 className="text-2xl font-bold max-lg:ml-2">Assessment Parts</h2>
           <PartsTable
             parts={parts}
-            partsToAdd={partsToAdd}
-            setPartsToAdd={setPartsToAdd}
+            gridRef={partsTableGridRef}
           />
           <AssessmentAttributes
             parts={parts}
             attributesToAdd={attributesToAdd}
-            setAttributesToAdd={setAttributesToAdd}
           />
         </div>
       </section>
@@ -228,7 +232,7 @@ export default function AddForm({
               projectId === "" ||
               collectionId === undefined ||
               name === "" ||
-              attributesToAdd.length === 0
+              attributesToAdd.current.length === 0
             }
           >
             {saving &&

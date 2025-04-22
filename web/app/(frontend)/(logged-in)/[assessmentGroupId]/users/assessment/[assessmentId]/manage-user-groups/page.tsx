@@ -39,7 +39,7 @@ export default async function Page(
         name: `${assessmentType.name} Users`,
       },
       {
-        url: `/${assessmentType.id}/users/${assessment.id}`,
+        url: `/${assessmentType.id}/users/assessment/${assessment.id}`,
         name: `${assessment.name} Users`,
       },
     ]

@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { AssessmentAttribute, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
 import {
     createAssessmentAttribute,
@@ -31,32 +31,32 @@ export default function AssessmentAttributes({
     readonly assessmentAttributes: AssessmentAttribute[]
 }) {
     const attributeIds = assessmentAttributes.map(attribute => attribute.attributeId)
-    const [attributesToAdd, setAttributesToAdd] = useState<string[]>([])
-    const [attributesToRemove, setAttributesToRemove] = useState<string[]>([])
+    const attributesToAdd = useRef<string[]>([])
+    const attributesToRemove = useRef<string[]>([])
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (attributesToAdd.length > 0 || attributesToRemove.length > 0) {
+        if (attributesToAdd.current.length > 0 || attributesToRemove.current.length > 0) {
             setSaving(true)
             try {
-                if (attributesToAdd.length > 0) {
-                    if (attributesToAdd.length === 1) {
-                        await createAssessmentAttribute(assessmentId, attributesToAdd[0])
+                if (attributesToAdd.current.length > 0) {
+                    if (attributesToAdd.current.length === 1) {
+                        await createAssessmentAttribute(assessmentId, attributesToAdd.current[0])
                     } else {
-                        const newAttributes = attributesToAdd.map(
+                        const newAttributes = attributesToAdd.current.map(
                             attribute => ({ assessmentId, attributeId: attribute })
                         )
                         await createAssessmentAttributes(newAttributes)
                     }
                 }
-                if (attributesToRemove.length > 0) {
-                    if (attributesToRemove.length === 1) {
-                        await deleteAssessmentAttribute(assessmentId, attributesToRemove[0])
+                if (attributesToRemove.current.length > 0) {
+                    if (attributesToRemove.current.length === 1) {
+                        await deleteAssessmentAttribute(assessmentId, attributesToRemove.current[0])
                     } else {
-                        await deleteAssessmentAttributes(assessmentId, attributesToRemove)
+                        await deleteAssessmentAttributes(assessmentId, attributesToRemove.current)
                     }
                 }
                 setSaving(false)
@@ -107,19 +107,19 @@ export default function AssessmentAttributes({
                                                                         checked={isChecked}
                                                                         onCheckedChange={(checked) => {
                                                                             if (checked) {
-                                                                                setAttributesToAdd([...attributesToAdd, attribute.id])
-                                                                                if (attributesToRemove.length > 0) {
-                                                                                    setAttributesToRemove(attributesToRemove.filter((id) =>
+                                                                                attributesToAdd.current.push(attribute.id)
+                                                                                if (attributesToRemove.current.length > 0) {
+                                                                                    attributesToRemove.current = attributesToRemove.current.filter((id) =>
                                                                                         id !== attribute.id
-                                                                                    ))
+                                                                                    )
                                                                                 }
                                                                                 setIsChecked(true)
                                                                             } else {
-                                                                                setAttributesToRemove([...attributesToRemove, attribute.id])
-                                                                                if (attributesToAdd.length > 0) {
-                                                                                    setAttributesToAdd(attributesToAdd.filter((id) =>
+                                                                                attributesToRemove.current.push(attribute.id)
+                                                                                if (attributesToAdd.current.length > 0) {
+                                                                                    attributesToAdd.current = attributesToAdd.current.filter((id) =>
                                                                                         id !== attribute.id
-                                                                                    ))
+                                                                                    )
                                                                                 }
                                                                                 setIsChecked(false)
                                                                             }
@@ -140,7 +140,7 @@ export default function AssessmentAttributes({
                     })}
                 </Accordion>
                 <div className="flex flex-col items-center">
-                    <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
+                    <Button type="submit" disabled={saving || (attributesToAdd.current.length === 0 && attributesToRemove.current.length === 0)}>
                         {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes
                     </Button>
                 </div>

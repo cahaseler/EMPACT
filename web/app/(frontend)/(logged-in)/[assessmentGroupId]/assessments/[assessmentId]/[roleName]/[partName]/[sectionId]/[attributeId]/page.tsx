@@ -8,6 +8,7 @@ import {
   fetchAssessment,
   fetchAssessmentAttribute,
   fetchAssessmentType,
+  fetchAssessmentUsers,
   fetchLevels,
   fetchNextAttribute,
   fetchPart,
@@ -42,14 +43,16 @@ export default async function Page(
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const section = await fetchSection(params.sectionId)
   const prevAttribute = await fetchPreviousAttribute(
-    params.assessmentGroupId,
+    params.assessmentId,
     params.attributeId
   )
   const nextAttribute = await fetchNextAttribute(
-    params.assessmentGroupId,
+    params.assessmentId,
     params.attributeId
   )
   const levels = await fetchLevels(params.attributeId)
+
+  const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
   const isParticipant = params.roleName === "Participant"
   const userResponses = await viewableAttributeResponses(
     session,
@@ -58,11 +61,11 @@ export default async function Page(
     params.roleName
   )
 
-  if (assessmentType && assessment && part && section && assessmentAttribute) {
+  if (assessmentType && assessment && part && section && assessmentAttribute && assessmentUsers) {
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
-        name: assessmentType.name,
+        name: `${assessmentType.name} Assessments`,
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}`,
@@ -70,13 +73,20 @@ export default async function Page(
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`,
-        name: part.name,
+        name: `${part.name} Assessment`,
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}/${section.id}`,
         name: `${section.id.toString().toUpperCase()}. ${section.name}`,
       },
     ]
+    const partParticipants = assessmentUsers.filter(
+      assessmentUser =>
+        assessmentUser.role === "Participant" ||
+        assessmentUser.participantParts.some(
+          participantPart => participantPart.partId === part.id
+        )
+    )
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -91,8 +101,10 @@ export default async function Page(
               />
               {params.roleName === "Facilitator" &&
                 <AttributeResponseTable
+                  assessmentStatus={assessment.status}
                   userResponses={userResponses}
                   levels={levels}
+                  numParticipants={partParticipants.length}
                 />
               }
               <Card className="bg-white max-h-60 overflow-auto px-6 py-1">
@@ -116,6 +128,7 @@ export default async function Page(
         }
         <Navigation
           urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}/${section.id}`}
+          assessmentId={assessment.id}
           isParticipant={isParticipant}
           userResponses={userResponses}
           prevAttribute={prevAttribute}

@@ -38,7 +38,7 @@ export default async function Page(
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
-        name: assessmentType.name,
+        name: `${assessmentType.name} Assessments`,
       },
       {
         url: `/${assessmentType.id}/assessments/${assessment.id}`,
@@ -50,11 +50,11 @@ export default async function Page(
         <div className="w-full max-w-4xl mx-auto">
           <section className="mb-8">
             <div className="space-y-4 max-lg:ml-2">
-              <Breadcrumbs links={links} currentPage={part.name} />
+              <Breadcrumbs links={links} currentPage={`${part.name} Assessment`} />
               <div className="flex flex-row justify-between">
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter">
-                    {part.name}
+                    {part.name} Assessment
                   </h1>
                   <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                     {part.description}

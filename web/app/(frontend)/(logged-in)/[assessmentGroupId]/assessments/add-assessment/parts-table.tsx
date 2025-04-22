@@ -1,132 +1,127 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
+
+import { Part } from "@/prisma/mssql/generated/client"
+
+import type { ColDef } from "ag-grid-community"
+import {
+  AllCommunityModule,
+  ModuleRegistry
+} from "ag-grid-community";
+import { AgGridReact, CustomCellRendererProps } from "ag-grid-react"
 
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import {
   Select,
-  SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Part } from "@/prisma/mssql/generated/client"
+import { theme } from "@/components/ui/data-table/data-table-theme"
 
-type AssessmentPartToAdd = {
-  partId: number
-  status: string
-  date: Date | undefined
-}
+import { AssessmentPartToAdd } from "./add-form"
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function PartsTable({
   parts,
-  partsToAdd,
-  setPartsToAdd,
+  gridRef
 }: {
   readonly parts: Part[]
-  readonly partsToAdd: AssessmentPartToAdd[]
-  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>>
+  readonly gridRef: React.RefObject<AgGridReact<AssessmentPartToAdd> | null>
 }) {
+  const partsToAdd = parts.map((part) => ({
+    name: part.name,
+    partId: part.id,
+    status: "Planned",
+    date: new Date(),
+  }))
+
+  const [rowData] = React.useState<AssessmentPartToAdd[]>(partsToAdd);
+
+  const [colDefs] = useState<ColDef<AssessmentPartToAdd>[]>([
+    { field: "name", suppressHeaderFilterButton: true, resizable: false, sortable: false, flex: 2 },
+    {
+      field: "status",
+      editable: true,
+      cellEditor: "agSelectCellEditor",
+      cellRenderer: selectCellRenderer,
+      cellStyle: { padding: 0 },
+      cellEditorParams: {
+        values: ["Planned", "Active", "Inactive"],
+      },
+      suppressHeaderFilterButton: true,
+      resizable: false,
+      sortable: false,
+      flex: 2
+    },
+    {
+      field: "date",
+      editable: true,
+      cellEditor: "agDateCellEditor",
+      cellRenderer: dateCellRenderer,
+      cellStyle: { padding: 0 },
+      suppressHeaderFilterButton: true,
+      resizable: false,
+      sortable: false,
+      flex: 2
+    },
+  ]);
+
   return (
-    <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
-      <Table className="table-fixed dark:bg-transparent">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {parts.map((part: Part) => {
-            const [status, setStatus] = useState<string>("Planned")
-            const [date, setDate] = useState<Date | undefined>(new Date())
-
-            const updatePartsToAdd = () => {
-              const newPartsToAdd = partsToAdd.filter(
-                (partToAdd) => partToAdd.partId !== part.id
-              )
-              setPartsToAdd([
-                ...newPartsToAdd,
-                { partId: part.id, status: status, date: date },
-              ])
-            }
-
-            return (
-              <TableRow key={part.id}>
-                <TableCell>{part.name}</TableCell>
-                <TableCell>
-                  <Select
-                    onValueChange={(value) => {
-                      setStatus(value)
-                      updatePartsToAdd()
-                    }}
-                  >
-                    <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
-                      <SelectValue placeholder={status} defaultValue={status} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Planned" key={0}>
-                        Planned
-                      </SelectItem>
-                      <SelectItem value="Active" key={1}>
-                        Active
-                      </SelectItem>
-                      <SelectItem value="Inactive" key={2}>
-                        Inactive
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="dateInput" size="offset">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? (
-                          format(date, "MM/dd/yyyy")
-                        ) : (
-                          <span>Select date</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={(selectedDate) => {
-                          if (selectedDate !== undefined) {
-                            setDate(selectedDate)
-                            updatePartsToAdd()
-                          }
-                        }}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+    <div>
+      <AgGridReact
+        ref={gridRef}
+        theme={theme}
+        rowData={rowData}
+        columnDefs={colDefs}
+        pagination={false}
+        suppressClickEdit={true}
+        domLayout="autoHeight"
+      />
     </div>
-  )
+  );
+};
+
+function selectCellRenderer(props: CustomCellRendererProps) {
+  const handleClick = () => {
+    props.api.startEditingCell({
+      rowIndex: props.node.rowIndex!,
+      colKey: props.column!.getId(),
+    });
+  };
+  return (
+    <Select>
+      <SelectTrigger
+        onClick={handleClick}
+        className="h-full w-full focus:ring-offset-indigo-400 focus:ring-transparent rounded-sm border-indigo-200"
+      >
+        <SelectValue placeholder={props.value} />
+      </SelectTrigger>
+    </Select>
+  );
+}
+
+function dateCellRenderer(props: CustomCellRendererProps) {
+  const handleClick = () => {
+    props.api.startEditingCell({
+      rowIndex: props.node.rowIndex!,
+      colKey: props.column!.getId(),
+    });
+  };
+  return (
+    <Button
+      onClick={handleClick}
+      variant="dateInput"
+      size="offset"
+      className="h-full focus:ring-offset-indigo-400 focus:ring-transparent rounded-sm border-indigo-200 text-left"
+    >
+      <span className="w-full flex flex-row justify-between">
+        {props.value ? format(props.value, "MM/dd/yyyy") : ""}
+        <CalendarIcon className="mr-2 h-4 w-4" />
+      </span>
+    </Button>
+  );
 }

@@ -215,6 +215,8 @@ model AssessmentUserResponse {
     level        Level      @relation(fields: [levelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     levelId      Int
     notes        String     @db.VarChar(Max)
+
+    @@unique([assessmentId, userId, attributeId])
 }
 
 // Settings for the system

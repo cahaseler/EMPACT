@@ -1,28 +1,26 @@
 "use client"
-import { useState } from "react"
+import { useState, RefObject } from "react"
 import { Part, Section, Attribute } from "@/prisma/mssql/generated/client"
 
 import {
-    Accordion, 
-    AccordionItem, 
-    AccordionTrigger, 
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
     AccordionContent
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
- 
-export default function AssessmentAttributes({ 
+
+export default function AssessmentAttributes({
     parts,
-    attributesToAdd,
-    setAttributesToAdd
+    attributesToAdd
 }: {
     readonly parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
-    readonly attributesToAdd: string[]
-    readonly setAttributesToAdd: Function
+    readonly attributesToAdd: RefObject<string[]>
 }) {
     return (
-        <Accordion 
-            type="single" 
-            collapsible={true} 
+        <Accordion
+            type="single"
+            collapsible={true}
             className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
         >
             {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
@@ -32,9 +30,9 @@ export default function AssessmentAttributes({
                             {part.name} {part.attributeType}s
                         </AccordionTrigger>
                         <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
-                            <Accordion 
-                                type="single" 
-                                collapsible={true} 
+                            <Accordion
+                                type="single"
+                                collapsible={true}
                                 className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                             >
                                 {part.sections.map((section: Section & { attributes: Attribute[] }) => {
@@ -47,20 +45,20 @@ export default function AssessmentAttributes({
                                                 {section.attributes.map((attribute: Attribute) => {
                                                     const [isChecked, setIsChecked] = useState(true)
                                                     return (
-                                                        <div className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
-                                                            <Checkbox 
+                                                        <div key={attribute.id} className="flex flex-row space-x-4 pb-4 items-center border-b-2 border-indigo-100 dark:border-indigo-900">
+                                                            <Checkbox
                                                                 checked={isChecked}
                                                                 onCheckedChange={(checked) => {
                                                                     if (checked) {
-                                                                        setAttributesToAdd([...attributesToAdd, attribute.id])
+                                                                        attributesToAdd.current.push(attribute.id)
                                                                         setIsChecked(true)
                                                                     } else {
-                                                                        setAttributesToAdd(attributesToAdd.filter((id) => 
+                                                                        attributesToAdd.current = attributesToAdd.current.filter((id) =>
                                                                             id !== attribute.id
-                                                                        ))
+                                                                        )
                                                                         setIsChecked(false)
                                                                     }
-                                                                }} 
+                                                                }}
                                                             />
                                                             <div>{attribute.id.toUpperCase()}. {attribute.name}</div>
                                                         </div>

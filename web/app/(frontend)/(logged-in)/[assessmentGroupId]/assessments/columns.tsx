@@ -11,7 +11,8 @@ import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-col
 import {
     Assessment,
     AssessmentType,
-    AssessmentUser
+    AssessmentUser,
+    User
 } from "@/prisma/mssql/generated/client"
 import {
     canViewUsers,
@@ -91,7 +92,7 @@ export function columns({
 }: {
     readonly assessmentType: AssessmentType,
     readonly session: Session | null
-}): ColumnDef<Assessment & { assessmentUser: AssessmentUser[] }>[] {
+}): ColumnDef<Assessment & { assessmentUser: (AssessmentUser & { user: User })[] }>[] {
     return (
         [
             {
@@ -140,7 +141,28 @@ export function columns({
                     <DataTableColumnHeader column={column} title="Completion Date" />
                 ),
                 cell: ({ row }) => <div>{row.original.completedDate ? format(row.getValue("completedDate"), "MM/dd/yyyy") : "N/A"}</div>,
-                enableSorting: true
+                enableSorting: true,
+            },
+            {
+                id: "facilitators",
+                accessorFn: (row) => {
+                    const facilitators = row.assessmentUser.filter((assessmentUser) =>
+                        assessmentUser.role === "Facilitator" ||
+                        assessmentUser.role === "Lead Facilitator"
+                    )
+                    if (facilitators.length > 0) {
+                        return facilitators.map((facilitator) =>
+                            <li key={facilitator.id}>
+                                {facilitator.user.lastName}, {facilitator.user.firstName}
+                            </li>
+                        )
+                    }
+                    return "N/A"
+                },
+                header: ({ column }) => (
+                    <DataTableColumnHeader column={column} title="Facilitator(s)" />
+                ),
+                cell: ({ row }) => <div><ul className="list-none">{row.getValue("facilitators")}</ul></div>
             },
             {
                 id: "actions",
