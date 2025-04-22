@@ -42,7 +42,12 @@ interface SessionClaims {
   }
 }
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"])
+const isPublicRoute = createRouteMatcher([
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/test-static(.*)",
+  "/api/debug-middleware(.*)"
+])
 
 function isAuthenticationRequired(req: NextRequest): boolean {
   return !isPublicRoute(req)
@@ -264,10 +269,13 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Match all routes except static files and specific paths
+    // This pattern follows Clerk's recommended approach of skipping paths with a dot (.)
+    // Reference: https://clerk.com/blog/skip-nextjs-middleware-static-and-public-files
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|.*\\..*).*)',
     // Always run for API routes
-    "/(api|trpc)(.*)",
+    '/api/:path*',
+    '/trpc/:path*'
   ],
   runtime: "nodejs",
 }

@@ -1,6 +1,6 @@
 {
   "name": "empact",
-  "version": "1.7.9",
+  "version": "1.8.1",
   "license": "CC-BY-4.0",
   "description": "Environment and Maturity Program Assessment and Control Tool",
   "keywords": [
@@ -65,6 +65,7 @@
     "@radix-ui/react-toggle-group": "1.1.0",
     "@radix-ui/react-tooltip": "1.1.8",
     "@tanstack/react-table": "^8.21.2",
+    "@userback/react": "^0.3.9",
     "@vercel/speed-insights": "1.1.0",
     "ag-grid-react": "^33.2.1",
     "class-variance-authority": "0.7.1",
