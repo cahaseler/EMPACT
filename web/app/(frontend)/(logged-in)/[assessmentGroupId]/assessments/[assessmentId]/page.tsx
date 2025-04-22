@@ -53,16 +53,10 @@ export default async function Page(
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
             <Breadcrumbs links={links} currentPage={assessment.name} />
-            <div className="flex flex-row justify-between">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter">
-                  {assessment.name}
-                </h1>
-                <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                  {assessment.description}
-                </p>
-              </div>
-              {/* TODO: Edit assessment functionality */}
+            <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
+              <h1 className="text-3xl font-bold tracking-tighter">
+                {assessment.name}
+              </h1>
               {canEdit && (
                 <div>
                   <Link
@@ -74,6 +68,9 @@ export default async function Page(
                 </div>
               )}
             </div>
+            <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+              {assessment.description}
+            </p>
           </div>
         </section>
         <section className="mb-16">

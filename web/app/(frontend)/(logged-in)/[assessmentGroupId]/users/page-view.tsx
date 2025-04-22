@@ -30,20 +30,9 @@ export default function PageView({
       <section className="mb-8">
         <div className="space-y-4 max-lg:ml-2">
           <div className="flex flex-col max-md:space-y-2 md:flex-row md:space-x-4 justify-between">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter">
-                {assessmentType.name} Assessment {assessmentsOrCollections === "collections" ? "Collection Managers" : "Users"}
-              </h1>
-              <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                Select an assessment{" "}
-                {assessmentsOrCollections === "collections" && "collection"}{" "}
-                from the list below to view its assigned{" "}
-                {assessmentsOrCollections === "collections"
-                  ? "managers"
-                  : "users"}
-                .
-              </p>
-            </div>
+            <h1 className="text-3xl font-bold tracking-tighter">
+              {assessmentType.name} Assessment {assessmentsOrCollections === "collections" ? "Collection Managers" : "Users"}
+            </h1>
             {isAdmin && (
               <div className="flex flex-row">
                 <Button
@@ -63,6 +52,15 @@ export default function PageView({
               </div>
             )}
           </div>
+          <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+            Select an assessment{" "}
+            {assessmentsOrCollections === "collections" && "collection"}{" "}
+            from the list below to view its assigned{" "}
+            {assessmentsOrCollections === "collections"
+              ? "managers"
+              : "users"}
+            .
+          </p>
         </div>
       </section>
       <section className="mb-16">

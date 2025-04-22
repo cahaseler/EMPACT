@@ -41,11 +41,11 @@ export default function DataTable({
 }) {
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
-      <Table className="table-fixed dark:bg-transparent">
+      <Table className="dark:bg-transparent">
         <TableHeader>
           <TableRow>
             <TableHead className="w-32">User ID</TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead className="w-48">Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead className="w-32">Actions</TableHead>
           </TableRow>
