@@ -45,6 +45,7 @@ interface DataTableProps<TData, TValue> {
     id: string
     title: string
   }[]
+  initColumnVisibility?: VisibilityState
   urlHeader?: string
 }
 
@@ -54,13 +55,14 @@ export function DataTable<TData, TValue>({
   selectable = true,
   filterableColumns = [],
   searchableColumns = [],
+  initColumnVisibility = {},
   urlHeader
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
 
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>(initColumnVisibility)
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )

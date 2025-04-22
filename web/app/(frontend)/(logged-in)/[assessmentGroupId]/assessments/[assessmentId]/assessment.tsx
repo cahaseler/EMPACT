@@ -56,7 +56,7 @@ export default function AssessmentContent({
           <Card className="w-auto" key={key}>
             <CardHeader className="flex justify-between space-y-4 ml-2">
               <div className="flex flex-col space-y-2 max-sm:items-center">
-                <CardTitle>{part.part.name}</CardTitle>
+                <CardTitle>{part.part.name} Assessment</CardTitle>
                 <CardDescription className="flex flex-col sm:flex-row items-center sm:space-x-6 max-sm:space-y-2 justify-start">
                   <span>
                     <Label>Status:</Label> {part.status}

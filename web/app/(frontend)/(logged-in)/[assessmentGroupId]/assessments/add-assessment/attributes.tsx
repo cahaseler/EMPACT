@@ -3,26 +3,26 @@ import { useState } from "react"
 import { Part, Section, Attribute } from "@/prisma/mssql/generated/client"
 
 import {
-    Accordion, 
-    AccordionItem, 
-    AccordionTrigger, 
+    Accordion,
+    AccordionItem,
+    AccordionTrigger,
     AccordionContent
 } from "@/components/ui/accordion"
 import { Checkbox } from "@/components/ui/checkbox"
- 
-export default function AssessmentAttributes({ 
+
+export default function AssessmentAttributes({
     parts,
     attributesToAdd,
-    setAttributesToAdd
+    setAttributesToAddAction
 }: {
     readonly parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
     readonly attributesToAdd: string[]
-    readonly setAttributesToAdd: React.Dispatch<React.SetStateAction<string[]>> // Use specific type for state setter
+    readonly setAttributesToAddAction: React.Dispatch<React.SetStateAction<string[]>> // Use specific type for state setter
 }) {
     return (
-        <Accordion 
-            type="single" 
-            collapsible={true} 
+        <Accordion
+            type="single"
+            collapsible={true}
             className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
         >
             {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
@@ -32,9 +32,9 @@ export default function AssessmentAttributes({
                             {part.name} {part.attributeType}s
                         </AccordionTrigger>
                         <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
-                            <Accordion 
-                                type="single" 
-                                collapsible={true} 
+                            <Accordion
+                                type="single"
+                                collapsible={true}
                                 className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                             >
                                 {part.sections.map((section: Section & { attributes: Attribute[] }) => {
@@ -49,7 +49,7 @@ export default function AssessmentAttributes({
                                                         key={attribute.id} // Add unique key prop
                                                         attribute={attribute}
                                                         attributesToAdd={attributesToAdd}
-                                                        setAttributesToAdd={setAttributesToAdd}
+                                                        setAttributesToAdd={setAttributesToAddAction}
                                                     />
                                                 ))}
                                             </AccordionContent>

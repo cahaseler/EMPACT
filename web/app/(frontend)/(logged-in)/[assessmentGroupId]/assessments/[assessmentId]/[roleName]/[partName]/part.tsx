@@ -56,7 +56,8 @@ export default function PartContent({
           responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
         )
         const unfinishedSection =
-          sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length * numParticipants
+          sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length
+        if (sectionAttributesInAssessment.length === 0) return null
         return (
           <Link
             key={key}

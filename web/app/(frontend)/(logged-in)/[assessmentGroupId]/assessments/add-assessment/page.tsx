@@ -37,7 +37,7 @@ export default async function Page(
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
-        name: assessmentType.name,
+        name: `${assessmentType.name} Assessments`,
       },
     ]
     const canAdd = isAdmin(session) || isCollectionManager(session)

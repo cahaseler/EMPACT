@@ -24,6 +24,13 @@ type Session = {
   user: CustomJwtSessionClaims["metadata"]
 }
 
+type UserInfo = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export function isAdmin(session: Session | null): boolean {
   return (
     session?.user?.systemRoles?.find((role) => role.name === "Admin") !==
@@ -159,7 +166,7 @@ export async function viewableCollections(
 export async function viewableAssessments(
   session: Session | null,
   assessmentGroupId: string
-): Promise<(Assessment & { assessmentUser: AssessmentUser[] })[]> {
+): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]> {
   if (session) {
     const assessments = await fetchAssessments(assessmentGroupId)
     // Admins can view all assessments
@@ -230,9 +237,10 @@ export async function viewableResponses(
   role: string
 ): Promise<AssessmentUserResponse[]> {
   if (session) {
+    const user = session.user as UserInfo
     if (role === "Participant") {
       return await fetchUserResponsesForAssessment(
-        session.user.databaseId?.toString(),
+        user.id,
         assessmentId
       )
     } else {
@@ -249,9 +257,10 @@ export async function viewableAttributeResponses(
   role: string
 ): Promise<(AssessmentUserResponse & { user?: User, level?: Level })[]> {
   if (session) {
+    const user = session.user as UserInfo
     if (role === "Participant") {
       const response = await fetchUserResponseForAssessmentAttribute(
-        session.user.databaseId?.toString(),
+        user.id,
         assessmentId,
         attributeId
       )

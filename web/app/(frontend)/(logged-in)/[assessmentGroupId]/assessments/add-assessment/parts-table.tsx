@@ -35,11 +35,11 @@ import type { AssessmentPartToAdd } from "@/types/assessment"
 export default function PartsTable({
   parts,
   partsToAdd, // This prop isn't actually used in the refactored version, but kept for type consistency if needed elsewhere
-  setPartsToAdd,
+  setPartsToAddAction,
 }: {
   readonly parts: Part[]
   readonly partsToAdd: AssessmentPartToAdd[] // Uses imported type
-  readonly setPartsToAdd: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>> // Uses imported type
+  readonly setPartsToAddAction: React.Dispatch<React.SetStateAction<AssessmentPartToAdd[]>> // Uses imported type
 }) {
   // Initialize the state in the parent component when the table mounts
   // This ensures the parent state reflects the initial default values from PartRow
@@ -49,13 +49,13 @@ export default function PartsTable({
       status: "Planned", // Default status from PartRow
       date: new Date()    // Default date from PartRow
     }));
-    setPartsToAdd(initialParts);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parts, setPartsToAdd]); // Run only when parts array changes
+    setPartsToAddAction(initialParts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parts, setPartsToAddAction]); // Run only when parts array changes
 
   // Callback to update the parent state
   const handlePartChange = useCallback((partId: number, status: string, date: Date) => {
-    setPartsToAdd(prevParts => {
+    setPartsToAddAction(prevParts => {
       const existingPartIndex = prevParts.findIndex(p => p.partId === partId);
       const updatedPart = { partId, status, date };
 
@@ -69,7 +69,7 @@ export default function PartsTable({
         return [...prevParts, updatedPart];
       }
     });
-  }, [setPartsToAdd]);
+  }, [setPartsToAddAction]);
 
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">

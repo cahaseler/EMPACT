@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import {
   fetchAssessment,
   fetchAssessmentUsers,
+  fetchAssessmentUserGroup,
   fetchAssessmentType,
   fetchPart,
 } from "../../../../../utils/dataFetchers"
@@ -54,7 +55,8 @@ export default async function RootLayout(
     params.roleName
   )
 
-  if (assessmentType && assessment) {
+  if (assessmentType && assessment && parts) {
+
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
@@ -65,10 +67,14 @@ export default async function RootLayout(
         name: assessment.name,
       },
     ]
+
     if (part) {
+      const currentAssessmentPart = assessment.assessmentParts.find((p) => p.partId === part.id)
+      const viewableStatuses = ["Active", "Inactive", "Submitted", "Final"]
+
       const canViewAsFac =
         isAdmin(session) ||
-        isManagerForCollection(session, assessment?.assessmentCollectionId) ||
+        isManagerForCollection(session, assessment.assessmentCollectionId) ||
         isLeadForAssessment(session, params.assessmentId) ||
         isFacForAssessment(session, params.assessmentId)
       const canViewAsParticipant = canUserParticipateInPart(
@@ -76,10 +82,24 @@ export default async function RootLayout(
         params.assessmentId,
         part.id
       )
+      const currentAssessmentUser = session?.user?.assessmentUser?.find(
+        (uc) => uc.assessmentId === assessment.id
+      )
+      const currentAssessmentGroup = await fetchAssessmentUserGroup(
+        currentAssessmentUser?.assessmentUserGroupId
+      )
+
       const facAuthorized = params.roleName === "Facilitator" && canViewAsFac
       const participantAuthorized =
-        params.roleName === "Participant" && canViewAsParticipant
-      if (facAuthorized || participantAuthorized) {
+        params.roleName === "Participant" &&
+        canViewAsParticipant &&
+        currentAssessmentGroup?.status === "Active"
+
+      if (
+        (facAuthorized || participantAuthorized) &&
+        currentAssessmentPart &&
+        viewableStatuses.includes(currentAssessmentPart.status)
+      ) {
         return (
           <SidebarProvider defaultOpen={false}>
             <AssessmentSidebar

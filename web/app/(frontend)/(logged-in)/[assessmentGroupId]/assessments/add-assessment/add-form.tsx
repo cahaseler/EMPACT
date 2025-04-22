@@ -99,7 +99,7 @@ export default function AddForm({
                   partData.partId
                 )
               } else {
-                 console.warn("Skipping part due to missing data:", partData); // Log skipped parts
+                console.warn("Skipping part due to missing data:", partData); // Log skipped parts
               }
             }
             if (attributesToAdd.length === 1) {
@@ -115,7 +115,7 @@ export default function AddForm({
               // Ensure attributeId is defined before passing to bulk create
               const validAttributes = newAttributes.filter(attr => attr.attributeId !== undefined) as { assessmentId: number, attributeId: string }[];
               if (validAttributes.length > 0) {
-                 await createAssessmentAttributes(validAttributes);
+                await createAssessmentAttributes(validAttributes);
               }
             }
             setSaving(false) // Move saving reset here for success case
@@ -124,13 +124,13 @@ export default function AddForm({
               title: "Assessment created successfully."
             })
           } catch (innerError) {
-             console.error("Error processing assessment parts/attributes:", innerError);
-             setSaving(false); // Ensure saving is reset on inner error
-             toast({
-               variant: "destructive",
-               title: "Error saving assessment details.",
-               description: innerError instanceof Error ? innerError.message : String(innerError),
-             });
+            console.error("Error processing assessment parts/attributes:", innerError);
+            setSaving(false); // Ensure saving is reset on inner error
+            toast({
+              variant: "destructive",
+              title: "Error saving assessment details.",
+              description: innerError instanceof Error ? innerError.message : String(innerError),
+            });
           }
         }
       ).catch(outerError => { // Catch errors from createAssessment itself
@@ -143,12 +143,12 @@ export default function AddForm({
         })
       })
     } else {
-       // Provide feedback if required fields are missing
-       toast({
-         variant: "destructive",
-         title: "Missing required fields.",
-         description: "Please provide Project ID, Collection, and Name.",
-       });
+      // Provide feedback if required fields are missing
+      toast({
+        variant: "destructive",
+        title: "Missing required fields.",
+        description: "Please provide Project ID, Collection, and Name.",
+      });
     }
   }
 
@@ -242,12 +242,12 @@ export default function AddForm({
           <PartsTable
             parts={parts}
             partsToAdd={partsToAdd}
-            setPartsToAdd={setPartsToAdd}
+            setPartsToAddAction={setPartsToAdd}
           />
           <AssessmentAttributes
             parts={parts}
             attributesToAdd={attributesToAdd}
-            setAttributesToAdd={setAttributesToAdd}
+            setAttributesToAddAction={setAttributesToAdd}
           />
         </div>
       </section>

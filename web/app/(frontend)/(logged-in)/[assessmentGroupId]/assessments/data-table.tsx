@@ -6,16 +6,18 @@ import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   AssessmentType,
   Assessment,
-  AssessmentUser
+  AssessmentUser,
+  User
 } from "@/prisma/mssql/generated/client"
 import { columns } from "./columns"
+import { TrendingUpDown } from "lucide-react"
 
 export default function AssessmentsDataTable({
   assessments,
   assessmentType,
   session,
 }: Readonly<{
-  assessments: (Assessment & { assessmentUser: AssessmentUser[] })[]
+  assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]
   assessmentType: AssessmentType
   session: Session | null
 }>) {
@@ -52,6 +54,18 @@ export default function AssessmentsDataTable({
     },
   ]
 
+  // Define initial column visibility
+  const initColumnVisibility = {
+    id: true,
+    projectId: true,
+    name: true,
+    status: true,
+    location: false,
+    completedDate: false,
+    facilitators: true,
+    actions: true
+  }
+
   return (
     <div className="space-y-4">
       <DataTable
@@ -60,6 +74,7 @@ export default function AssessmentsDataTable({
         selectable={false}
         searchableColumns={searchableColumns}
         filterableColumns={filterableColumns}
+        initColumnVisibility={initColumnVisibility}
         urlHeader={`/${assessmentType.id}/assessments`}
       />
     </div>

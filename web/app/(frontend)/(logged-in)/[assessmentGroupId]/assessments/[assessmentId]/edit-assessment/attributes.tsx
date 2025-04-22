@@ -1,12 +1,12 @@
 "use client"
 import { useState } from "react"
-import { AssessmentAttribute, Part, Section, Attribute } from "@/prisma/mssql/generated/client"
 import {
-    createAssessmentAttribute,
-    createAssessmentAttributes,
-    deleteAssessmentAttribute,
-    deleteAssessmentAttributes
-} from "../../../../utils/dataActions"
+    AssessmentAttribute,
+    Part,
+    Section,
+    Attribute
+} from "@/prisma/mssql/generated/client"
+import { createAssessmentAttributes, deleteAssessmentAttributes } from "../../../../utils/dataActions"
 
 import {
     Accordion,
@@ -90,18 +90,18 @@ export default function AssessmentAttributes({
                     title: "Assessment attributes updated successfully."
                 })
             } catch (error) {
-                 setSaving(false) // Ensure saving is reset on error
-                 console.error("Error updating assessment attributes:", error); // Log error for debugging
-                 toast({
-                     variant: "destructive", // Use destructive variant for errors
-                     title: "Error updating assessment attributes.",
-                     description: error instanceof Error ? error.message : String(error)
-                 })
+                setSaving(false) // Ensure saving is reset on error
+                console.error("Error updating assessment attributes:", error); // Log error for debugging
+                toast({
+                    variant: "destructive", // Use destructive variant for errors
+                    title: "Error updating assessment attributes.",
+                    description: error instanceof Error ? error.message : String(error)
+                })
             }
         } else {
-             toast({
-                 title: "No changes detected."
-             })
+            toast({
+                title: "No changes detected."
+            })
         }
     }
 

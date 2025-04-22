@@ -41,7 +41,10 @@ export function AssessmentSidebar({
   isParticipant
 }: Readonly<{
   assessmentType: AssessmentType
-  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] }
+  assessment: Assessment & {
+    assessmentParts: AssessmentPart[],
+    assessmentAttributes: AssessmentAttribute[]
+  }
   role: string
   parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
   assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[] })[]
@@ -78,6 +81,9 @@ export function AssessmentSidebar({
       </SidebarHeader>
       <SidebarContent className="group-data-[collapsible=icon]:hidden">
         {parts.map((part) => {
+          const assessmentPart = assessment.assessmentParts.find(
+            assessmentPart => assessmentPart.partId === part.id
+          )
           const partAttributeIds = part.sections.flatMap(
             section => section.attributes.map(
               attribute => attribute.id
@@ -99,93 +105,95 @@ export function AssessmentSidebar({
           const numParticipants = isParticipant ? 1 : partParticipants.length
           const unfinishedPart =
             partAttributesInAssessmentIds.length * numParticipants !== partResponseAttributeIds.length
-          return (
-            <Collapsible className="group/collapsible" key={part.id}>
-              <SidebarGroup>
-                <div className="flex flex-row justify-between items-center">
-                  <SidebarGroupLabel asChild>
-                    <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}`}>
-                      {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
-                      <span className={unfinishedPart ? "" : "opacity-50"}>
-                        {part.name}
-                      </span>
-                    </a>
-                  </SidebarGroupLabel>
-                  <div className="ml-1 cursor-pointer">
-                    <CollapsibleTrigger asChild>
-                      <ChevronRight className="h-4 w-4 shrink-0 text-indigo-900/70 dark:text-indigo-50/70 group-data-[state=open]/collapsible:rotate-90 transition duration-200" />
-                    </CollapsibleTrigger>
+          if (assessmentPart && assessmentPart.status === "Active") {
+            return (
+              <Collapsible className="group/collapsible" key={part.id}>
+                <SidebarGroup>
+                  <div className="flex flex-row justify-between items-center">
+                    <SidebarGroupLabel asChild>
+                      <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}`}>
+                        {!unfinishedPart && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
+                        <span className={unfinishedPart ? "" : "opacity-50"}>
+                          {part.name}
+                        </span>
+                      </a>
+                    </SidebarGroupLabel>
+                    <div className="ml-1 cursor-pointer">
+                      <CollapsibleTrigger asChild>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-indigo-900/70 dark:text-indigo-50/70 group-data-[state=open]/collapsible:rotate-90 transition duration-200" />
+                      </CollapsibleTrigger>
+                    </div>
                   </div>
-                </div>
-                <CollapsibleContent>
-                  <SidebarGroupContent>
-                    <SidebarMenu>
-                      {part.sections.map((section) => {
-                        const sectionAttributesInAssessment = section.attributes.filter(
-                          attribute => assessmentAttributeIds.includes(attribute.id)
-                        )
-                        const sectionAttributeIds = sectionAttributesInAssessment.map(
-                          attribute => attribute.id
-                        )
-                        const sectionResponseAttributeIds = responseAttributeIds.filter(
-                          responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
-                        )
-                        const unfinishedSection =
-                          sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length
-                        if (sectionAttributesInAssessment.length > 0) {
-                          return (
-                            <Collapsible className="group/collapsible-2" key={section.id}>
-                              <SidebarMenuItem key={section.name}>
-                                <div className="flex flex-row justify-between items-center">
-                                  <SidebarMenuButton asChild>
-                                    <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}>
-                                      {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
-                                      <span className={unfinishedSection ? "" : "opacity-50"}>
-                                        {section.id.toUpperCase()}. {section.name}
-                                      </span>
-                                    </a>
-                                  </SidebarMenuButton>
-                                  <div className="ml-1 py-2 px-1 cursor-pointer rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-700 hover:text-sidebar-accent-foreground">
-                                    <CollapsibleTrigger asChild>
-                                      <ChevronRight className="h-4 w-4 shrink-0 group-data-[state=open]/collapsible-2:rotate-90 transition duration-200" />
-                                    </CollapsibleTrigger>
-                                  </div>
-                                </div>
-                                <CollapsibleContent>
-                                  <SidebarMenuSub>
-                                    {sectionAttributesInAssessment.map((attribute) => {
-                                      const attributeResponseAttributeIds = responseAttributeIds.filter(
-                                        responseAttributeId => attribute.id === responseAttributeId
-                                      )
-                                      const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
-                                      return (
-                                        <SidebarMenuSubItem key={attribute.id}>
-                                          <SidebarMenuButton asChild>
-                                            <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
-                                              {!unfinishedAttribute &&
-                                                <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />
-                                              }
-                                              <span className={unfinishedAttribute ? "" : "opacity-50"}>
-                                                {attribute.id.toUpperCase()}. {attribute.name}
-                                              </span>
-                                            </a>
-                                          </SidebarMenuButton>
-                                        </SidebarMenuSubItem>
-                                      )
-                                    })}
-                                  </SidebarMenuSub>
-                                </CollapsibleContent>
-                              </SidebarMenuItem>
-                            </Collapsible>
+                  <CollapsibleContent>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {part.sections.map((section) => {
+                          const sectionAttributesInAssessment = section.attributes.filter(
+                            attribute => assessmentAttributeIds.includes(attribute.id)
                           )
-                        }
-                      })}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible>
-          )
+                          const sectionAttributeIds = sectionAttributesInAssessment.map(
+                            attribute => attribute.id
+                          )
+                          const sectionResponseAttributeIds = responseAttributeIds.filter(
+                            responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
+                          )
+                          const unfinishedSection =
+                            sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length
+                          if (sectionAttributesInAssessment.length > 0) {
+                            return (
+                              <Collapsible className="group/collapsible-2" key={section.id}>
+                                <SidebarMenuItem key={section.name}>
+                                  <div className="flex flex-row justify-between items-center">
+                                    <SidebarMenuButton asChild>
+                                      <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}>
+                                        {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
+                                        <span className={unfinishedSection ? "" : "opacity-50"}>
+                                          {section.id.toUpperCase()}. {section.name}
+                                        </span>
+                                      </a>
+                                    </SidebarMenuButton>
+                                    <div className="ml-1 py-2 px-1 cursor-pointer rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-700 hover:text-sidebar-accent-foreground">
+                                      <CollapsibleTrigger asChild>
+                                        <ChevronRight className="h-4 w-4 shrink-0 group-data-[state=open]/collapsible-2:rotate-90 transition duration-200" />
+                                      </CollapsibleTrigger>
+                                    </div>
+                                  </div>
+                                  <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                      {sectionAttributesInAssessment.map((attribute) => {
+                                        const attributeResponseAttributeIds = responseAttributeIds.filter(
+                                          responseAttributeId => attribute.id === responseAttributeId
+                                        )
+                                        const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
+                                        return (
+                                          <SidebarMenuSubItem key={attribute.id}>
+                                            <SidebarMenuButton asChild>
+                                              <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
+                                                {!unfinishedAttribute &&
+                                                  <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />
+                                                }
+                                                <span className={unfinishedAttribute ? "" : "opacity-50"}>
+                                                  {attribute.id.toUpperCase()}. {attribute.name}
+                                                </span>
+                                              </a>
+                                            </SidebarMenuButton>
+                                          </SidebarMenuSubItem>
+                                        )
+                                      })}
+                                    </SidebarMenuSub>
+                                  </CollapsibleContent>
+                                </SidebarMenuItem>
+                              </Collapsible>
+                            )
+                          }
+                        })}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </Collapsible>
+            )
+          }
         })}
       </SidebarContent>
     </Sidebar>
