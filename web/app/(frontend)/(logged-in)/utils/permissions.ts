@@ -1,5 +1,6 @@
 import {
   Assessment,
+  AssessmentAttribute,
   AssessmentCollection,
   AssessmentCollectionUser,
   AssessmentUser,
@@ -166,7 +167,7 @@ export async function viewableCollections(
 export async function viewableAssessments(
   session: Session | null,
   assessmentGroupId: string
-): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]> {
+): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]> {
   if (session) {
     const assessments = await fetchAssessments(assessmentGroupId)
     // Admins can view all assessments

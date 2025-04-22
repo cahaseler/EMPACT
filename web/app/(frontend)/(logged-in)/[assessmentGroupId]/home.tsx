@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card"
 import {
   Assessment,
+  AssessmentAttribute,
   AssessmentType,
   AssessmentUserResponse,
   Attribute,
@@ -27,7 +28,7 @@ export default function Home({
   session,
 }: Readonly<{
   assessmentType: AssessmentType | null
-  assessments: Assessment[]
+  assessments: (Assessment & { assessmentAttributes: AssessmentAttribute[] })[]
   parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
   userResponses: AssessmentUserResponse[]
   session: Session | null
@@ -77,8 +78,12 @@ export default function Home({
         (attribute) => !mostRecentResponseAttributeIds.includes(attribute.id)
       )
     )
-    const nextAttribute = nextSection?.attributes.find(
-      (attribute) => !mostRecentResponseAttributeIds.includes(attribute.id)
+    const mostRecentAssessmentAttributeIds = mostRecentAssessment?.assessmentAttributes.map(
+      (assessmentAttribute) => assessmentAttribute.attributeId
+    )
+    const nextAttribute = nextSection?.attributes.find((attribute) =>
+      mostRecentAssessmentAttributeIds?.includes(attribute.id) &&
+      !mostRecentResponseAttributeIds.includes(attribute.id)
     )
 
     const completedAssessments = assessments.filter(
@@ -144,7 +149,10 @@ export default function Home({
             <div className="grid gap-4">
               {completedAssessments.length > 0 ? (
                 completedAssessments
-                  .filter((assessment): assessment is Assessment & { completedDate: Date } => assessment.completedDate !== null) // Filter out null dates and assert type
+                  .filter((assessment): assessment is Assessment & {
+                    completedDate: Date,
+                    assessmentAttributes: AssessmentAttribute[]
+                  } => assessment.completedDate !== null) // Filter out null dates and assert type
                   .map((assessment, key: number) => {
                     return (
                       <AssessmentCard

@@ -65,7 +65,7 @@ export async function fetchAssessmentType(
 
 export async function fetchAssessmentCollections(typeid: string): Promise<
   (AssessmentCollection & {
-    assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]
+    assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]
     assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[]
   })[]
 > {
@@ -86,6 +86,7 @@ export async function fetchAssessmentCollections(typeid: string): Promise<
               user: true,
             },
           },
+          assessmentAttributes: true
         },
       },
       assessmentCollectionUser: {
@@ -125,7 +126,7 @@ export async function fetchAllAssessments(): Promise<Assessment[]> {
 // Returns assessments in collections of given type
 export async function fetchAssessments(
   typeid: string
-): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]> {
+): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]> {
   const collections = await fetchAssessmentCollections(typeid)
   return collections.flatMap((collection) => collection.assessments)
 }
@@ -455,13 +456,22 @@ export async function fetchPreviousAttribute(assessmentId: string, attributeId: 
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
+  const sortedAttributes = attributes.sort((a, b) => {
+    if (a.attribute.id < b.attribute.id) {
+      return -1;
+    }
+    if (a.attribute.id > b.attribute.id) {
+      return 1;
+    }
+    return 0;
+  });
+  const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
   // Check if current attribute exists and if there is a previous attribute (index > 0)
   if (currentAttributeIndex === -1 || currentAttributeIndex === 0) return null
 
   // Safely access the previous attribute
-  const previousAssessmentAttribute = attributes[currentAttributeIndex - 1];
+  const previousAssessmentAttribute = sortedAttributes[currentAttributeIndex - 1];
   return previousAssessmentAttribute?.attribute ?? null;
 }
 
@@ -469,13 +479,22 @@ export async function fetchNextAttribute(assessmentId: string, attributeId: stri
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
+  const sortedAttributes = attributes.sort((a, b) => {
+    if (a.attribute.id < b.attribute.id) {
+      return -1;
+    }
+    if (a.attribute.id > b.attribute.id) {
+      return 1;
+    }
+    return 0;
+  });
+  const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
   // Check if current attribute exists and if there is a next attribute (index < length - 1)
-  if (currentAttributeIndex === -1 || currentAttributeIndex >= attributes.length - 1) return null
+  if (currentAttributeIndex === -1 || currentAttributeIndex >= sortedAttributes.length - 1) return null
 
   // Safely access the next attribute
-  const nextAssessmentAttribute = attributes[currentAttributeIndex + 1];
+  const nextAssessmentAttribute = sortedAttributes[currentAttributeIndex + 1];
   return nextAssessmentAttribute?.attribute ?? null;
 }
 
