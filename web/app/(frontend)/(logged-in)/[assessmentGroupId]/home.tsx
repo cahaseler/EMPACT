@@ -26,12 +26,14 @@ export default function Home({
   parts,
   userResponses,
   session,
+  canAdd
 }: Readonly<{
   assessmentType: AssessmentType | null
   assessments: (Assessment & { assessmentAttributes: AssessmentAttribute[] })[]
   parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
   userResponses: AssessmentUserResponse[]
   session: Session | null
+  canAdd: boolean
 }>) {
   if (assessmentType) {
     // Corrected logic from 'main' branch for finding mostRecentAssessment
@@ -93,10 +95,28 @@ export default function Home({
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tighter">
-              {assessmentType.name}
-            </h1>
+          <div className="space-y-4">
+            <div className="flex flex-col max-md:space-y-2 md:flex-row items-center justify-between">
+              <h1 className="text-3xl font-bold tracking-tighter">
+                {assessmentType.name}
+              </h1>
+              {canAdd && (
+                <div className="flex flex-col h-fit max-md:space-y-2 md:flex-row md:space-x-2 items-center justify-end">
+                  <Link
+                    href={`/${assessmentType.id}/assessments/manage-collections`}
+                    prefetch={false}
+                  >
+                    <Button>Manage Assessment Collections</Button>
+                  </Link>
+                  <Link
+                    href={`/${assessmentType.id}/assessments/add-assessment`}
+                    prefetch={false}
+                  >
+                    <Button>Add Assessment</Button>
+                  </Link>
+                </div>
+              )}
+            </div>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
               {assessmentType.description}
             </p>
@@ -108,7 +128,7 @@ export default function Home({
             mostRecentAssessment.id.toString()
           ) && (
             <section className="mb-16">
-              <div className="flex flex-col space-y-4">
+              <div className="flex flex-col max-md:items-center space-y-4">
                 <h2 className="text-2xl font-bold">
                   Continue Recent Assessment
                 </h2>
@@ -145,7 +165,7 @@ export default function Home({
           )}
         <section className="mb-16">
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Previous Assessments</h2>
+            <h2 className="text-2xl font-bold max-md:text-center">Previous Assessments</h2>
             <div className="grid gap-4">
               {completedAssessments.length > 0 ? (
                 completedAssessments
