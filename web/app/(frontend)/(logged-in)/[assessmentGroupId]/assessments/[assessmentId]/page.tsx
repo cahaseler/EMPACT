@@ -10,6 +10,7 @@ import {
   fetchAssessmentUserGroup
 } from "../../../utils/dataFetchers"
 import {
+  canViewUsers,
   isAdmin,
   isLeadForAssessment,
   isManagerForCollection,
@@ -57,16 +58,28 @@ export default async function Page(
               <h1 className="text-3xl font-bold tracking-tighter">
                 {assessment.name}
               </h1>
-              {canEdit && (
-                <div>
-                  <Link
-                    href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
-                    prefetch={false}
-                  >
-                    <Button>Edit Assessment</Button>
-                  </Link>
-                </div>
-              )}
+              <div className="flex flex-row space-x-2">
+                {canViewUsers(session) && (
+                  <div>
+                    <Link
+                      href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
+                      prefetch={false}
+                    >
+                      <Button>Manage Assessment Users</Button>
+                    </Link>
+                  </div>
+                )}
+                {canEdit && (
+                  <div>
+                    <Link
+                      href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
+                      prefetch={false}
+                    >
+                      <Button>Edit Assessment</Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
               {assessment.description}
