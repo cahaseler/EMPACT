@@ -10,6 +10,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogPortal,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
@@ -66,6 +67,9 @@ export default function ArchiveModule({
         <AlertDialogOverlay />
         <AlertDialogContent>
           <div className="flex flex-col space-y-6 text center">
+            <AlertDialogTitle>
+              Archive {assessment.name}
+            </AlertDialogTitle>
             <p>Are you sure you want to archive this assessment?</p>
             <div className="flex flex-row space-x-2 justify-end">
               <AlertDialogCancel asChild>
