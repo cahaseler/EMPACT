@@ -24,7 +24,7 @@ export default function AddGroup({
 }) {
   const [isAdding, setIsAdding] = useState<boolean>(false)
   const [name, setName] = useState<string>("")
-  const [status, setStatus] = useState<string>("Inactive")
+  const [status, setStatus] = useState<string>("Active")
   const [saving, setSaving] = useState<boolean>(false)
 
   const router = useRouter()
