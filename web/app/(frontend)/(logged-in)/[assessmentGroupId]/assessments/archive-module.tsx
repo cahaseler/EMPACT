@@ -86,7 +86,7 @@ export default function ArchiveModule({
       </AlertDialogPortal>
     </AlertDialog>
   ) : (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button size={buttonType} className="cursor-default opacity-50">

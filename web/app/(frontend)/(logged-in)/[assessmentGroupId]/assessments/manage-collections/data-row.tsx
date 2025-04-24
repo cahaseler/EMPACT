@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
+
 import {
   Assessment,
   AssessmentCollection,
@@ -116,45 +117,79 @@ export default function DataTable({
         <div className="grid grid-cols-2 gap-2 w-20">
           {!isEditing ? (
             <>
-              <Button onClick={() => setIsEditing(true)} size="icon">
-                <SquarePen className="w-5 h-5 text-white" />
-              </Button>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={() => setIsEditing(true)} size="icon">
+                      <SquarePen className="w-5 h-5 text-white" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Edit Assessment Collection
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               {isAdmin && <DeleteModule collection={collection} />}
               {isAdmin && (
                 <Link
                   href={`/${assessmentType.id}/users/collection/${collection.id}`}
                 >
-                  <Button size="icon">
-                    <Users className="w-5 h-5 text-white" />
-                  </Button>
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button size="icon">
+                          <Users className="w-5 h-5 text-white" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="text-center">
+                        Manage Collection Managers
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </Link>
               )}
             </>
           ) : (
             <>
-              <Button
-                onClick={() => {
-                  setIsEditing(false)
-                  setName(collection.name)
-                }}
-                variant="outline"
-                size="icon"
-                className="border-[3px]"
-              >
-                <X className="w-5 h-5 stroke-[3px]" />
-              </Button>
-              {isAdmin && (
-                <Button
-                  onClick={(e: React.FormEvent) => handleUpdate(e)}
-                  size="icon"
-                >
-                  {saving ? (
-                    <Loader className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Save className="w-5 h-5 text-white" />
-                  )}
-                </Button>
-              )}
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => {
+                        setIsEditing(false)
+                        setName(collection.name)
+                      }}
+                      variant="outline"
+                      size="icon"
+                      className="border-[3px]"
+                    >
+                      <X className="w-5 h-5 stroke-[3px]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Cancel
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={(e: React.FormEvent) => handleUpdate(e)}
+                      size="icon"
+                    >
+                      {saving ? (
+                        <Loader className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Save className="w-5 h-5 text-white" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Save Changes to Assessment Collection
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </>
           )}
         </div>
@@ -180,7 +215,7 @@ function DeleteModule({
   }
 
   return collection.assessments.length > 0 ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -200,9 +235,18 @@ function DeleteModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon">
-          <Trash2 className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <Trash2 className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="w-60 text-center">
+              Delete Assessment Collection
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />

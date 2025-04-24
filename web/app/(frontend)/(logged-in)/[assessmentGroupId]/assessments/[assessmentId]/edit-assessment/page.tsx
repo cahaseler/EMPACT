@@ -118,6 +118,7 @@ export default async function Page(
               <h2 className="text-2xl font-bold max-lg:ml-2">Assessment Parts</h2>
               <PartsTable
                 assessmentParts={assessmentParts}
+                assessmentAttributes={assessmentAttributes}
                 canEditStatus={canEditStatus}
                 assessmentUsers={assessmentUsers}
                 userResponses={userResponses}

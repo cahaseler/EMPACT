@@ -18,6 +18,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "@/components/ui/use-toast"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { SystemRole, User } from "@/prisma/mssql/generated/client"
 import { updateUser } from "./actions"
 
@@ -72,9 +78,18 @@ export function UserActions({ user }: { readonly user: UserWithRoles }) {
   return (
     <>
       <div className="flex justify-start">
-        <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
-          <SquarePen className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
+                <SquarePen className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-center">
+              Edit User
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Edit User Dialog */}

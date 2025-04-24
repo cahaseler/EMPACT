@@ -186,7 +186,7 @@ export default function AssessmentAttributes({
                 </Accordion>
                 <div className="flex flex-col items-center">
                     <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
-                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes
+                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes to Selections
                     </Button>
                 </div>
             </div>

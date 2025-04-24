@@ -10,6 +10,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogPortal,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
@@ -93,7 +94,7 @@ function DeleteModule({
   }
 
   return numUsers === 1 ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -113,14 +114,26 @@ function DeleteModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon">
-          <Trash2 className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <Trash2 className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="w-60 text-center">
+              Remove Collection Manager
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>
           <div className="flex flex-col space-y-6 text center">
+            <AlertDialogTitle>
+              Remove Collection Manager
+            </AlertDialogTitle>
             <p>Are you sure you want to remove this collection manager?</p>
             <div className="flex flex-row space-x-2 justify-end">
               <AlertDialogCancel asChild>

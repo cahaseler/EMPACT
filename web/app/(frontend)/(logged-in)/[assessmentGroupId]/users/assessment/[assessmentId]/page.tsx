@@ -138,7 +138,7 @@ function AddUsersButton({
       <Button>Add Users to Assessment</Button>
     </Link>
   ) : (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button className="cursor-default opacity-50">

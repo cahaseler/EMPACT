@@ -57,7 +57,7 @@ export default function DeleteModule({
   }
 
   return assessmentUser.user.assessmentUserResponse.length > 0 ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button size="icon" className="cursor-default opacity-50">
@@ -73,9 +73,18 @@ export default function DeleteModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon">
-          <Trash2 className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <Trash2 className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="w-60 text-center">
+              Remove Assessment User
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />
