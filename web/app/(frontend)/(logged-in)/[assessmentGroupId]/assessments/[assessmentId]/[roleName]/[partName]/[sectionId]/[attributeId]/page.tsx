@@ -87,16 +87,20 @@ export default async function Page(
           participantPart => participantPart.partId === part.id
         )
     )
+    const attributeIdDisplay =
+      part.attributeType === "Attribute" ?
+        assessmentAttribute.attributeId.toUpperCase() :
+        assessmentAttribute.attributeId
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
-            <Breadcrumbs links={links} currentPage={part.attributeType + " " + assessmentAttribute.attributeId.toUpperCase()} />
+            <Breadcrumbs links={links} currentPage={part.attributeType + " " + attributeIdDisplay} />
             <div className={isParticipant ? "space-y-4" : "space-y-6"}>
               <h1
                 className="text-3xl font-bold tracking-tighter"
                 dangerouslySetInnerHTML={{
-                  __html: assessmentAttribute.attributeId.toUpperCase() + ". " + assessmentAttribute.attribute.name
+                  __html: attributeIdDisplay + ". " + assessmentAttribute.attribute.name
                 }}
               />
               {params.roleName === "Facilitator" &&

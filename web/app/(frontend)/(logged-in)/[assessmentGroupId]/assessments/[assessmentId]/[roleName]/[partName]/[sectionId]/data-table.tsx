@@ -78,12 +78,15 @@ export default function DataTable({
               const attributeResponseLevels = attributeResponses.map(
                 (attributeResponse: AssessmentUserResponse) => attributeResponse.levelId
               )
+              const attributeIdDisplay =
+                part.attributeType === "Attribute" ?
+                  attribute.id.toUpperCase() :
+                  attribute.id
               const levels = attribute.levels.filter(
                 (level: Level) => attributeResponseLevels.includes(level.id)
               ).map(
                 (level: Level) => level.level
               )
-              console.log(levels)
               const averageLevel = levels.reduce((a, b) => a + b, 0) / levels.length
               return (
                 <TableRow
@@ -95,7 +98,7 @@ export default function DataTable({
                   }
                 >
                   <TableCell className="w-1/2">
-                    {attribute.id.toString().toUpperCase()}. {attribute.name}
+                    {attributeIdDisplay}. {attribute.name}
                   </TableCell>
                   {isParticipant ? (
                     <>
