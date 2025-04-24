@@ -27,6 +27,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
 import {
@@ -83,6 +84,8 @@ export default function EditModule({
         assessmentUser.permissions.map((permission) => permission.id)
     )
 
+    const router = useRouter()
+
     const handleUpdateUser = (e: React.FormEvent) => {
         e.preventDefault()
         setIsUpdating(true)
@@ -98,11 +101,14 @@ export default function EditModule({
             permissionIds
         ).then(() => {
             setIsEditDialogOpen(false)
+            setIsUpdating(false)
+            router.refresh()
             toast({
                 title: "Assessment user updated successfully.",
             })
         }).catch(error => {
             setIsEditDialogOpen(false)
+            setIsUpdating(false)
             toast({
                 title: `Error updating assessment user: ${error}`
             })
