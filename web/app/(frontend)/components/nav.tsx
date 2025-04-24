@@ -193,7 +193,7 @@ function NavigationItemLink({
     <NavigationMenuItem>
       <Link href={href} legacyBehavior passHref>
         <NavigationMenuLink
-          className={cn(href === pn ? "font-bold" : "", linkStyle)}
+          className={cn(pn.includes(href) ? "font-bold" : "", linkStyle)}
         >
           <div>{icon}</div>
           <div>{label}</div>

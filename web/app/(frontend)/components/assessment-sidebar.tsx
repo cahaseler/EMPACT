@@ -1,3 +1,7 @@
+"use client"
+
+import { usePathname } from "next/navigation"
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,6 +23,7 @@ import {
   SidebarMenuSubItem,
   SidebarTrigger
 } from "@/components/ui/sidebar"
+
 import {
   Assessment,
   AssessmentAttribute,
@@ -57,6 +62,7 @@ export function AssessmentSidebar({
   const assessmentAttributeIds = assessment.assessmentAttributes.map(
     (assessmentAttribute) => assessmentAttribute.attributeId
   )
+  const pn = usePathname()
   return (
     <Sidebar
       variant="floating"
@@ -139,6 +145,7 @@ export function AssessmentSidebar({
                           )
                           const unfinishedSection =
                             sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length
+                          const sectionPn = `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`
                           if (sectionAttributesInAssessment.length > 0) {
                             return (
                               <Collapsible className="group/collapsible-2" key={section.id}>
@@ -147,7 +154,7 @@ export function AssessmentSidebar({
                                     <SidebarMenuButton asChild>
                                       <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}`}>
                                         {!unfinishedSection && <CircleCheckBig className="h-4 w-4 mr-2 opacity-50" />}
-                                        <span className={unfinishedSection ? "" : "opacity-50"}>
+                                        <span className={(pn.includes(sectionPn) && "font-bold") + (unfinishedSection ? "" : " opacity-50")}>
                                           {section.id.toUpperCase()}. {section.name}
                                         </span>
                                       </a>
@@ -165,14 +172,15 @@ export function AssessmentSidebar({
                                           responseAttributeId => attribute.id === responseAttributeId
                                         )
                                         const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
+                                        const attributePn = `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`
                                         return (
                                           <SidebarMenuSubItem key={attribute.id}>
                                             <SidebarMenuButton asChild>
-                                              <a href={`/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`}>
+                                              <a href={attributePn}>
                                                 {!unfinishedAttribute &&
                                                   <CircleCheckBig className="h-4 w-4 mr-1 opacity-50" />
                                                 }
-                                                <span className={unfinishedAttribute ? "" : "opacity-50"}>
+                                                <span className={(attributePn === pn && "font-bold") + (unfinishedAttribute ? "" : " opacity-50")}>
                                                   {attribute.id.toUpperCase()}. {attribute.name}
                                                 </span>
                                               </a>
