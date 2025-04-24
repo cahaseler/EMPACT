@@ -399,7 +399,9 @@ export async function fetchAssessmentAttribute(assessmentId: string, attributeId
 
 // *** PARTS ***
 
-export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
+export async function fetchPartsSectionsAttributes(typeid: string): Promise<
+  (Part & { sections: (Section & { attributes: (Attribute & { levels: Level[] })[] })[] })[]
+> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -414,7 +416,11 @@ export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Par
     include: {
       sections: {
         include: {
-          attributes: true,
+          attributes: {
+            include: {
+              levels: true,
+            }
+          },
         },
       },
     },
@@ -425,7 +431,7 @@ export async function fetchPart(
   typeid: string,
   partName: string
 ): Promise<
-  (Part & { sections: (Section & { attributes: Attribute[] })[] }) | null
+  (Part & { sections: (Section & { attributes: (Attribute & { levels: Level[] })[] })[] }) | null
 > {
   const parts = await fetchPartsSectionsAttributes(typeid)
   const uniquePart = parts.find((part) => part.name === partName)
@@ -452,11 +458,12 @@ export async function fetchAttributes(
   })
 }
 
-export async function fetchPreviousAttribute(assessmentId: string, attributeId: string): Promise<
+export async function fetchPreviousAttribute(assessmentId: string, partName: string, attributeId: string): Promise<
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const sortedAttributes = attributes.sort((a, b) => {
+  const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
+  const sortedAttributes = attributesInPart.sort((a, b) => {
     if (a.attribute.id < b.attribute.id) {
       return -1;
     }
@@ -475,11 +482,12 @@ export async function fetchPreviousAttribute(assessmentId: string, attributeId: 
   return previousAssessmentAttribute?.attribute ?? null;
 }
 
-export async function fetchNextAttribute(assessmentId: string, attributeId: string): Promise<
+export async function fetchNextAttribute(assessmentId: string, partName: string, attributeId: string): Promise<
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const sortedAttributes = attributes.sort((a, b) => {
+  const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
+  const sortedAttributes = attributesInPart.sort((a, b) => {
     if (a.attribute.id < b.attribute.id) {
       return -1;
     }

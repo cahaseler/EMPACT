@@ -12,45 +12,55 @@ import Link from "next/link"
 
 export default function Navigation({
   urlHead,
-  assessmentId,
   prevAttribute,
   nextAttribute,
   isParticipant,
-  userResponses
+  userResponses,
+  canReview
 }: {
   urlHead: string,
-  assessmentId: number,
   prevAttribute: Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null,
   nextAttribute: Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null,
   isParticipant: boolean,
   userResponses: (AssessmentUserResponse & { user?: User })[]
+  canReview: boolean
 }) {
-  const prevAttributeAssessmentPart = prevAttribute ? prevAttribute.section.part.assessmentPart.find(
-    part => part.assessmentId === assessmentId
-  ) : null
-  const nextAttributeAssessmentPart = nextAttribute ? nextAttribute.section.part.assessmentPart.find(
-    part => part.assessmentId === assessmentId
-  ) : null
+  const prevSectionId = prevAttribute ? prevAttribute.section.id : null
+  const nextSectionId = nextAttribute ? nextAttribute.section.id : null
   return (
     <section className="mb-8 space-y-4">
       <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
-        {(prevAttribute && prevAttributeAssessmentPart?.status === "Active") &&
-          <Link href={`${urlHead}/${prevAttribute.id}`}>
+        {prevAttribute &&
+          <Link href={`${urlHead}/${prevSectionId}/${prevAttribute.id}`}>
             <Button>Previous</Button>
           </Link>
         }
-        {(nextAttribute && nextAttributeAssessmentPart?.status === "Active") && (
-          isParticipant && userResponses.length === 0 ?
-            <Button disabled={true}>
-              Next
-            </Button>
-            :
-            <Link href={`${urlHead}/${nextAttribute.id}`}>
-              <Button>
+        {nextAttribute ?
+          (
+            isParticipant && userResponses.length === 0 ?
+              <Button disabled={true}>
                 Next
               </Button>
-            </Link>
-        )
+              :
+              <Link href={`${urlHead}/${nextSectionId}/${nextAttribute.id}`}>
+                <Button>
+                  Next
+                </Button>
+              </Link>
+          ) : (
+            isParticipant && (
+              canReview ?
+                <Link href={`${urlHead}/review-all-responses`}>
+                  <Button>
+                    Review All Responses
+                  </Button>
+                </Link>
+                :
+                <Button disabled>
+                  Review All Responses
+                </Button>
+            )
+          )
         }
       </div>
     </section>
