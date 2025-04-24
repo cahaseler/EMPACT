@@ -77,15 +77,10 @@ export default async function Page(
               currentPage={`${assessment.name} Users`}
             />
             <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter">
-                  {assessment.name} Users
-                </h1>
-                <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                  {assessment.description}
-                </p>
-              </div>
-              <div className="flex flex-row space-x-2 justify-end">
+              <h1 className="text-3xl font-bold tracking-tighter">
+                {assessment.name} Users
+              </h1>
+              <div className="flex h-fit flex-row space-x-2 justify-end">
                 {canRegroup && (
                   <Link
                     href={`/${assessmentType.id}/users/assessment/${assessment.id}/manage-user-groups`}
@@ -103,6 +98,9 @@ export default async function Page(
                 )}
               </div>
             </div>
+            <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+              {assessment.description}
+            </p>
           </div>
         </section>
         <section className="mb-16">
@@ -140,7 +138,7 @@ function AddUsersButton({
       <Button>Add Users to Assessment</Button>
     </Link>
   ) : (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button className="cursor-default opacity-50">

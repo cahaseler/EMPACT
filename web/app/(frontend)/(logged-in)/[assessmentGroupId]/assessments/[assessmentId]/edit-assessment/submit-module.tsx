@@ -55,7 +55,7 @@ export default function SubmitModule({
     (part: AssessmentPart) => part.status !== "Final"
   )
   return unfinalizedPart ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button className="cursor-default opacity-50">

@@ -15,7 +15,7 @@ import {
   fetchPreviousAttribute,
   fetchSection
 } from "../../../../../../../utils/dataFetchers"
-import { viewableAttributeResponses } from "../../../../../../../utils/permissions"
+import { viewableAttributeResponses, viewableResponses } from "../../../../../../../utils/permissions"
 
 import AttributeLevels from "./attributeLevels"
 import AttributeResponseTable from "./attributeResponseTable"
@@ -44,16 +44,23 @@ export default async function Page(
   const section = await fetchSection(params.sectionId)
   const prevAttribute = await fetchPreviousAttribute(
     params.assessmentId,
+    params.partName,
     params.attributeId
   )
   const nextAttribute = await fetchNextAttribute(
     params.assessmentId,
+    params.partName,
     params.attributeId
   )
   const levels = await fetchLevels(params.attributeId)
 
   const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
   const isParticipant = params.roleName === "Participant"
+  const allResponses = await viewableResponses(
+    session,
+    params.assessmentId,
+    params.roleName
+  )
   const userResponses = await viewableAttributeResponses(
     session,
     params.assessmentId,
@@ -80,6 +87,7 @@ export default async function Page(
         name: `${section.id.toString().toUpperCase()}. ${section.name}`,
       },
     ]
+
     const partParticipants = assessmentUsers.filter(
       assessmentUser =>
         assessmentUser.role === "Participant" ||
@@ -87,16 +95,34 @@ export default async function Page(
           participantPart => participantPart.partId === part.id
         )
     )
+
+    const attributeIdDisplay =
+      part.attributeType === "Attribute" ?
+        assessmentAttribute.attributeId.toUpperCase() :
+        assessmentAttribute.attributeId
+
+    const partAttributeIds = part.sections.flatMap(
+      section => section.attributes.map(
+        attribute => attribute.id
+      )
+    )
+    const responsesInPart = allResponses.filter(
+      response => partAttributeIds.includes(response.attributeId)
+    )
+    const assessmentAttributesInPart = assessment.assessmentAttributes.filter(
+      assessmentAttribute => partAttributeIds.includes(assessmentAttribute.attributeId)
+    )
+    const hasUserSubmittedAllResponses = responsesInPart.length === assessmentAttributesInPart.length
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
-            <Breadcrumbs links={links} currentPage={part.attributeType + " " + assessmentAttribute.attributeId.toUpperCase()} />
+            <Breadcrumbs links={links} currentPage={part.attributeType + " " + attributeIdDisplay} />
             <div className={isParticipant ? "space-y-4" : "space-y-6"}>
               <h1
                 className="text-3xl font-bold tracking-tighter"
                 dangerouslySetInnerHTML={{
-                  __html: assessmentAttribute.attributeId.toUpperCase() + ". " + assessmentAttribute.attribute.name
+                  __html: attributeIdDisplay + ". " + assessmentAttribute.attribute.name
                 }}
               />
               {params.roleName === "Facilitator" &&
@@ -127,12 +153,12 @@ export default async function Page(
           />
         }
         <Navigation
-          urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}/${section.id}`}
-          assessmentId={assessment.id}
+          urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
           isParticipant={isParticipant}
           userResponses={userResponses}
           prevAttribute={prevAttribute}
           nextAttribute={nextAttribute}
+          canReview={hasUserSubmittedAllResponses}
         />
       </div >
     )

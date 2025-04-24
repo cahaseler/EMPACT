@@ -1,5 +1,8 @@
+import Link from "next/link"
+
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import { auth } from "@/auth"
+import { Button } from "@/components/ui/button"
 import {
   fetchAssessment,
   fetchAssessmentType,
@@ -63,6 +66,16 @@ export default async function Page(
                 <h1 className="text-3xl font-bold tracking-tighter">
                   Add Users to {assessment.name}
                 </h1>
+                {isAdmin(session) && (
+                  <div>
+                    <Link
+                      href={`/admin`}
+                      prefetch={false}
+                    >
+                      <Button>Import New Users</Button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </section>

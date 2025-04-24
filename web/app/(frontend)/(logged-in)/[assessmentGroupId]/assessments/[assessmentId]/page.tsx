@@ -10,6 +10,7 @@ import {
   fetchAssessmentUserGroup
 } from "../../../utils/dataFetchers"
 import {
+  canViewUsers,
   isAdmin,
   isLeadForAssessment,
   isManagerForCollection,
@@ -53,27 +54,36 @@ export default async function Page(
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
             <Breadcrumbs links={links} currentPage={assessment.name} />
-            <div className="flex flex-row justify-between">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter">
-                  {assessment.name}
-                </h1>
-                <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                  {assessment.description}
-                </p>
+            <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
+              <h1 className="text-3xl font-bold tracking-tighter">
+                {assessment.name}
+              </h1>
+              <div className="flex flex-row space-x-2">
+                {canViewUsers(session) && (
+                  <div>
+                    <Link
+                      href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
+                      prefetch={false}
+                    >
+                      <Button>Manage Assessment Users</Button>
+                    </Link>
+                  </div>
+                )}
+                {canEdit && (
+                  <div>
+                    <Link
+                      href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
+                      prefetch={false}
+                    >
+                      <Button>Edit Assessment</Button>
+                    </Link>
+                  </div>
+                )}
               </div>
-              {/* TODO: Edit assessment functionality */}
-              {canEdit && (
-                <div>
-                  <Link
-                    href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
-                    prefetch={false}
-                  >
-                    <Button>Edit Assessment</Button>
-                  </Link>
-                </div>
-              )}
             </div>
+            <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+              {assessment.description}
+            </p>
           </div>
         </section>
         <section className="mb-16">

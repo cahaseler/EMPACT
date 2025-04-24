@@ -6,6 +6,7 @@ import {
   TableRow
 } from "@/components/ui/table"
 import {
+  AssessmentAttribute,
   AssessmentPart,
   AssessmentUser,
   AssessmentUserResponse,
@@ -17,6 +18,7 @@ import PartRow from "./part-row"
 
 export default function PartsTable({
   assessmentParts,
+  assessmentAttributes,
   canEditStatus,
   assessmentUsers,
   userResponses
@@ -30,6 +32,7 @@ export default function PartsTable({
       }
     }
   )[]
+  assessmentAttributes: AssessmentAttribute[]
   canEditStatus: boolean
   assessmentUsers: (
     AssessmentUser & {
@@ -40,6 +43,9 @@ export default function PartsTable({
 }>) {
   const responseAttributeIds = userResponses.map(
     userResponse => userResponse.attributeId
+  )
+  const assessmentAttributeIds = assessmentAttributes.map(
+    (assessmentAttribute) => assessmentAttribute.attributeId
   )
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
@@ -63,8 +69,11 @@ export default function PartsTable({
                   attribute => attribute.id
                 )
               )
+              const partAttributesInAssessmentIds = partAttributeIds.filter(
+                partAttributeId => assessmentAttributeIds.includes(partAttributeId)
+              )
               const partResponseAttributeIds = responseAttributeIds.filter(
-                responseAttributeId => partAttributeIds.includes(responseAttributeId)
+                responseAttributeId => partAttributesInAssessmentIds.includes(responseAttributeId)
               )
               const partParticipants = assessmentUsers.filter(
                 assessmentUser =>
@@ -74,7 +83,7 @@ export default function PartsTable({
                   )
               )
               const unfinishedPart =
-                partAttributeIds.length * partParticipants.length !== partResponseAttributeIds.length * partParticipants.length
+                partAttributesInAssessmentIds.length * partParticipants.length !== partResponseAttributeIds.length
               return (
                 <PartRow
                   key={assessmentPart.id}

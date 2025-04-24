@@ -116,34 +116,62 @@ export default function DataTable({
         <div className="grid grid-cols-2 gap-2 w-20">
           {!isEditing ? (
             <>
-              <Button onClick={() => setIsEditing(true)} size="icon">
-                <SquarePen className="w-5 h-5 text-white" />
-              </Button>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={() => setIsEditing(true)} size="icon">
+                      <SquarePen className="w-5 h-5 text-white" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Edit Assessment User Group
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <DeleteModule group={group} />
             </>
           ) : (
             <>
-              <Button
-                onClick={() => {
-                  setIsEditing(false)
-                  setName(group.name)
-                }}
-                variant="outline"
-                size="icon"
-                className="border-[3px]"
-              >
-                <X className="w-5 h-5 stroke-[3px]" />
-              </Button>
-              <Button
-                onClick={(e: React.FormEvent) => handleUpdate(e)}
-                size="icon"
-              >
-                {saving ? (
-                  <Loader className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Save className="w-5 h-5 text-white" />
-                )}
-              </Button>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => {
+                        setIsEditing(false)
+                        setName(group.name)
+                        setStatus(group.status)
+                      }}
+                      variant="outline"
+                      size="icon"
+                      className="border-[3px]"
+                    >
+                      <X className="w-5 h-5 stroke-[3px]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Cancel
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={(e: React.FormEvent) => handleUpdate(e)}
+                      size="icon"
+                    >
+                      {saving ? (
+                        <Loader className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Save className="w-5 h-5 text-white" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    Save Changes
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </>
           )}
         </div>
@@ -169,7 +197,7 @@ function DeleteModule({
   }
 
   return group.assessmentUser.length > 0 ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -189,9 +217,18 @@ function DeleteModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon">
-          <Trash2 className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <Trash2 className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="w-60 text-center">
+              Delete Assessment User Group
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />

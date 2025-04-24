@@ -20,6 +20,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogPortal,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
@@ -152,9 +153,18 @@ export default function DataTable({
           <div className="grid grid-cols-2 gap-2 w-20">
             {!isEditing ? (
               <>
-                <Button onClick={() => setIsEditing(true)} size="icon">
-                  <SquarePen className="w-5 h-5 text-white" />
-                </Button>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button onClick={() => setIsEditing(true)} size="icon">
+                        <SquarePen className="w-5 h-5 text-white" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="text-center">
+                      Edit Assessment Part
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <SubmitModule
                   assessmentId={assessmentId}
                   assessmentPart={assessmentPart}
@@ -163,28 +173,46 @@ export default function DataTable({
               </>
             ) : (
               <>
-                <Button
-                  onClick={() => {
-                    setIsEditing(false)
-                    setStatus(assessmentPart.status)
-                    setDate(assessmentPart.date)
-                  }}
-                  variant="outline"
-                  size="icon"
-                  className="border-[3px]"
-                >
-                  <X className="w-5 h-5 stroke-[3px]" />
-                </Button>
-                <Button
-                  onClick={(e: React.FormEvent) => handleUpdate(e)}
-                  size="icon"
-                >
-                  {saving ? (
-                    <Loader className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Save className="w-5 h-5 text-white" />
-                  )}
-                </Button>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => {
+                          setIsEditing(false)
+                          setStatus(assessmentPart.status)
+                          setDate(assessmentPart.date)
+                        }}
+                        variant="outline"
+                        size="icon"
+                        className="border-[3px]"
+                      >
+                        <X className="w-5 h-5 stroke-[3px]" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="text-center">
+                      Cancel
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={(e: React.FormEvent) => handleUpdate(e)}
+                        size="icon"
+                      >
+                        {saving ? (
+                          <Loader className="h-5 w-5 animate-spin" />
+                        ) : (
+                          <Save className="w-5 h-5 text-white" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="text-center">
+                      Save Changes to Assessment Part
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </>
             )}
           </div>
@@ -207,22 +235,32 @@ function SubmitModule({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await updateAssessmentPart(
-      assessmentPart.id,
-      "Submitted",
-      assessmentPart.date,
-      assessmentId,
-      assessmentPart.part.id
-    ).then(() => {
-      router.refresh()
-      toast({
-        title: "Assessment part submitted successfully.",
-      })
+    toast({
+      title: "This feature is currently unavailable. Please calculate the score for the assessment part manually.",
     })
+
+    // TODO: implement assessment part submission functionality
+
+    // await updateAssessmentPart(
+    //   assessmentPart.id,
+    //   "Submitted",
+    //   assessmentPart.date,
+    //   assessmentId,
+    //   assessmentPart.part.id
+    // ).then(() => {
+    //   router.refresh()
+    //   toast({
+    //     title: "Assessment part submitted successfully.",
+    //   })
+    // }).catch(error => {
+    //   toast({
+    //     title: `Error submitting assessment part: ${error}`
+    //   })
+    // })
   }
 
   return unfinishedPart ? (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -243,14 +281,24 @@ function SubmitModule({
   ) : (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size="icon">
-          <SquareCheckBig className="w-5 h-5 text-white" />
-        </Button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <SquareCheckBig className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-center">
+              Submit Assessment Part for Scoring
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>
           <div className="flex flex-col space-y-6 text center">
+            <AlertDialogTitle>Submit {assessmentPart.part.name} Assessment for Scoring</AlertDialogTitle>
             <p>
               Are you sure you want to submit this assessment part for scoring?
             </p>

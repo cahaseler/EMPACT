@@ -9,6 +9,13 @@ import { Session } from "@/auth"
 import { Button } from "@/components/ui/button"
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header"
 import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+import {
     Assessment,
     AssessmentType,
     AssessmentUser,
@@ -56,28 +63,54 @@ function AssessmentActions({
                 <Link
                     href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`}
                 >
-                    <Button size="icon">
-                        <SquarePen className="w-5 h-5 text-white" />
-                    </Button>
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="icon">
+                                    <SquarePen className="w-5 h-5 text-white" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="text-center">
+                                Edit Assessment
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </Link>
             )}
             <Link href={`/${assessmentTypeId}/reports/${assessment.id}`}>
-                <Button size="icon">
-                    <FileChartColumn className="w-5 h-5 text-white" />
-                </Button>
+                <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button size="icon">
+                                <FileChartColumn className="w-5 h-5 text-white" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-center">
+                            View Assessment Reports
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </Link>
             {canView && (
                 <Link href={`/${assessmentTypeId}/users/assessment/${assessment.id}`}>
-                    <Button size="icon">
-                        <Users className="w-5 h-5 text-white" />
-                    </Button>
+                    <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button size="icon">
+                                    <Users className="w-5 h-5 text-white" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="text-center">
+                                Manage Assessment Users
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </Link>
             )}
             {canArchive && (
                 <ArchiveModule
                     assessment={assessment}
                     assessmentTypeId={assessmentTypeId}
-                    assessmentUsers={assessmentUsers}
                     buttonType="icon"
                 />
             )}

@@ -4,7 +4,11 @@ import {
   fetchPartsSectionsAttributes,
   fetchUserResponses,
 } from "../utils/dataFetchers"
-import { viewableAssessments } from "../utils/permissions"
+import {
+  isAdmin,
+  isCollectionManager,
+  viewableAssessments,
+} from "../utils/permissions"
 import Home from "./home"
 
 export default async function Page(
@@ -18,6 +22,7 @@ export default async function Page(
     session,
     params.assessmentGroupId
   )
+  const canAdd = isAdmin(session) || isCollectionManager(session)
   const parts = await fetchPartsSectionsAttributes(params.assessmentGroupId)
   const userResponses = await fetchUserResponses(session?.user?.id)
 
@@ -28,6 +33,7 @@ export default async function Page(
       parts={parts}
       userResponses={userResponses}
       session={session}
+      canAdd={canAdd}
     />
   )
 }

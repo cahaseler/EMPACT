@@ -65,7 +65,7 @@ export async function fetchAssessmentType(
 
 export async function fetchAssessmentCollections(typeid: string): Promise<
   (AssessmentCollection & {
-    assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]
+    assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]
     assessmentCollectionUser: (AssessmentCollectionUser & { user: User })[]
   })[]
 > {
@@ -86,6 +86,7 @@ export async function fetchAssessmentCollections(typeid: string): Promise<
               user: true,
             },
           },
+          assessmentAttributes: true
         },
       },
       assessmentCollectionUser: {
@@ -125,7 +126,7 @@ export async function fetchAllAssessments(): Promise<Assessment[]> {
 // Returns assessments in collections of given type
 export async function fetchAssessments(
   typeid: string
-): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]> {
+): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]> {
   const collections = await fetchAssessmentCollections(typeid)
   return collections.flatMap((collection) => collection.assessments)
 }
@@ -398,7 +399,9 @@ export async function fetchAssessmentAttribute(assessmentId: string, attributeId
 
 // *** PARTS ***
 
-export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Part & { sections: (Section & { attributes: Attribute[] })[] })[]> {
+export async function fetchPartsSectionsAttributes(typeid: string): Promise<
+  (Part & { sections: (Section & { attributes: (Attribute & { levels: Level[] })[] })[] })[]
+> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(typeid, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
@@ -413,7 +416,11 @@ export async function fetchPartsSectionsAttributes(typeid: string): Promise<(Par
     include: {
       sections: {
         include: {
-          attributes: true,
+          attributes: {
+            include: {
+              levels: true,
+            }
+          },
         },
       },
     },
@@ -424,7 +431,7 @@ export async function fetchPart(
   typeid: string,
   partName: string
 ): Promise<
-  (Part & { sections: (Section & { attributes: Attribute[] })[] }) | null
+  (Part & { sections: (Section & { attributes: (Attribute & { levels: Level[] })[] })[] }) | null
 > {
   const parts = await fetchPartsSectionsAttributes(typeid)
   const uniquePart = parts.find((part) => part.name === partName)
@@ -451,31 +458,51 @@ export async function fetchAttributes(
   })
 }
 
-export async function fetchPreviousAttribute(assessmentId: string, attributeId: string): Promise<
+export async function fetchPreviousAttribute(assessmentId: string, partName: string, attributeId: string): Promise<
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
+  const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
+  const sortedAttributes = attributesInPart.sort((a, b) => {
+    if (a.attribute.id < b.attribute.id) {
+      return -1;
+    }
+    if (a.attribute.id > b.attribute.id) {
+      return 1;
+    }
+    return 0;
+  });
+  const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
   // Check if current attribute exists and if there is a previous attribute (index > 0)
   if (currentAttributeIndex === -1 || currentAttributeIndex === 0) return null
 
   // Safely access the previous attribute
-  const previousAssessmentAttribute = attributes[currentAttributeIndex - 1];
+  const previousAssessmentAttribute = sortedAttributes[currentAttributeIndex - 1];
   return previousAssessmentAttribute?.attribute ?? null;
 }
 
-export async function fetchNextAttribute(assessmentId: string, attributeId: string): Promise<
+export async function fetchNextAttribute(assessmentId: string, partName: string, attributeId: string): Promise<
   Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null
 > {
   const attributes = await fetchAssessmentAttributes(assessmentId)
-  const currentAttributeIndex = attributes.findIndex(attribute => attribute.attributeId === attributeId)
+  const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
+  const sortedAttributes = attributesInPart.sort((a, b) => {
+    if (a.attribute.id < b.attribute.id) {
+      return -1;
+    }
+    if (a.attribute.id > b.attribute.id) {
+      return 1;
+    }
+    return 0;
+  });
+  const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
   // Check if current attribute exists and if there is a next attribute (index < length - 1)
-  if (currentAttributeIndex === -1 || currentAttributeIndex >= attributes.length - 1) return null
+  if (currentAttributeIndex === -1 || currentAttributeIndex >= sortedAttributes.length - 1) return null
 
   // Safely access the next attribute
-  const nextAssessmentAttribute = attributes[currentAttributeIndex + 1];
+  const nextAssessmentAttribute = sortedAttributes[currentAttributeIndex + 1];
   return nextAssessmentAttribute?.attribute ?? null;
 }
 

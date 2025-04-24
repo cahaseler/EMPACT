@@ -20,8 +20,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label"
+import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
+
 import {
     AssessmentPart,
     AssessmentUser,
@@ -76,6 +84,8 @@ export default function EditModule({
         assessmentUser.permissions.map((permission) => permission.id)
     )
 
+    const router = useRouter()
+
     const handleUpdateUser = (e: React.FormEvent) => {
         e.preventDefault()
         setIsUpdating(true)
@@ -91,11 +101,14 @@ export default function EditModule({
             permissionIds
         ).then(() => {
             setIsEditDialogOpen(false)
+            setIsUpdating(false)
+            router.refresh()
             toast({
                 title: "Assessment user updated successfully.",
             })
         }).catch(error => {
             setIsEditDialogOpen(false)
+            setIsUpdating(false)
             toast({
                 title: `Error updating assessment user: ${error}`
             })
@@ -105,9 +118,18 @@ export default function EditModule({
     return (
         <>
             <div className="flex justify-start">
-                <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
-                    <SquarePen className="w-5 h-5 text-white" />
-                </Button>
+                <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
+                                <SquarePen className="w-5 h-5 text-white" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="text-center">
+                            Edit Assessment User
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">

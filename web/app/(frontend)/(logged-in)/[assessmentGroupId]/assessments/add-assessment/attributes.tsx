@@ -26,10 +26,25 @@ export default function AssessmentAttributes({
             className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
         >
             {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
+                const partAttributeIds = part.sections.flatMap(
+                    section => section.attributes.map(
+                        attribute => attribute.id
+                    )
+                )
+                const numPartAttributesSelected = attributesToAdd.filter(attributeId =>
+                    partAttributeIds.includes(attributeId)
+                ).length
                 return (
                     <AccordionItem key={part.id} value={part.name} className="last:border-b-0 group">
-                        <AccordionTrigger className="text-indigo-950 dark:text-indigo-200 md:text-lg text-left font-bold mx-4 hover:no-underline">
-                            {part.name} {part.attributeType}s
+                        <AccordionTrigger className="mx-4 hover:no-underline">
+                            <div className="flex flex-col space-y-4">
+                                <span className="text-indigo-950 dark:text-indigo-200 md:text-lg text-left font-bold">
+                                    {part.name} {part.attributeType}s
+                                </span>
+                                <span className="text-sm text-indigo-950/70 dark:text-indigo-200/70">
+                                    Number of {part.attributeType}s Selected: {numPartAttributesSelected} of {partAttributeIds.length}
+                                </span>
+                            </div>
                         </AccordionTrigger>
                         <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
                             <Accordion
@@ -38,10 +53,23 @@ export default function AssessmentAttributes({
                                 className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
                             >
                                 {part.sections.map((section: Section & { attributes: Attribute[] }) => {
+                                    const sectionAttributeIds = section.attributes.map(
+                                        attribute => attribute.id
+                                    )
+                                    const numSectionAttributesSelected = attributesToAdd.filter(attributeId =>
+                                        sectionAttributeIds.includes(attributeId)
+                                    ).length
                                     return (
                                         <AccordionItem key={section.id} value={section.name} className="last:border-b-0 group">
-                                            <AccordionTrigger className="text-indigo-900 dark:text-indigo-200 text-left font-medium mx-4 hover:no-underline">
-                                                {section.id.toUpperCase()}. {section.name}
+                                            <AccordionTrigger className="mx-4 hover:no-underline">
+                                                <div className="flex flex-col space-y-4">
+                                                    <span className="text-indigo-900 dark:text-indigo-200 text-left font-bold">
+                                                        {section.id.toUpperCase()}. {section.name}
+                                                    </span>
+                                                    <span className="text-sm text-indigo-900/70 dark:text-indigo-200/70">
+                                                        Number of {part.attributeType}s Selected: {numSectionAttributesSelected} of {sectionAttributeIds.length}
+                                                    </span>
+                                                </div>
                                             </AccordionTrigger>
                                             <AccordionContent className="flex flex-col space-y-4 px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg [&_div:last-child]:border-0 [&_div:last-child]:pb-0">
                                                 {section.attributes.map((attribute: Attribute) => (

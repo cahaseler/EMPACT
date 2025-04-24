@@ -38,19 +38,15 @@ export default async function Page(
                 currentPage={`${collection.name} Managers`}
               />
               <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter">
-                    {collection.name} Managers
-                  </h1>
-                </div>
-                <div className="flex flex-row space-x-2 justify-end">
-                  <Link
-                    href={`/${assessmentType.id}/users/collection/${collection.id}/add-collection-managers`}
-                    prefetch={false}
-                  >
-                    <Button>Add Collection Managers</Button>
-                  </Link>
-                </div>
+                <h1 className="text-3xl font-bold tracking-tighter">
+                  {collection.name} Managers
+                </h1>
+                <Link
+                  href={`/${assessmentType.id}/users/collection/${collection.id}/add-collection-managers`}
+                  prefetch={false}
+                >
+                  <Button>Add Collection Managers</Button>
+                </Link>
               </div>
             </div>
           </section>

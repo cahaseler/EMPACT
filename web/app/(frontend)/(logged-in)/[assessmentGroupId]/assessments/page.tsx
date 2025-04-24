@@ -34,7 +34,7 @@ export default async function Page(
                 {assessmentType.name} Assessments
               </h1>
               {canAdd && (
-                <div className="flex flex-col max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">
+                <div className="flex flex-col h-fit max-sm:space-y-2 sm:flex-row sm:space-x-2 justify-end">
                   <Link
                     href={`/${assessmentType.id}/assessments/manage-collections`}
                     prefetch={false}
@@ -50,6 +50,9 @@ export default async function Page(
                 </div>
               )}
             </div>
+            <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+              Select an assessment from the list below to enter the assessment.
+            </p>
           </div>
         </section>
         <section className="mb-16">

@@ -172,7 +172,7 @@ export default function EditForm({
           >
             {saving &&
               <Loader className="mr-2 h-4 w-4 animate-spin" />
-            } Save Changes
+            } Save Changes to Assessment Info
           </Button>
         </div>
       </div>
