@@ -116,6 +116,7 @@ export default function AssessmentAttributes({
                     {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
                         return (
                             <PartAccordionItem
+                                key={part.id}
                                 part={part}
                                 assessmentAttributes={assessmentAttributes}
                                 attributeIds={attributeIds}
@@ -176,6 +177,7 @@ const PartAccordionItem = ({
                     {part.sections.map((section: Section & { attributes: Attribute[] }) => {
                         return (
                             <SectionAccordionItem
+                                key={section.id}
                                 attributeType={part.attributeType}
                                 section={section}
                                 assessmentAttributes={assessmentAttributes}
