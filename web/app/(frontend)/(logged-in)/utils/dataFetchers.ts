@@ -132,7 +132,10 @@ export async function fetchAssessments(
 }
 
 export async function fetchAssessment(assessmentId: string): Promise<
-  (Assessment & { assessmentParts: (AssessmentPart & { part: Part })[], assessmentAttributes: AssessmentAttribute[] }) | null
+  (Assessment & {
+    assessmentParts: (AssessmentPart & { part: Part })[],
+    assessmentAttributes: (AssessmentAttribute & { attribute: Attribute & { levels: Level[] } })[]
+  }) | null
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
@@ -145,7 +148,7 @@ export async function fetchAssessment(assessmentId: string): Promise<
     where: { id: idAsInteger },
     include: {
       assessmentParts: { include: { part: true } },
-      assessmentAttributes: true
+      assessmentAttributes: { include: { attribute: { include: { levels: true } } } }
     }
   })
 }
@@ -154,7 +157,11 @@ export async function fetchAssessment(assessmentId: string): Promise<
 
 export async function fetchAssessmentUserGroups(assessmentId: string): Promise<
   (AssessmentUserGroup & {
-    assessmentUser: (AssessmentUser & { user: User })[]
+    assessmentUser: (AssessmentUser & {
+      user: User & {
+        assessmentUserResponse: (AssessmentUserResponse & { user: User, level: Level })[]
+      }
+    })[]
   })[]
 > {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
@@ -166,7 +173,17 @@ export async function fetchAssessmentUserGroups(assessmentId: string): Promise<
 
   return await db.assessmentUserGroup.findMany({
     where: { assessmentId: idAsInteger },
-    include: { assessmentUser: { include: { user: true } } },
+    include: {
+      assessmentUser: {
+        include: {
+          user: {
+            include: {
+              assessmentUserResponse: { include: { user: true, level: true } }
+            }
+          }
+        }
+      }
+    },
   })
 }
 
@@ -347,6 +364,17 @@ export async function fetchAssessmentParts(assessmentId: string): Promise<
         },
       },
     },
+  })
+}
+
+export async function fetchAssessmentPart(assessmentId: number, partId: number): Promise<AssessmentPart | null> {
+  return await db.assessmentPart.findUnique({
+    where: {
+      assessmentId_partId: {
+        assessmentId,
+        partId
+      }
+    }
   })
 }
 
