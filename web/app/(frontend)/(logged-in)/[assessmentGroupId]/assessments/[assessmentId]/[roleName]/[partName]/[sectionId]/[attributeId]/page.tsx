@@ -96,7 +96,9 @@ export default async function Page(
     ).flatMap(
       user => user.user.assessmentUserResponse
     ).filter(
-      response => response.attributeId === params.attributeId
+      response => response.attributeId ===
+        params.attributeId &&
+        response.assessmentId === assessment.id
     )
     const partParticipants = assessmentUsers.filter(
       assessmentUser =>
