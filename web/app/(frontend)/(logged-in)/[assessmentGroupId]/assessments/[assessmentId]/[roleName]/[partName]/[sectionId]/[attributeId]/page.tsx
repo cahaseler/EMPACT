@@ -9,6 +9,7 @@ import {
   fetchAssessmentAttribute,
   fetchAssessmentType,
   fetchAssessmentUsers,
+  fetchAssessmentUserGroups,
   fetchLevels,
   fetchNextAttribute,
   fetchPart,
@@ -55,6 +56,7 @@ export default async function Page(
   const levels = await fetchLevels(params.attributeId)
 
   const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
+  const groups = await fetchAssessmentUserGroups(params.assessmentId)
   const isParticipant = params.roleName === "Participant"
   const allResponses = await viewableResponses(
     session,
@@ -88,6 +90,14 @@ export default async function Page(
       },
     ]
 
+    const activeGroups = groups.filter(group => group.status === "Active")
+    const activeGroupsUserResponses = activeGroups.flatMap(
+      group => group.assessmentUser
+    ).flatMap(
+      user => user.user.assessmentUserResponse
+    ).filter(
+      response => response.attributeId === params.attributeId
+    )
     const partParticipants = assessmentUsers.filter(
       assessmentUser =>
         assessmentUser.role === "Participant" ||
@@ -95,6 +105,10 @@ export default async function Page(
           participantPart => participantPart.partId === part.id
         )
     )
+    const numParticipants =
+      activeGroups.length > 0 ?
+        activeGroups.flatMap(group => group.assessmentUser).length :
+        partParticipants.length
 
     const attributeIdDisplay =
       part.attributeType === "Attribute" ?
@@ -128,9 +142,9 @@ export default async function Page(
               {params.roleName === "Facilitator" &&
                 <AttributeResponseTable
                   assessmentStatus={assessment.status}
-                  userResponses={userResponses}
+                  userResponses={activeGroups.length > 0 ? activeGroupsUserResponses : userResponses}
                   levels={levels}
-                  numParticipants={partParticipants.length}
+                  numParticipants={numParticipants}
                 />
               }
               <Card className="bg-white max-h-60 overflow-auto px-6 py-1">

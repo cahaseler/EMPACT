@@ -71,7 +71,7 @@ export default function Sections({
                 <AccordionContent className="flex flex-col space-y-4 px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg [&_div:last-child]:border-0 [&_div:last-child]:pb-0">
                   <DataTable
                     part={part}
-                    urlHead={`${assessmentTypeId}/assessments/${assessmentId}/${part.name}/${section.id}`}
+                    urlHead={`${assessmentTypeId}/assessments/${assessmentId}/Participant/${part.name}/${section.id}`}
                     attributes={sectionAttributesInAssessment}
                     userResponses={userResponses}
                   />
