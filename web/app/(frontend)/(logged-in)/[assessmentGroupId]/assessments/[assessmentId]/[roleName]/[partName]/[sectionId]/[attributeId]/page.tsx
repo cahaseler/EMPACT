@@ -91,6 +91,13 @@ export default async function Page(
     ]
 
     const activeGroups = groups.filter(group => group.status === "Active")
+    const activeGroupsUserResponses = activeGroups.flatMap(
+      group => group.assessmentUser
+    ).flatMap(
+      user => user.user.assessmentUserResponse
+    ).filter(
+      response => response.attributeId === params.attributeId
+    )
     const partParticipants = assessmentUsers.filter(
       assessmentUser =>
         assessmentUser.role === "Participant" ||
@@ -135,7 +142,7 @@ export default async function Page(
               {params.roleName === "Facilitator" &&
                 <AttributeResponseTable
                   assessmentStatus={assessment.status}
-                  userResponses={userResponses}
+                  userResponses={activeGroups.length > 0 ? activeGroupsUserResponses : userResponses}
                   levels={levels}
                   numParticipants={numParticipants}
                 />
