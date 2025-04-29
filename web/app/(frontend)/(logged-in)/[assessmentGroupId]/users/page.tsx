@@ -20,9 +20,12 @@ export default async function Page(
   const collections = await fetchAssessmentCollections(params.assessmentGroupId)
 
   if (assessmentType) {
+    const nonArchivedAssessments = assessments.filter(
+      assessment => assessment.status !== "Archived"
+    )
     return (
       <PageView
-        assessments={assessments}
+        assessments={nonArchivedAssessments}
         collections={collections}
         assessmentType={assessmentType}
         isAdmin={isAdmin(session)}

@@ -16,6 +16,9 @@ export default async function Page(
   )
 
   if (assessmentType) {
+    const nonArchivedAssessments = assessments.filter(
+      assessment => assessment.status !== "Archived"
+    )
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -31,7 +34,7 @@ export default async function Page(
         <section className="mb-16">
           <div className="space-y-4">
             <AssessmentsDataTable
-              assessments={assessments}
+              assessments={nonArchivedAssessments}
               assessmentType={assessmentType}
             />
           </div>
