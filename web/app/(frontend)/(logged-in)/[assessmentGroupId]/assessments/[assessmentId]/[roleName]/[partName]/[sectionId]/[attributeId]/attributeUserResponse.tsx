@@ -21,8 +21,7 @@ import {
   Level,
 } from "@/prisma/mssql/generated/client"
 import {
-  createAssessmentUserResponse,
-  updateAssessmentUserResponse,
+  upsertAssessmentUserResponse,
 } from "../../../../../../../utils/dataActions"
 
 export default function AttributeUserResponse({
@@ -53,46 +52,28 @@ export default function AttributeUserResponse({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSaving(true)
     if (userId && levelId && notes !== "") {
-      setSaving(true)
-      if (userResponse) {
-        await updateAssessmentUserResponse({
-          ...userResponse,
-          levelId: levelId,
-          notes,
-        }).then(() => {
-          setSaving(false)
-          router.refresh()
-          toast({
-            title: "Response saved successfully.",
-          })
-        }).catch(error => {
-          setSaving(false)
-          toast({
-            title: `Error saving response: ${error}`
-          })
+      await upsertAssessmentUserResponse(
+        assessment.id,
+        parseInt(userId, 10),
+        attributeId,
+        levelId,
+        notes
+      ).then(() => {
+        setSaving(false)
+        router.refresh()
+        toast({
+          title: "Response saved successfully.",
         })
-      } else {
-        await createAssessmentUserResponse(
-          assessment.id,
-          parseInt(userId, 10),
-          attributeId,
-          levelId,
-          notes
-        ).then(() => {
-          setSaving(false)
-          router.refresh()
-          toast({
-            title: "Response saved successfully.",
-          })
-        }).catch(error => {
-          setSaving(false)
-          toast({
-            title: `Error saving response: ${error}`
-          })
+      }).catch(error => {
+        setSaving(false)
+        toast({
+          title: `Error saving response: ${error}`
         })
-      }
+      })
     }
+    setSaving(false)
   }
 
   return (

@@ -216,20 +216,21 @@ function DeleteModule({
     </TooltipProvider>
   ) : (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
+
+      <TooltipProvider delayDuration={0}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <AlertDialogTrigger asChild>
               <Button size="icon">
                 <Trash2 className="w-5 h-5 text-white" />
               </Button>
-            </TooltipTrigger>
-            <TooltipContent className="w-60 text-center">
-              Delete Assessment User Group
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </AlertDialogTrigger>
+            </AlertDialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent className="w-60 text-center">
+            Delete Assessment User Group
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>

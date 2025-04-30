@@ -268,29 +268,16 @@ export async function deleteAssessmentUser(
   return await assessmentUser.delete_({ where: { id: assessmentUserId } })
 }
 
-export async function createAssessmentUserResponse(
+export async function upsertAssessmentUserResponse(
   assessmentId: number,
   userId: number,
   attributeId: string,
   levelId: number,
   notes: string
 ): Promise<AssessmentUserResponse> {
-  return await assessmentUserResponse.create({
-    data: { assessmentId, userId, attributeId, levelId, notes },
-  })
-}
-
-export async function updateAssessmentUserResponse(
-  response: AssessmentUserResponse
-): Promise<AssessmentUserResponse> {
-  return await assessmentUserResponse.update({
-    where: { id: response.id },
-    data: {
-      assessmentId: response.assessmentId,
-      userId: response.userId,
-      attributeId: response.attributeId,
-      levelId: response.levelId,
-      notes: response.notes,
-    },
+  return await assessmentUserResponse.upsert({
+    where: { assessmentId_userId_attributeId: { assessmentId, userId, attributeId } },
+    create: { assessmentId, userId, attributeId, levelId, notes },
+    update: { assessmentId, userId, attributeId, levelId, notes },
   })
 }
