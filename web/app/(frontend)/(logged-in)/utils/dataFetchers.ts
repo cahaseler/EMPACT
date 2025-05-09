@@ -492,13 +492,23 @@ export async function fetchPreviousAttribute(assessmentId: string, partName: str
   const attributes = await fetchAssessmentAttributes(assessmentId)
   const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
   const sortedAttributes = attributesInPart.sort((a, b) => {
-    if (a.attribute.id < b.attribute.id) {
-      return -1;
+    const aId = a.attribute.id.replace(".", "");
+    const bId = b.attribute.id.replace(".", "");
+
+    const aPart1 = aId.slice(1);
+    const bPart1 = bId.slice(1);
+    const aPart2 = aId.slice(0, 1);
+    const bPart2 = bId.slice(0, 1);
+
+    if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
+      if (aPart1 < bPart1) return -1;
+      if (aPart1 > bPart1) return 1;
+      return parseInt(aPart2, 10) - parseInt(bPart2, 10);
+    } else {
+      if (aPart2 < bPart2) return -1;
+      if (aPart2 > bPart2) return 1;
+      return parseInt(aPart1, 10) - parseInt(bPart1, 10);
     }
-    if (a.attribute.id > b.attribute.id) {
-      return 1;
-    }
-    return 0;
   });
   const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
@@ -516,13 +526,23 @@ export async function fetchNextAttribute(assessmentId: string, partName: string,
   const attributes = await fetchAssessmentAttributes(assessmentId)
   const attributesInPart = attributes.filter(attribute => attribute.attribute.section.part.name === partName)
   const sortedAttributes = attributesInPart.sort((a, b) => {
-    if (a.attribute.id < b.attribute.id) {
-      return -1;
+    const aId = a.attribute.id.replace(".", "");
+    const bId = b.attribute.id.replace(".", "");
+
+    const aPart1 = aId.slice(1);
+    const bPart1 = bId.slice(1);
+    const aPart2 = aId.slice(0, 1);
+    const bPart2 = bId.slice(0, 1);
+
+    if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
+      if (aPart1 < bPart1) return -1;
+      if (aPart1 > bPart1) return 1;
+      return parseInt(aPart2, 10) - parseInt(bPart2, 10);
+    } else {
+      if (aPart2 < bPart2) return -1;
+      if (aPart2 > bPart2) return 1;
+      return parseInt(aPart1, 10) - parseInt(bPart1, 10);
     }
-    if (a.attribute.id > b.attribute.id) {
-      return 1;
-    }
-    return 0;
   });
   const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 

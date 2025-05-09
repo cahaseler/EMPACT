@@ -137,7 +137,7 @@ export default function Home({
                   // Determine target IDs safely, providing fallbacks only if parts exist
                   const targetPartName = nextPart?.name ?? parts?.[0]?.name;
                   const targetSectionId = (nextSection?.id ?? parts?.[0]?.sections?.[0]?.id)?.toString();
-                  const targetAttributeId = (nextAttribute?.id ?? parts?.[0]?.sections?.[0]?.attributes?.[0]?.id)?.toString();
+                  const targetAttributeId = (nextAttribute?.id ?? parts?.[0]?.sections?.[0]?.attributes?.[0]?.id)?.toString().replace(".", "");
 
                   // Check if all necessary components for the URL are defined and valid strings
                   const canConstructLink =

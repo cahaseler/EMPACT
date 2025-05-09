@@ -137,6 +137,25 @@ export function AssessmentSidebar({
                           const sectionAttributesInAssessment = section.attributes.filter(
                             attribute => assessmentAttributeIds.includes(attribute.id)
                           )
+                          const sortedSectionAttributes = sectionAttributesInAssessment.sort((a, b) => {
+                            const aId = a.id.replace(".", "");
+                            const bId = b.id.replace(".", "");
+
+                            const aPart1 = aId.slice(1);
+                            const bPart1 = bId.slice(1);
+                            const aPart2 = aId.slice(0, 1);
+                            const bPart2 = bId.slice(0, 1);
+
+                            if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
+                              if (aPart1 < bPart1) return -1;
+                              if (aPart1 > bPart1) return 1;
+                              return parseInt(aPart2, 10) - parseInt(bPart2, 10);
+                            } else {
+                              if (aPart2 < bPart2) return -1;
+                              if (aPart2 > bPart2) return 1;
+                              return parseInt(aPart1, 10) - parseInt(bPart1, 10);
+                            }
+                          });
                           const sectionAttributeIds = sectionAttributesInAssessment.map(
                             attribute => attribute.id
                           )
@@ -167,7 +186,7 @@ export function AssessmentSidebar({
                                   </div>
                                   <CollapsibleContent>
                                     <SidebarMenuSub>
-                                      {sectionAttributesInAssessment.map((attribute) => {
+                                      {sortedSectionAttributes.map((attribute) => {
                                         const attributeResponseAttributeIds = responseAttributeIds.filter(
                                           responseAttributeId => attribute.id === responseAttributeId
                                         )

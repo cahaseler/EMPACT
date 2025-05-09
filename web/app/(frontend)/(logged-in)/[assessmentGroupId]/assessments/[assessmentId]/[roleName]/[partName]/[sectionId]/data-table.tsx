@@ -47,6 +47,25 @@ export default function DataTable({
 
   const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
   const attributesInAssessment = attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
+  const sortedAttributes = attributesInAssessment.sort((a, b) => {
+    const aId = a.id.replace(".", "");
+    const bId = b.id.replace(".", "");
+
+    const aPart1 = aId.slice(1);
+    const bPart1 = bId.slice(1);
+    const aPart2 = aId.slice(0, 1);
+    const bPart2 = bId.slice(0, 1);
+
+    if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
+      if (aPart1 < bPart1) return -1;
+      if (aPart1 > bPart1) return 1;
+      return parseInt(aPart2, 10) - parseInt(bPart2, 10);
+    } else {
+      if (aPart2 < bPart2) return -1;
+      if (aPart2 > bPart2) return 1;
+      return parseInt(aPart1, 10) - parseInt(bPart1, 10);
+    }
+  });
 
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
@@ -70,7 +89,7 @@ export default function DataTable({
           </TableRow>
         </TableHeader>
         <TableBody className="cursor-pointer">
-          {attributesInAssessment.map(
+          {sortedAttributes.map(
             (attribute: Attribute & { levels: Level[] }, key: number) => {
               const attributeResponses = userResponses.filter(
                 (userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id
