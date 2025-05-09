@@ -500,15 +500,9 @@ export async function fetchPreviousAttribute(assessmentId: string, partName: str
     const aPart2 = aId.slice(0, 1);
     const bPart2 = bId.slice(0, 1);
 
-    if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
-      if (aPart1 < bPart1) return -1;
-      if (aPart1 > bPart1) return 1;
-      return parseInt(aPart2, 10) - parseInt(bPart2, 10);
-    } else {
-      if (aPart2 < bPart2) return -1;
-      if (aPart2 > bPart2) return 1;
-      return parseInt(aPart1, 10) - parseInt(bPart1, 10);
-    }
+    if (aPart2 < bPart2) return -1;
+    if (aPart2 > bPart2) return 1;
+    return parseInt(aPart1, 10) - parseInt(bPart1, 10);
   });
   const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
@@ -534,15 +528,9 @@ export async function fetchNextAttribute(assessmentId: string, partName: string,
     const aPart2 = aId.slice(0, 1);
     const bPart2 = bId.slice(0, 1);
 
-    if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
-      if (aPart1 < bPart1) return -1;
-      if (aPart1 > bPart1) return 1;
-      return parseInt(aPart2, 10) - parseInt(bPart2, 10);
-    } else {
-      if (aPart2 < bPart2) return -1;
-      if (aPart2 > bPart2) return 1;
-      return parseInt(aPart1, 10) - parseInt(bPart1, 10);
-    }
+    if (aPart2 < bPart2) return -1;
+    if (aPart2 > bPart2) return 1;
+    return parseInt(aPart1, 10) - parseInt(bPart1, 10);
   });
   const currentAttributeIndex = sortedAttributes.findIndex(attribute => attribute.attributeId === attributeId)
 
