@@ -29,9 +29,15 @@ export default async function RootLayout(
   const assessment = await fetchAssessment(params.assessmentId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const section = await fetchSection(params.sectionId)
-  const attribute = await fetchAssessmentAttribute(params.assessmentId, params.attributeId)
 
   if (assessmentType && assessment && part && section) {
+    const idPart1 = params.attributeId.charAt(0)
+    const idPart2 = params.attributeId.slice(1)
+    const newId = idPart1.concat(".", idPart2)
+    const attributeId = part.attributeType === "Factor" ? params.attributeId : newId
+
+    const attribute = await fetchAssessmentAttribute(params.assessmentId, attributeId)
+
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
