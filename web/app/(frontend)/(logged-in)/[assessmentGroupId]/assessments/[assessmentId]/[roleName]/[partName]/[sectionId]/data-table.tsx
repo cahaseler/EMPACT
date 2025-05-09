@@ -88,12 +88,13 @@ export default function DataTable({
                 (level: Level) => level.level
               )
               const averageLevel = levels.reduce((a, b) => a + b, 0) / levels.length
+              const urlAttributeId = attribute.id.replace(".", "")
               return (
                 <TableRow
                   key={key}
                   onClick={() =>
                     router.push(
-                      `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`
+                      `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${urlAttributeId}`
                     )
                   }
                 >

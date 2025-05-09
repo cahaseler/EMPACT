@@ -172,7 +172,8 @@ export function AssessmentSidebar({
                                           responseAttributeId => attribute.id === responseAttributeId
                                         )
                                         const unfinishedAttribute = attributeResponseAttributeIds.length !== numParticipants
-                                        const attributePn = `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${attribute.id}`
+                                        const urlAttributeId = attribute.id.replace(".", "")
+                                        const attributePn = `/${assessmentType.id}/assessments/${assessment.id}/${role}/${part.name}/${section.id}/${urlAttributeId}`
                                         return (
                                           <SidebarMenuSubItem key={attribute.id}>
                                             <SidebarMenuButton asChild>

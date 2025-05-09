@@ -27,11 +27,13 @@ export default function Navigation({
 }) {
   const prevSectionId = prevAttribute ? prevAttribute.section.id : null
   const nextSectionId = nextAttribute ? nextAttribute.section.id : null
+  const urlPrevAttributeId = prevAttribute ? prevAttribute.id.replace(".", "") : null
+  const urlNextAttributeId = nextAttribute ? nextAttribute.id.replace(".", "") : null
   return (
     <section className="mb-8 space-y-4">
       <div className={"w-full flex flex-row " + (prevAttribute ? "justify-between" : "justify-end")}>
         {prevAttribute &&
-          <Link href={`${urlHead}/${prevSectionId}/${prevAttribute.id}`}>
+          <Link href={`${urlHead}/${prevSectionId}/${urlPrevAttributeId}`}>
             <Button>Previous</Button>
           </Link>
         }
@@ -42,7 +44,7 @@ export default function Navigation({
                 Next
               </Button>
               :
-              <Link href={`${urlHead}/${nextSectionId}/${nextAttribute.id}`}>
+              <Link href={`${urlHead}/${nextSectionId}/${urlNextAttributeId}`}>
                 <Button>
                   Next
                 </Button>
