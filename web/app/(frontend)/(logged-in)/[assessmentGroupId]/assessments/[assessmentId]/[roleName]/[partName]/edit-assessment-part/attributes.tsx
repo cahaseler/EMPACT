@@ -6,7 +6,7 @@ import {
     Section,
     Attribute
 } from "@/prisma/mssql/generated/client"
-import { createAssessmentAttributes, deleteAssessmentAttributes } from "../../../../utils/dataActions"
+import { createAssessmentAttributes, deleteAssessmentAttributes } from "../../../../../../utils/dataActions"
 
 import {
     Accordion,
@@ -23,16 +23,26 @@ import { toast } from "@/components/ui/use-toast"
 
 export default function AssessmentAttributes({
     assessmentId,
-    parts,
+    part,
     assessmentAttributes
 }: {
     readonly assessmentId: number
-    readonly parts: (Part & { sections: (Section & { attributes: Attribute[] })[] })[]
+    readonly part: Part & { sections: (Section & { attributes: Attribute[] })[] }
     readonly assessmentAttributes: AssessmentAttribute[]
 }) {
     const attributeIds = assessmentAttributes.map(attribute => attribute.attributeId)
     const [attributesToAdd, setAttributesToAdd] = useState<string[]>([])
     const [attributesToRemove, setAttributesToRemove] = useState<string[]>([])
+    const partAttributeIds = part.sections.flatMap(
+        section => section.attributes.map(
+            attribute => attribute.id
+        )
+    )
+    const [numPartAttributesSelected, setNumPartAttributesSelected] = useState<number>(
+        assessmentAttributes.filter(aa =>
+            partAttributeIds.includes(aa.attributeId)
+        ).length
+    )
     const [saving, setSaving] = useState<boolean>(false)
 
     const router = useRouter()
@@ -108,67 +118,14 @@ export default function AssessmentAttributes({
     return (
         <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-4">
-                <Accordion
-                    type="single"
-                    collapsible={true}
-                    className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
-                >
-                    {parts.map((part: Part & { sections: (Section & { attributes: Attribute[] })[] }) => {
-                        return (
-                            <PartAccordionItem
-                                key={part.id}
-                                part={part}
-                                assessmentAttributes={assessmentAttributes}
-                                attributeIds={attributeIds}
-                                handleAttributeCheckedChange={handleAttributeCheckedChange}
-                            />
-                        )
-                    })}
-                </Accordion>
-                <div className="flex flex-col items-center">
-                    <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
-                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes to Selections
-                    </Button>
-                </div>
-            </div>
-        </form>
-    )
-}
-
-const PartAccordionItem = ({
-    part,
-    assessmentAttributes,
-    attributeIds,
-    handleAttributeCheckedChange
-}: {
-    part: Part & { sections: (Section & { attributes: Attribute[] })[] },
-    assessmentAttributes: AssessmentAttribute[],
-    attributeIds: string[],
-    handleAttributeCheckedChange: (attributeId: string, checked: boolean) => void
-}) => {
-    const partAttributeIds = part.sections.flatMap(
-        section => section.attributes.map(
-            attribute => attribute.id
-        )
-    )
-    const [numPartAttributesSelected, setNumPartAttributesSelected] = useState<number>(
-        assessmentAttributes.filter(aa =>
-            partAttributeIds.includes(aa.attributeId)
-        ).length
-    )
-    return (
-        <AccordionItem key={part.id} value={part.name} className="last:border-b-0 group">
-            <AccordionTrigger className="mx-4 hover:no-underline">
-                <div className="flex flex-col space-y-4">
-                    <span className="text-indigo-950 dark:text-indigo-200 md:text-lg text-left font-bold">
-                        {part.name} {part.attributeType}s
-                    </span>
+                <div className="flex flex-row items-center justify-between">
+                    <h2 className="text-2xl text-left font-bold">
+                        {part.name} Assessment {part.attributeType}s
+                    </h2>
                     <span className="text-sm text-indigo-950/70 dark:text-indigo-200/70">
                         Number of {part.attributeType}s Selected: {numPartAttributesSelected} of {partAttributeIds.length}
                     </span>
                 </div>
-            </AccordionTrigger>
-            <AccordionContent className="px-4 pt-4 bg-white dark:bg-indigo-600/20 group-last:rounded-b-lg">
                 <Accordion
                     type="single"
                     collapsible={true}
@@ -188,8 +145,13 @@ const PartAccordionItem = ({
                         )
                     })}
                 </Accordion>
-            </AccordionContent>
-        </AccordionItem>
+                <div className="flex flex-col items-center">
+                    <Button type="submit" disabled={saving || (attributesToAdd.length === 0 && attributesToRemove.length === 0)}>
+                        {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes to Selections
+                    </Button>
+                </div>
+            </div>
+        </form>
     )
 }
 
@@ -220,10 +182,10 @@ const SectionAccordionItem = ({
         <AccordionItem key={section.id} value={section.name} className="last:border-b-0 group">
             <AccordionTrigger className="mx-4 hover:no-underline">
                 <div className="flex flex-col space-y-4">
-                    <span className="text-indigo-900 dark:text-indigo-200 text-left font-bold">
+                    <span className="text-indigo-950 dark:text-indigo-100 text-lg text-left font-bold">
                         {section.id.toUpperCase()}. {section.name}
                     </span>
-                    <span className="text-sm text-indigo-900/70 dark:text-indigo-200/70">
+                    <span className="text-sm text-indigo-900/70 text-left dark:text-indigo-200/70">
                         Number of {attributeType}s Selected: {numSectionAttributesSelected} of {sectionAttributeIds.length}
                     </span>
                 </div>

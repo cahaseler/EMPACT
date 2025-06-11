@@ -3,6 +3,7 @@ import {
   AssessmentAttribute,
   AssessmentCollection,
   AssessmentCollectionUser,
+  AssessmentPart,
   AssessmentUser,
   AssessmentUserResponse,
   Attribute,
@@ -18,6 +19,7 @@ import {
   fetchAssessments,
   fetchPartsSectionsAttributes,
   fetchUserResponseForAssessmentAttribute,
+  fetchUserResponsesForAssessmentAttribute,
   fetchUserResponsesForAssessment,
 } from "./dataFetchers"
 
@@ -104,7 +106,7 @@ export function canUserParticipateInPart(
     (uc) => uc.assessmentId === idAsInteger
   )
   const participantPart = assessmentUser?.participantParts.find(
-    (part) => part.id === partId
+    (part) => part.partId === partId
   )
   return participantPart !== undefined || assessmentUser?.role === "Participant"
 }
@@ -167,7 +169,11 @@ export async function viewableCollections(
 export async function viewableAssessments(
   session: Session | null,
   assessmentGroupId: string
-): Promise<(Assessment & { assessmentUser: (AssessmentUser & { user: User })[], assessmentAttributes: AssessmentAttribute[] })[]> {
+): Promise<(Assessment & {
+  assessmentParts: AssessmentPart[],
+  assessmentUser: (AssessmentUser & { user: User })[],
+  assessmentAttributes: AssessmentAttribute[]
+})[]> {
   if (session) {
     const assessments = await fetchAssessments(assessmentGroupId)
     // Admins can view all assessments
@@ -260,12 +266,27 @@ export async function viewableAttributeResponses(
   if (session) {
     const user = session.user as UserInfo
     if (role === "Participant") {
-      const response = await fetchUserResponseForAssessmentAttribute(
-        user.id,
-        assessmentId,
-        attributeId
+      const assessmentUser = session.user.assessmentUser?.find(
+        (uc) => uc.assessmentId === parseInt(assessmentId, 10)
       )
-      return response ? [response] : []
+      if (assessmentUser) {
+        if (assessmentUser.role === "Participant" && assessmentUser.assessmentUserGroupId) {
+          const response = await fetchUserResponseForAssessmentAttribute(
+            user.id,
+            assessmentId,
+            assessmentUser.assessmentUserGroupId,
+            attributeId
+          )
+          return response ? [response] : []
+        } else {
+          return await fetchUserResponsesForAssessmentAttribute(
+            user.id,
+            assessmentId,
+            attributeId
+          )
+        }
+      }
+      return []
     } else {
       return await fetchAllResponsesForAssessmentAttribute(
         assessmentId,

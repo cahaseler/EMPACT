@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { FileChartColumn, SquarePen, Users } from "lucide-react"
+import { FileChartColumn, Users } from "lucide-react"
 import Link from "next/link"
 
 import { Session } from "@/auth"
@@ -17,6 +17,8 @@ import {
 
 import {
     Assessment,
+    AssessmentCollection,
+    AssessmentPart,
     AssessmentType,
     AssessmentUser,
     User
@@ -24,22 +26,26 @@ import {
 import {
     canViewUsers,
     isAdmin,
+    isCollectionManager,
     isLeadForAssessment,
     isManagerForCollection
 } from "../../utils/permissions"
+
 import ArchiveModule from "./archive-module"
+import EditModule from "./edit-module"
+import SubmitModule from "./submit-module"
 
 // User action component for editing user details
 function AssessmentActions({
-    assessmentTypeId,
+    assessmentType,
     assessment,
-    session,
-    assessmentUsers,
+    collections,
+    session
 }: {
-    readonly assessmentTypeId: number
-    readonly assessment: Assessment
+    readonly assessmentType: AssessmentType
+    readonly assessment: Assessment & { assessmentParts: AssessmentPart[] }
+    readonly collections: AssessmentCollection[]
     readonly session: Session | null
-    readonly assessmentUsers: AssessmentUser[]
 }) {
     const permissions = session?.user?.assessmentUser.find(
         assessmentUser => assessmentUser.assessmentId === assessment.id
@@ -50,6 +56,11 @@ function AssessmentActions({
         isLeadForAssessment(session, assessment.id.toString()) ||
         permissions?.find((permission) => permission.name === "Edit assessment") !==
         undefined
+    const canEditCollection = isAdmin(session) || isCollectionManager(session)
+    const canEditStatus =
+        isAdmin(session) ||
+        isManagerForCollection(session, assessment.assessmentCollectionId) ||
+        isLeadForAssessment(session, assessment.id.toString())
     const canView = canViewUsers(session)
     const canArchive =
         isAdmin(session) ||
@@ -60,24 +71,16 @@ function AssessmentActions({
     return (
         <div className="grid grid-cols-2 gap-2 w-20">
             {canEdit && (
-                <Link
-                    href={`/${assessmentTypeId}/assessments/${assessment.id}/edit-assessment`}
-                >
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button size="icon">
-                                    <SquarePen className="w-5 h-5 text-white" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="text-center">
-                                Edit Assessment
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </Link>
+                <EditModule
+                    assessmentType={assessmentType}
+                    assessment={assessment}
+                    assessmentCollections={collections}
+                    canEditCollection={canEditCollection}
+                    canEditStatus={canEditStatus}
+                    buttonType="icon"
+                />
             )}
-            <Link href={`/${assessmentTypeId}/reports/${assessment.id}`}>
+            <Link href={`/${assessmentType.id}/reports/${assessment.id}`}>
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -92,7 +95,7 @@ function AssessmentActions({
                 </TooltipProvider>
             </Link>
             {canView && (
-                <Link href={`/${assessmentTypeId}/users/assessment/${assessment.id}`}>
+                <Link href={`/${assessmentType.id}/users/assessment/${assessment.id}`}>
                     <TooltipProvider delayDuration={0}>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -107,10 +110,16 @@ function AssessmentActions({
                     </TooltipProvider>
                 </Link>
             )}
-            {canArchive && (
+            {canEditStatus && assessment.status === "Active" && (
+                <SubmitModule
+                    assessment={assessment}
+                    buttonType="icon"
+                />
+            )}
+            {canArchive && assessment.status !== "Active" && (
                 <ArchiveModule
                     assessment={assessment}
-                    assessmentTypeId={assessmentTypeId}
+                    assessmentTypeId={assessmentType.id}
                     buttonType="icon"
                 />
             )}
@@ -121,11 +130,16 @@ function AssessmentActions({
 // Column definitions
 export function columns({
     assessmentType,
+    collections,
     session
 }: {
     readonly assessmentType: AssessmentType,
+    readonly collections: AssessmentCollection[],
     readonly session: Session | null
-}): ColumnDef<Assessment & { assessmentUser: (AssessmentUser & { user: User })[] }>[] {
+}): ColumnDef<Assessment & {
+    assessmentParts: AssessmentPart[],
+    assessmentUser: (AssessmentUser & { user: User })[]
+}>[] {
     return (
         [
             {
@@ -202,9 +216,9 @@ export function columns({
                 cell: ({ row }) =>
                     <AssessmentActions
                         assessment={row.original}
-                        assessmentTypeId={assessmentType.id}
+                        assessmentType={assessmentType}
+                        collections={collections}
                         session={session}
-                        assessmentUsers={row.original.assessmentUser}
                     />,
             },
         ]

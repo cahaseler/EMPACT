@@ -35,18 +35,19 @@ model SystemRole {
 
 // Represents a specific assessment being done
 model Assessment {
-    id                     Int                      @id() @default(autoincrement())
+    id                     Int                       @id() @default(autoincrement())
     projectId              String //A unique identifier for the project that this assessment belongs to, for example a PARSID
     name                   String
     location               String
-    description            String                   @db.VarChar(Max)
+    description            String                    @db.VarChar(Max)
     status                 String
     completedDate          DateTime?
+    finalizedDates         AssessmentFinalizedDate[]
     assessmentParts        AssessmentPart[]
     assessmentAttributes   AssessmentAttribute[]
     assessmentUserGroup    AssessmentUserGroup[]
     assessmentUser         AssessmentUser[]
-    assessmentCollection   AssessmentCollection?    @relation(fields: [assessmentCollectionId], references: [id])
+    assessmentCollection   AssessmentCollection?     @relation(fields: [assessmentCollectionId], references: [id])
     assessmentCollectionId Int?
     scoreSummaries         ScoreSummary[]
     assessmentUserResponse AssessmentUserResponse[]
@@ -55,14 +56,16 @@ model Assessment {
 // Represents a part of a specific assessment being done
 // Parts of an assessment can be activated/submitted separately
 model AssessmentPart {
-    id             Int              @id() @default(autoincrement())
+    id             Int                           @id() @default(autoincrement())
     status         String
     date           DateTime
-    assessment     Assessment       @relation(fields: [assessmentId], references: [id])
+    finalizedDates AssessmentPartFinalizedDate[]
+    assessment     Assessment                    @relation(fields: [assessmentId], references: [id])
     assessmentUser AssessmentUser[]
     partId         Int
-    part           Part             @relation(fields: [partId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    part           Part                          @relation(fields: [partId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     assessmentId   Int
+    scoreSummaries ScoreSummary[]
 
     @@unique([assessmentId, partId])
 }
@@ -78,13 +81,32 @@ model AssessmentAttribute {
     @@unique([assessmentId, attributeId])
 }
 
+// To keep track of when an assessment was finalized/re-finalized
+model AssessmentFinalizedDate {
+    id           Int        @id() @default(autoincrement())
+    date         DateTime
+    assessmentId Int
+    assessment   Assessment @relation(fields: [assessmentId], references: [id])
+}
+
+// To keep track of when an assessment part was finalized/re-finalized
+model AssessmentPartFinalizedDate {
+    id               Int            @id() @default(autoincrement())
+    date             DateTime
+    assessmentPartId Int
+    assessmentPart   AssessmentPart @relation(fields: [assessmentPartId], references: [id])
+}
+
 // Final / total scores for an assessment. Depending on the type of assessment, there may be multiple. For example, Environment and Maturity for IP2M METRR scores.
 model ScoreSummary {
-    id           Int         @id() @default(autoincrement())
-    type         String
-    score        Int
-    assessment   Assessment? @relation(fields: [assessmentId], references: [id])
-    assessmentId Int?
+    id                    Int                 @id() @default(autoincrement())
+    score                 Int
+    assessment            Assessment          @relation(fields: [assessmentId], references: [id])
+    assessmentId          Int
+    assessmentPart        AssessmentPart      @relation(fields: [assessmentPartId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentPartId      Int
+    assessmentUserGroup   AssessmentUserGroup @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentUserGroupId Int
 }
 
 // A collection of assessments that might be run at the same time, potentially with different groups of users
@@ -114,12 +136,14 @@ model AssessmentCollectionUser {
 // Groups of users that are assigned to an assessment
 // Different groups can have access to the assessment at different times
 model AssessmentUserGroup {
-    id             Int              @id() @default(autoincrement())
-    name           String
-    assessment     Assessment       @relation(fields: [assessmentId], references: [id])
-    assessmentUser AssessmentUser[]
-    status         String
-    assessmentId   Int
+    id                      Int                      @id() @default(autoincrement())
+    name                    String
+    assessment              Assessment               @relation(fields: [assessmentId], references: [id])
+    assessmentUser          AssessmentUser[]
+    status                  String
+    assessmentId            Int
+    assessmentUserResponses AssessmentUserResponse[]
+    scoreSummaries          ScoreSummary[]
 }
 
 // Users that are assigned to an assessment
@@ -205,18 +229,20 @@ model Level {
 
 // The actual responses to the specific survey questions
 model AssessmentUserResponse {
-    id           Int        @id() @default(autoincrement())
-    user         User       @relation(fields: [userId], references: [id])
-    userId       Int
-    assessment   Assessment @relation(fields: [assessmentId], references: [id])
-    assessmentId Int
-    attribute    Attribute  @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    attributeId  String
-    level        Level      @relation(fields: [levelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    levelId      Int
-    notes        String     @db.VarChar(Max)
+    id                    Int                 @id() @default(autoincrement())
+    user                  User                @relation(fields: [userId], references: [id])
+    userId                Int
+    assessment            Assessment          @relation(fields: [assessmentId], references: [id])
+    assessmentId          Int
+    assessmentUserGroup   AssessmentUserGroup @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentUserGroupId Int
+    attribute             Attribute           @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    attributeId           String
+    level                 Level               @relation(fields: [levelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    levelId               Int
+    notes                 String              @db.VarChar(Max)
 
-    @@unique([assessmentId, userId, attributeId])
+    @@unique([assessmentId, userId, assessmentUserGroupId, attributeId])
 }
 
 // Settings for the system

@@ -11,7 +11,9 @@ import {
   AssessmentAttribute,
   AssessmentCollection,
   AssessmentCollectionUser,
+  AssessmentFinalizedDate,
   AssessmentPart,
+  AssessmentPartFinalizedDate,
   AssessmentUser,
   AssessmentUserGroup,
   AssessmentUserResponse
@@ -24,21 +26,28 @@ type BatchPayload = {
 }
 
 type NewAssessmentAttribute = {
-  assessmentId: number;
-  attributeId: string;
+  assessmentId: number
+  attributeId: string
 }
 
 type NewAssessmentCollectionUser = {
-  role: string;
-  assessmentCollectionId: number;
-  userId: number;
+  role: string
+  assessmentCollectionId: number
+  userId: number
 }
 
 type NewAssessmentUser = {
-  role: string;
-  userId: number;
-  assessmentId: number;
-  assessmentUserGroupId: number | null;
+  role: string
+  userId: number
+  assessmentId: number
+  assessmentUserGroupId: number | null
+}
+
+type NewScoreSummary = {
+  score: number
+  assessmentId: number
+  assessmentPartId: number
+  assessmentUserGroupId: number
 }
 
 export async function createAssessmentCollection(
@@ -114,8 +123,10 @@ export async function updateAssessment(
   name: string,
   status: string,
   location: string,
-  description: string
+  description: string,
+  completedDate?: Date,
 ): Promise<Assessment> {
+  const date = completedDate ? completedDate : null
   return await assessment.update({
     where: { id: assessmentId },
     data: {
@@ -125,6 +136,7 @@ export async function updateAssessment(
       status,
       location,
       description,
+      completedDate: date
     },
   })
 }
@@ -268,16 +280,74 @@ export async function deleteAssessmentUser(
   return await assessmentUser.delete_({ where: { id: assessmentUserId } })
 }
 
+export async function updateAssessmentUserResponsesGroupId(
+  assessmentId: number,
+  userId: number,
+  assessmentUserGroupId: number,
+): Promise<BatchPayload> {
+  return await db.assessmentUserResponse.updateMany({
+    where: {
+      AND: {
+        assessmentId,
+        userId
+      }
+    },
+    data: { assessmentUserGroupId },
+  })
+}
+
 export async function upsertAssessmentUserResponse(
   assessmentId: number,
   userId: number,
+  assessmentUserGroupId: number,
   attributeId: string,
   levelId: number,
   notes: string
 ): Promise<AssessmentUserResponse> {
   return await assessmentUserResponse.upsert({
-    where: { assessmentId_userId_attributeId: { assessmentId, userId, attributeId } },
-    create: { assessmentId, userId, attributeId, levelId, notes },
-    update: { assessmentId, userId, attributeId, levelId, notes },
+    where: {
+      assessmentId_userId_assessmentUserGroupId_attributeId: {
+        assessmentId,
+        userId,
+        assessmentUserGroupId,
+        attributeId
+      }
+    },
+    create: { assessmentId, userId, assessmentUserGroupId, attributeId, levelId, notes },
+    update: { levelId, notes },
+  })
+}
+
+export async function createScoreSummaries(
+  scoreSummaries: NewScoreSummary[]
+): Promise<BatchPayload> {
+  return await db.scoreSummary.createMany({ data: scoreSummaries })
+}
+
+export async function deleteScoreSummaries(
+  assessmentPartId: number
+): Promise<BatchPayload> {
+  return await db.scoreSummary.deleteMany({ where: { assessmentPartId } })
+}
+
+export async function createAssessmentFinalizedDate(
+  assessmentId: number
+): Promise<AssessmentFinalizedDate> {
+  return await db.assessmentFinalizedDate.create({
+    data: {
+      assessmentId,
+      date: new Date()
+    }
+  })
+}
+
+export async function createAssessmentPartFinalizedDate(
+  assessmentPartId: number
+): Promise<AssessmentPartFinalizedDate> {
+  return await db.assessmentPartFinalizedDate.create({
+    data: {
+      assessmentPartId,
+      date: new Date()
+    }
   })
 }

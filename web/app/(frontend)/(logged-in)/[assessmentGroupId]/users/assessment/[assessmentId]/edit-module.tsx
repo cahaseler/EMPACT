@@ -38,7 +38,10 @@ import {
     Permission,
     User
 } from "@/prisma/mssql/generated/client"
-import { updateAssessmentUser } from "../../../../utils/dataActions"
+import {
+    updateAssessmentUser,
+    updateAssessmentUserResponsesGroupId
+} from "../../../../utils/dataActions"
 
 export default function EditModule({
     assessmentUser,
@@ -100,11 +103,23 @@ export default function EditModule({
             partIds,
             permissionIds
         ).then(() => {
-            setIsEditDialogOpen(false)
-            setIsUpdating(false)
-            router.refresh()
-            toast({
-                title: "Assessment user updated successfully.",
+            updateAssessmentUserResponsesGroupId(
+                assessmentUser.assessmentId,
+                assessmentUser.userId,
+                groupId || groups[0]?.id || 0
+            ).then(() => {
+                setIsEditDialogOpen(false)
+                setIsUpdating(false)
+                router.refresh()
+                toast({
+                    title: "Assessment user updated successfully.",
+                })
+            }).catch(error => {
+                setIsEditDialogOpen(false)
+                setIsUpdating(false)
+                toast({
+                    title: `Error updating assessment user: ${error}`
+                })
             })
         }).catch(error => {
             setIsEditDialogOpen(false)
@@ -206,12 +221,10 @@ export default function EditModule({
                                         onCheckedChange={(checked) => {
                                             if (checked) {
                                                 setShouldFacParticipate(true)
-                                                setGroupId(groups?.[0]?.id ?? null) // Safely access id, fallback to null
                                                 if (partsToParticipate.length === 1)
                                                     setSelectedParts(partsToParticipate?.[0]?.id ? [partsToParticipate[0].id] : []) // Safely access id, fallback to empty array
                                             } else {
                                                 setShouldFacParticipate(false)
-                                                setGroupId(null)
                                                 if (partsToParticipate.length === 1) setSelectedParts([])
                                             }
                                         }}
@@ -307,8 +320,7 @@ export default function EditModule({
                             onClick={handleUpdateUser}
                             disabled={
                                 isUpdating ||
-                                ((role === "Participant" || shouldFacParticipate) &&
-                                    groupId === null)
+                                (role === "Participant" && groupId === null)
                             }
                         >
                             {isUpdating && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save Changes

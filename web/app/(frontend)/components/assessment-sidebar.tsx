@@ -141,20 +141,27 @@ export function AssessmentSidebar({
                             const aId = a.id.replace(".", "");
                             const bId = b.id.replace(".", "");
 
-                            const aPart1 = aId.slice(1);
-                            const bPart1 = bId.slice(1);
-                            const aPart2 = aId.slice(0, 1);
-                            const bPart2 = bId.slice(0, 1);
+                            const regex = /(\d+)|(\D+)/g;
+                            const aParts = aId.match(regex);
+                            const bParts = bId.match(regex);
 
-                            if (!isNaN(parseInt(aPart2, 10)) && !isNaN(parseInt(bPart2, 10))) {
-                              if (aPart1 < bPart1) return -1;
-                              if (aPart1 > bPart1) return 1;
-                              return parseInt(aPart2, 10) - parseInt(bPart2, 10);
-                            } else {
-                              if (aPart2 < bPart2) return -1;
-                              if (aPart2 > bPart2) return 1;
-                              return parseInt(aPart1, 10) - parseInt(bPart1, 10);
+                            if (aParts && bParts) {
+                              for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+                                const aPart = aParts[i] || "";
+                                const bPart = bParts[i] || "";
+
+                                if (/\d/.test(aPart) && /\d/.test(bPart)) {
+                                  const aNum = parseInt(aPart, 10);
+                                  const bNum = parseInt(bPart, 10);
+                                  if (aNum !== bNum) {
+                                    return aNum - bNum;
+                                  }
+                                } else if (aPart !== bPart) {
+                                  return aPart.localeCompare(bPart);
+                                }
+                              }
                             }
+                            return 0;
                           });
                           const sectionAttributeIds = sectionAttributesInAssessment.map(
                             attribute => attribute.id

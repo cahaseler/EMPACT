@@ -12,10 +12,16 @@ import {
 import {
   canViewUsers,
   isAdmin,
+  isCollectionManager,
   isLeadForAssessment,
   isManagerForCollection,
+  viewableCollections
 } from "../../../utils/permissions"
+
+import ArchiveModule from "../archive-module"
 import AssessmentContent from "./assessment"
+import EditModule from "../edit-module"
+import SubmitModule from "../submit-module"
 
 export default async function Page(
   props: Readonly<{
@@ -27,6 +33,7 @@ export default async function Page(
 
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const collections = await viewableCollections(session, params.assessmentGroupId)
   const parts = await fetchAssessmentParts(params.assessmentId)
   const assessmentUser = session?.user?.assessmentUser.find(
     (assessmentUser) =>
@@ -35,20 +42,33 @@ export default async function Page(
   const permissions = assessmentUser?.permissions
   const group = await fetchAssessmentUserGroup(assessmentUser?.assessmentUserGroupId)
 
-  const canEdit =
-    isAdmin(session) ||
-    isManagerForCollection(session, assessment?.assessmentCollectionId) ||
-    isLeadForAssessment(session, params.assessmentId) ||
-    permissions?.find((permission) => permission.name === "Edit assessment") !==
-    undefined
-
   if (assessmentType && assessment) {
+
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
         name: `${assessmentType.name} Assessments`,
       },
     ]
+
+    const canEdit =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, params.assessmentId) ||
+      permissions?.find((permission) => permission.name === "Edit assessment") !==
+      undefined
+    const canEditCollection = isAdmin(session) || isCollectionManager(session)
+    const canEditStatus =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, params.assessmentId)
+    const canArchive =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      permissions?.find(
+        (permission) => permission.name === "Archive assessment"
+      ) !== undefined
+
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -58,27 +78,43 @@ export default async function Page(
               <h1 className="text-3xl font-bold tracking-tighter">
                 {assessment.name}
               </h1>
-              <div className="flex flex-row space-x-2">
-                {canViewUsers(session) && (
-                  <div>
-                    <Link
-                      href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
-                      prefetch={false}
-                    >
-                      <Button>Manage Assessment Users</Button>
-                    </Link>
-                  </div>
-                )}
-                {canEdit && (
-                  <div>
-                    <Link
-                      href={`/${assessmentType.id}/assessments/${assessment.id}/edit-assessment`}
-                      prefetch={false}
-                    >
-                      <Button>Edit Assessment</Button>
-                    </Link>
-                  </div>
-                )}
+              <div className="flex flex-col space-y-2">
+                <div className="flex flex-row space-x-2">
+                  {canViewUsers(session) && (
+                    <div>
+                      <Link
+                        href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
+                        prefetch={false}
+                      >
+                        <Button>Manage Assessment Users</Button>
+                      </Link>
+                    </div>
+                  )}
+                  {canEdit && (
+                    <div>
+                      <EditModule
+                        assessmentType={assessmentType}
+                        assessment={assessment}
+                        assessmentCollections={collections}
+                        canEditCollection={canEditCollection}
+                        canEditStatus={canEditStatus}
+                        buttonType="default"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-row space-x-2 sm:justify-end">
+                  {canEditStatus &&
+                    <SubmitModule assessment={assessment} buttonType="default" />
+                  }
+                  {canArchive &&
+                    <ArchiveModule
+                      assessment={assessment}
+                      assessmentTypeId={assessmentType.id}
+                      buttonType="default"
+                    />
+                  }
+                </div>
               </div>
             </div>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">

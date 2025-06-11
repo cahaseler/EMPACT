@@ -54,7 +54,7 @@ export default function DataTable({
         <TableBody>
           {users.map((user: AssessmentCollectionUser & { user: User }) => (
             <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
+              <TableCell>{user.user.id}</TableCell>
               <TableCell>
                 {user.user.lastName}, {user.user.firstName}
               </TableCell>

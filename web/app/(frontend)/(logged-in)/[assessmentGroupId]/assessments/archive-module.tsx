@@ -54,15 +54,27 @@ export default function ArchiveModule({
 
   return assessment.status !== "Active" ? (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button size={buttonType}>
-          {buttonType === "icon" ? (
-            <Archive className="w-5 h-5 text-white" />
-          ) : (
-            "Archive Assessment"
-          )}
-        </Button>
-      </AlertDialogTrigger>
+      {buttonType === "icon" &&
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon">
+                <Archive className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className="text-center">
+              Archive Assessment
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      }
+      {buttonType === "default" &&
+        <AlertDialogTrigger asChild>
+          <Button>
+            Archive Assessment
+          </Button>
+        </AlertDialogTrigger>
+      }
       <AlertDialogPortal>
         <AlertDialogOverlay />
         <AlertDialogContent>
