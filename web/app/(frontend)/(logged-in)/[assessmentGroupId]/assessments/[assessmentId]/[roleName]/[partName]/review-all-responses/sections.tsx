@@ -2,6 +2,7 @@
 
 import {
   AssessmentAttribute,
+  AssessmentPart,
   AssessmentUserResponse,
   Level,
   Part,
@@ -31,7 +32,14 @@ export default function Sections({
 }: {
   readonly assessmentTypeId: number
   readonly assessmentId: number
-  readonly part: Part & { sections: (Section & { attributes: (Attribute & { levels: Level[] })[] })[] }
+  readonly part: Part & {
+    sections: (Section & {
+      attributes: (Attribute & {
+        levels: Level[],
+        section: Section & { part: Part & { assessmentPart: AssessmentPart[] } }
+      })[]
+    })[]
+  }
   readonly assessmentAttributes: AssessmentAttribute[]
   readonly userResponses: AssessmentUserResponse[]
 }) {
@@ -54,7 +62,7 @@ export default function Sections({
         defaultValue={part?.sections[0]?.name}
         className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
       >
-        {part.sections.map((section: Section & { attributes: (Attribute & { levels: Level[] })[] }) => {
+        {part.sections.map((section) => {
           const sectionAttributesInAssessment = section.attributes.filter(
             attribute => assessmentAttributeIds.includes(attribute.id)
           )

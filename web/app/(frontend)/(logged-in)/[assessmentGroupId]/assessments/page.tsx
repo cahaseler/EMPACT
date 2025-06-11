@@ -7,6 +7,7 @@ import {
   isAdmin,
   isCollectionManager,
   viewableAssessments,
+  viewableCollections
 } from "../../utils/permissions"
 import AssessmentsDataTable from "./data-table"
 
@@ -17,6 +18,10 @@ export default async function Page(
   const session = await auth()
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const collections = await viewableCollections(
+    session,
+    params.assessmentGroupId
+  )
   const assessments = await viewableAssessments(
     session,
     params.assessmentGroupId
@@ -63,6 +68,7 @@ export default async function Page(
             <AssessmentsDataTable
               assessments={nonArchivedAssessments}
               assessmentType={assessmentType}
+              collections={collections}
               session={session}
             />
           </div>

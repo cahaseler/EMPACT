@@ -6,7 +6,6 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import {
   fetchAssessment,
   fetchAssessmentUsers,
-  fetchAssessmentUserGroup,
   fetchAssessmentType,
   fetchPart,
 } from "../../../../../utils/dataFetchers"
@@ -70,7 +69,7 @@ export default async function RootLayout(
 
     if (part) {
       const currentAssessmentPart = assessment.assessmentParts.find((p) => p.partId === part.id)
-      const viewableStatuses = ["Active", "Inactive", "Submitted", "Final"]
+      const viewableStatuses = ["Active", "Final"]
 
       const canViewAsFac =
         isAdmin(session) ||
@@ -82,23 +81,18 @@ export default async function RootLayout(
         params.assessmentId,
         part.id
       )
-      const currentAssessmentUser = session?.user?.assessmentUser?.find(
-        (uc) => uc.assessmentId === assessment.id
-      )
-      const currentAssessmentGroup = await fetchAssessmentUserGroup(
-        currentAssessmentUser?.assessmentUserGroupId
-      )
 
       const facAuthorized = params.roleName === "Facilitator" && canViewAsFac
       const participantAuthorized =
         params.roleName === "Participant" &&
-        canViewAsParticipant &&
-        currentAssessmentGroup?.status === "Active"
+        canViewAsParticipant
 
       if (
-        (facAuthorized || participantAuthorized) &&
-        currentAssessmentPart &&
-        viewableStatuses.includes(currentAssessmentPart.status)
+        facAuthorized || (
+          participantAuthorized &&
+          currentAssessmentPart &&
+          viewableStatuses.includes(currentAssessmentPart.status)
+        )
       ) {
         return (
           <SidebarProvider defaultOpen={false}>

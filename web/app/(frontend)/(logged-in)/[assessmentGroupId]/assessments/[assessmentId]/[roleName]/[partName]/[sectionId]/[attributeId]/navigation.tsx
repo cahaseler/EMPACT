@@ -14,14 +14,14 @@ export default function Navigation({
   urlHead,
   prevAttribute,
   nextAttribute,
-  isParticipant,
+  isParticipating,
   userResponses,
   canReview
 }: {
   urlHead: string,
   prevAttribute: Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null,
   nextAttribute: Attribute & { section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } | null,
-  isParticipant: boolean,
+  isParticipating: boolean,
   userResponses: (AssessmentUserResponse & { user?: User })[]
   canReview: boolean
 }) {
@@ -39,7 +39,7 @@ export default function Navigation({
         }
         {nextAttribute ?
           (
-            isParticipant && userResponses.length === 0 ?
+            isParticipating && userResponses.length === 0 ?
               <Button disabled={true}>
                 Next
               </Button>
@@ -50,7 +50,7 @@ export default function Navigation({
                 </Button>
               </Link>
           ) : (
-            isParticipant && (
+            isParticipating && (
               canReview ?
                 <Link href={`${urlHead}/review-all-responses`}>
                   <Button>

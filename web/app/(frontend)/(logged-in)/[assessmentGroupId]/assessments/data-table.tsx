@@ -6,19 +6,25 @@ import { DataTable } from "@/components/ui/data-table/data-table"
 import {
   AssessmentType,
   Assessment,
+  AssessmentCollection,
+  AssessmentPart,
   AssessmentUser,
   User
 } from "@/prisma/mssql/generated/client"
 import { columns } from "./columns"
-import { TrendingUpDown } from "lucide-react"
 
 export default function AssessmentsDataTable({
   assessments,
   assessmentType,
+  collections,
   session,
 }: Readonly<{
-  assessments: (Assessment & { assessmentUser: (AssessmentUser & { user: User })[] })[]
+  assessments: (Assessment & {
+    assessmentParts: AssessmentPart[],
+    assessmentUser: (AssessmentUser & { user: User })[]
+  })[]
   assessmentType: AssessmentType
+  collections: AssessmentCollection[]
   session: Session | null
 }>) {
   // Define searchable and filterable columns
@@ -69,7 +75,7 @@ export default function AssessmentsDataTable({
   return (
     <div className="space-y-4">
       <DataTable
-        columns={columns({ assessmentType, session })}
+        columns={columns({ assessmentType, collections, session })}
         data={assessments}
         selectable={false}
         searchableColumns={searchableColumns}

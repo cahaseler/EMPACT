@@ -12,11 +12,14 @@ import {
 } from "@/components/ui/table"
 
 import {
+  AssessmentPart,
   AssessmentUserResponse,
   Attribute,
   Level,
-  Part
+  Part,
+  Section
 } from "@/prisma/mssql/generated/client"
+import { sortAttributes } from "../../../../../../utils/dataCalculations"
 
 export default function DataTable({
   part,
@@ -26,10 +29,16 @@ export default function DataTable({
 }: Readonly<{
   part: Part,
   urlHead: string,
-  attributes: (Attribute & { levels: Level[] })[],
+  attributes: (Attribute & {
+    levels: Level[],
+    section: Section & { part: Part & { assessmentPart: AssessmentPart[] } }
+  })[],
   userResponses: AssessmentUserResponse[],
 }>) {
+  const sortedAttributes = sortAttributes(attributes)
+
   const router = useRouter()
+
   return (
     <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
       <Table className="dark:bg-transparent">
@@ -41,7 +50,7 @@ export default function DataTable({
           </TableRow>
         </TableHeader>
         <TableBody className="cursor-pointer">
-          {attributes.map(
+          {sortedAttributes.map(
             (attribute: Attribute & { levels: Level[] }, key: number) => {
               const attributeResponses = userResponses.filter(
                 (userResponse: AssessmentUserResponse) => userResponse.attributeId === attribute.id

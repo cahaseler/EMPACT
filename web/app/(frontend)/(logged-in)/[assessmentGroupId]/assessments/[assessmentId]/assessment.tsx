@@ -50,7 +50,7 @@ export default function AssessmentContent({
         const canEnterAsParticipant = canUserParticipateInPart(
           session,
           assessment.id.toString(),
-          part.id
+          part.partId
         )
         return (
           <Card className="w-auto" key={key}>
@@ -67,24 +67,18 @@ export default function AssessmentContent({
                 </CardDescription>
               </div>
               <div className="flex flex-col sm:flex-row items-center sm:space-x-2 max-sm:space-y-2 justify-start">
-                {canEnterAsFac && (
-                  part.status === "Active" ? (
-                    <Link
-                      href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
-                      prefetch={false}
-                    >
-                      <Button variant="secondary">
-                        Enter as Facilitator
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button variant="secondary" disabled>
+                {canEnterAsFac &&
+                  <Link
+                    href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.part.name}`}
+                    prefetch={false}
+                  >
+                    <Button variant="secondary">
                       Enter as Facilitator
                     </Button>
-                  )
-                )}
+                  </Link>
+                }
                 {canEnterAsParticipant && (
-                  part.status === "Active" && group?.status === "Active" ? (
+                  part.status === "Active" ? (
                     <Link
                       href={`/${assessmentType.id}/assessments/${assessment.id}/Participant/${part.part.name}`}
                       prefetch={false}

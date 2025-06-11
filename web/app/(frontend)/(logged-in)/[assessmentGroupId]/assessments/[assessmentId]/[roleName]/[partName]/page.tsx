@@ -1,13 +1,23 @@
+import Link from "next/link"
+
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import { auth } from "@/auth"
+import { Button } from "@/components/ui/button"
 import {
   fetchAssessment,
   fetchAssessmentType,
   fetchAssessmentUsers,
   fetchPart,
 } from "../../../../../utils/dataFetchers"
-import { viewableResponses } from "../../../../../utils/permissions"
+import {
+  isAdmin,
+  isLeadForAssessment,
+  isManagerForCollection,
+  viewableResponses
+} from "../../../../../utils/permissions"
+
 import PartContent from "./part"
+import SubmitModule from "./submit-module"
 
 export default async function Page(
   props: Readonly<{
@@ -35,6 +45,7 @@ export default async function Page(
   )
 
   if (assessmentType && assessment) {
+
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
@@ -45,6 +56,22 @@ export default async function Page(
         name: assessment.name,
       },
     ]
+
+    const permissions = session?.user?.assessmentUser.find(
+      (assessmentUser) => assessmentUser.assessmentId === assessment.id
+    )?.permissions
+    const canEdit =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, params.assessmentId) ||
+      permissions?.find(
+        (permission) => permission.name === "Edit assessment"
+      ) !== undefined
+    const canSubmit =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, params.assessmentId)
+
     if (part) {
       return (
         <div className="w-full max-w-4xl mx-auto">
@@ -52,15 +79,33 @@ export default async function Page(
             <div className="space-y-4 max-lg:ml-2">
               <Breadcrumbs links={links} currentPage={`${part.name} Assessment`} />
               <div className="flex flex-row justify-between">
-                <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter">
-                    {part.name} Assessment
-                  </h1>
-                  <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-                    {part.description}
-                  </p>
+                <h1 className="text-3xl font-bold tracking-tighter">
+                  {part.name} Assessment
+                </h1>
+                <div className="flex flex-row space-x-2">
+                  {!isParticipant && canEdit &&
+                    <div>
+                      <Link
+                        href={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.name}/edit-assessment-part`}
+                        prefetch={false}
+                      >
+                        <Button>Edit Assessment Part</Button>
+                      </Link>
+                    </div>
+                  }
+                  {!isParticipant && canSubmit &&
+                    <div>
+                      <SubmitModule
+                        urlHead={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.name}`}
+                        assessmentPartName={part.name}
+                      />
+                    </div>
+                  }
                 </div>
               </div>
+              <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
+                {part.description}
+              </p>
             </div>
           </section>
           <section className="mb-16">

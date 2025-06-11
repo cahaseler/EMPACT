@@ -16,7 +16,12 @@ import {
   fetchPreviousAttribute,
   fetchSection
 } from "../../../../../../../utils/dataFetchers"
-import { viewableAttributeResponses, viewableResponses } from "../../../../../../../utils/permissions"
+import {
+  isFacForAssessment,
+  isLeadForAssessment,
+  viewableAttributeResponses,
+  viewableResponses
+} from "../../../../../../../utils/permissions"
 
 import AttributeLevels from "./attributeLevels"
 import AttributeResponseTable from "./attributeResponseTable"
@@ -64,7 +69,8 @@ export default async function Page(
 
     const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
     const groups = await fetchAssessmentUserGroups(params.assessmentId)
-    const isParticipant = params.roleName === "Participant"
+    const isParticipating = params.roleName === "Participant"
+    const isFacilitator = isFacForAssessment(session, params.assessmentId) || isLeadForAssessment(session, params.assessmentId)
     const allResponses = await viewableResponses(
       session,
       params.assessmentId,
@@ -141,7 +147,7 @@ export default async function Page(
           <section className="mb-8">
             <div className="space-y-4 max-lg:ml-2">
               <Breadcrumbs links={links} currentPage={part.attributeType + " " + attributeIdDisplay} />
-              <div className={isParticipant ? "space-y-4" : "space-y-6"}>
+              <div className={isParticipating ? "space-y-4" : "space-y-6"}>
                 <h1
                   className="text-3xl font-bold tracking-tighter"
                   dangerouslySetInnerHTML={{
@@ -166,18 +172,20 @@ export default async function Page(
             </div >
           </section >
           <AttributeLevels levels={levels} />
-          {isParticipant &&
+          {isParticipating &&
             <AttributeUserResponse
               assessment={assessment}
+              groups={groups}
               userId={session?.user?.id}
               attributeId={assessmentAttribute.attributeId}
               levels={levels}
-              userResponse={userResponses[0]}
+              userResponses={userResponses}
+              isFacilitator={isFacilitator}
             />
           }
           <Navigation
             urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
-            isParticipant={isParticipant}
+            isParticipating={isParticipating}
             userResponses={userResponses}
             prevAttribute={prevAttribute}
             nextAttribute={nextAttribute}

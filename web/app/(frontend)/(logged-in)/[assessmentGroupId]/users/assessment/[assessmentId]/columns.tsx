@@ -82,11 +82,12 @@ export function columns({
 }): ColumnDef<AssessmentUserWithUserInfo>[] {
     return [
         {
-            accessorKey: "id",
+            accessorFn: (row) => row.user.id,
+            id: "userId",
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title="User ID" />
             ),
-            cell: ({ row }) => <div>{row.getValue("id")}</div>,
+            cell: ({ row }) => <div>{row.getValue("userId")}</div>,
             enableHiding: false,
         },
         {

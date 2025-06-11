@@ -3,11 +3,16 @@ import { auth } from "@/auth"
 import {
   fetchAssessment,
   fetchAssessmentType,
+  fetchAssessmentUserGroups,
   fetchAttributes,
   fetchPart,
   fetchSection,
 } from "../../../../../../utils/dataFetchers"
-import { viewableResponses } from "../../../../../../utils/permissions"
+import {
+  isFacForAssessment,
+  isLeadForAssessment,
+  viewableResponses
+} from "../../../../../../utils/permissions"
 import DataTable from "./data-table"
 
 export default async function Page(
@@ -26,11 +31,13 @@ export default async function Page(
 
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const groups = await fetchAssessmentUserGroups(params.assessmentId)
   const part = await fetchPart(params.assessmentGroupId, params.partName)
   const section = await fetchSection(params.sectionId)
   const attributes = await fetchAttributes(params.sectionId)
 
-  const isParticipant = params.roleName === "Participant"
+  const isParticipating = params.roleName === "Participant"
+  const isFacilitator = isFacForAssessment(session, params.assessmentId) || isLeadForAssessment(session, params.assessmentId)
   const userResponses = await viewableResponses(
     session,
     params.assessmentId,
@@ -74,12 +81,14 @@ export default async function Page(
           <DataTable
             assessment={assessment}
             assessmentType={assessmentType}
+            groups={groups}
             role={params.roleName}
             part={part}
             section={section}
             attributes={attributes}
             userResponses={userResponses}
-            isParticipant={isParticipant}
+            isParticipating={isParticipating}
+            isFacilitator={isFacilitator}
           />
         </section>
       </div>
