@@ -181,7 +181,7 @@
     "@clerk/types" "^4.49.1"
     tslib "2.8.1"
 
-"@clerk/nextjs@^6.12.6":
+"@clerk/nextjs@6.12.7":
   version "6.12.7"
   resolved "https://registry.yarnpkg.com/@clerk/nextjs/-/nextjs-6.12.7.tgz#59241aa55d9dfd1d32c65e980aefffa07b193511"
   integrity sha512-r5/V2t3kqPSGhPRsOUQTO19qDnX7q/2ITJYE4R10ifaXjsiVvwr1+UncXT9hKVFAc7W4wCWOV/7LDphnIEt4jQ==
@@ -1638,7 +1638,7 @@
   dependencies:
     tslib "^2.8.0"
 
-"@tanstack/react-table@^8.21.2":
+"@tanstack/react-table@8.21.2":
   version "8.21.2"
   resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.21.2.tgz#6a7fce828b64547e33f4606ada8114db496007cc"
   integrity sha512-11tNlEDTdIhMJba2RBH+ecJ9l1zgS2kjmexDPAraulc8jeNA4xocSNeyzextT0XJyASil4XsCYlJmf5jEWAtYg==
@@ -1783,7 +1783,7 @@
   resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
 
-"@typescript-eslint/eslint-plugin@^8.27.0":
+"@typescript-eslint/eslint-plugin@8.27.0":
   version "8.27.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.27.0.tgz#fbef10802365832ee1d1bd5d2117dcec82727a72"
   integrity sha512-4henw4zkePi5p252c8ncBLzLce52SEUz2Ebj8faDnuUXz2UuHEONYcJ+G0oaCF+bYCWVZtrGzq3FD7YXetmnSA==
@@ -1798,6 +1798,17 @@
     natural-compare "^1.4.0"
     ts-api-utils "^2.0.1"
 
+"@typescript-eslint/parser@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.27.0.tgz#3f6beaa83934467eda34ae82ef04090014df8227"
+  integrity sha512-XGwIabPallYipmcOk45DpsBSgLC64A0yvdAkrwEzwZ2viqGqRUJ8eEYoPz0CWnutgAFbNMPdsGGvzjSmcWVlEA==
+  dependencies:
+    "@typescript-eslint/scope-manager" "8.27.0"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/typescript-estree" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
+    debug "^4.3.4"
+
 "@typescript-eslint/parser@^5.4.2 || ^6.0.0 || 7.0.0 - 7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-7.2.0.tgz#44356312aea8852a3a82deebdacd52ba614ec07a"
@@ -1807,17 +1818,6 @@
     "@typescript-eslint/types" "7.2.0"
     "@typescript-eslint/typescript-estree" "7.2.0"
     "@typescript-eslint/visitor-keys" "7.2.0"
-    debug "^4.3.4"
-
-"@typescript-eslint/parser@^8.27.0":
-  version "8.27.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.27.0.tgz#3f6beaa83934467eda34ae82ef04090014df8227"
-  integrity sha512-XGwIabPallYipmcOk45DpsBSgLC64A0yvdAkrwEzwZ2viqGqRUJ8eEYoPz0CWnutgAFbNMPdsGGvzjSmcWVlEA==
-  dependencies:
-    "@typescript-eslint/scope-manager" "8.27.0"
-    "@typescript-eslint/types" "8.27.0"
-    "@typescript-eslint/typescript-estree" "8.27.0"
-    "@typescript-eslint/visitor-keys" "8.27.0"
     debug "^4.3.4"
 
 "@typescript-eslint/scope-manager@7.2.0":
@@ -1997,7 +1997,7 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.5.0.tgz#5768c6bba4a27833a48a8a77e50eb01b520d0962"
   integrity sha512-wAvXp4k7jhioi4SebXW/yfzzYwsUCr9kIX4gCsUFKpCTUf8Mi7vScJXI3S+kupSUf0LbVHudR8qBbe2wFMSNUw==
 
-"@userback/react@^0.3.9":
+"@userback/react@0.3.9":
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/@userback/react/-/react-0.3.9.tgz#96d82b8b369117e5c353f6f279d395bf311c4793"
   integrity sha512-w4UwKY6DSI3KvgAGBl8ExTxb1eKYSokvkb64kiTd2zP2NaA+c3uftbi34j8ZH/Lm+RbsEXLVbHgM3B01vETrfA==
@@ -2036,7 +2036,7 @@ ag-grid-community@33.2.3:
   dependencies:
     ag-charts-types "11.2.3"
 
-ag-grid-react@^33.2.1:
+ag-grid-react@33.2.3:
   version "33.2.3"
   resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-33.2.3.tgz#b85ae769c7c67a0ec9e401518df7d082d509561a"
   integrity sha512-uljvrWKhaPjA+5AT5VuBtGUgIkaFMAWKcennC3gz1vWsmKS9zL8hZlGl7LjSalKHe6RTgBOTTMxGqXIy90zp+Q==
@@ -2532,7 +2532,7 @@ async@^3.2.3:
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz#1b0728e14929d51b85b449b7f06e27c1145e38ce"
   integrity sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==
 
-autoprefixer@^10.4.21:
+autoprefixer@10.4.21:
   version "10.4.21"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.21.tgz#77189468e7a8ad1d9a37fbc08efc9f480cf0a95d"
   integrity sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==
@@ -4770,7 +4770,7 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-lucide-react@^0.476.0:
+lucide-react@0.476.0:
   version "0.476.0"
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.476.0.tgz#a33354832ea85b2c3764faf09d85c9a9332f7f60"
   integrity sha512-x6cLTk8gahdUPje0hSgLN1/MgiJH+Xl90Xoxy9bkPAsMPOUiyRSKR4JCDPGVCEpyqnZXH3exFWNItcvra9WzUQ==
@@ -4922,7 +4922,7 @@ next-themes@0.3.0:
   resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.3.0.tgz#b4d2a866137a67d42564b07f3a3e720e2ff3871a"
   integrity sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==
 
-next@^15.3.0-canary.14:
+next@15.3.0-canary.17:
   version "15.3.0-canary.17"
   resolved "https://registry.yarnpkg.com/next/-/next-15.3.0-canary.17.tgz#df49526cc913a6a749019965474095c1f1c54fb5"
   integrity sha512-uTQPf+80W7n4ZZIStulH2NtXd7fvoWNNbBIXZrnhNXm0BYe9Vhuc2Ov8GS5NezRGZ7ifJdjND9Da+S1u8qdiAw==
@@ -5413,12 +5413,12 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier-plugin-organize-imports@^4.1.0:
+prettier-plugin-organize-imports@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/prettier-plugin-organize-imports/-/prettier-plugin-organize-imports-4.1.0.tgz#f3d3764046a8e7ba6491431158b9be6ffd83b90f"
   integrity sha512-5aWRdCgv645xaa58X8lOxzZoiHAldAPChljr/MT0crXVOWTZ+Svl4hIWlz+niYSlO6ikE5UXkN1JrRvIP2ut0A==
 
-prettier@^3.5.3:
+prettier@3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.5.3.tgz#4fc2ce0d657e7a02e602549f053b239cb7dfe1b5"
   integrity sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==
