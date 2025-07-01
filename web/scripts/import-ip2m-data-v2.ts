@@ -1,6 +1,7 @@
 import { PrismaClient } from '../prisma/mssql/generated/client'
 import * as XLSX from 'xlsx'
 import { parseArgs } from 'node:util'
+import sanitizeHtml from 'sanitize-html'
 
 const prisma = new PrismaClient({
   log: ['info', 'warn', 'error'],
@@ -348,15 +349,11 @@ function mapStatus(excelStatus: string): string {
 }
 
 function cleanHtml(html: string): string {
-  // Basic HTML tag removal
-  return html
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&rsquo;/g, "'")
-    .replace(/&ldquo;/g, '"')
-    .replace(/&rdquo;/g, '"')
-    .replace(/&amp;/g, '&')
-    .trim()
+  // Use sanitize-html to remove all HTML tags and attributes
+  return sanitizeHtml(html, {
+    allowedTags: [],
+    allowedAttributes: {}
+  }).trim()
 }
 
 main().catch(async (e) => {
