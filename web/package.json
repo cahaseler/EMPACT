@@ -31,7 +31,8 @@
     "test:ui:dev": "cross-env PLAYWRIGHT_SERVER_COMMAND=\"yarn dev\" playwright test --ui",
     "test:ci": "playwright test --reporter=list",
     "test:nobuild:ui": "playwright test --ui",
-    "test:nobuild": "playwright test"
+    "test:nobuild": "playwright test",
+    "import:ip2m": "npx tsx scripts/import-ip2m-data-v2.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.6",
@@ -117,7 +118,8 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "prisma-dbml-generator": "0.12.0",
     "prompt-confirm": "2.0.4",
-    "tailwindcss": "3.4.17"
+    "tailwindcss": "3.4.17",
+    "xlsx": "^0.18.5"
   },
   "pkg": {
     "scripts": ".next/standalone/**/*.*",
