@@ -16,9 +16,7 @@ export default async function Page(
   )
 
   if (assessmentType) {
-    const nonArchivedAssessments = assessments.filter(
-      assessment => assessment.status !== "Archived"
-    )
+    const finalizedAssessments = assessments.filter(assessment => assessment.status === "Final")
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -27,14 +25,14 @@ export default async function Page(
               {assessmentType.name} Reports
             </h1>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
-              Select an assessment from the list below to view its report.
+              Select an assessment from the list below to view its reports.
             </p>
           </div>
         </section>
         <section className="mb-16">
           <div className="space-y-4">
             <AssessmentsDataTable
-              assessments={nonArchivedAssessments}
+              assessments={finalizedAssessments}
               assessmentType={assessmentType}
             />
           </div>

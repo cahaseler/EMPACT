@@ -11,36 +11,12 @@ export default function AssessmentsDataTable({
   assessments: Assessment[]
   assessmentType: AssessmentType
 }>) {
-  // Define searchable and filterable columns
+
+  // Define searchable columns
   const searchableColumns = [
     {
       id: "name",
       title: "Name",
-    },
-  ]
-
-  const filterableColumns = [
-    {
-      id: "status",
-      title: "Assessment Status",
-      options: [
-        {
-          label: "Planned",
-          value: "Planned",
-        },
-        {
-          label: "Active",
-          value: "Active",
-        },
-        {
-          label: "Inactive",
-          value: "Inactive",
-        },
-        {
-          label: "Final",
-          value: "Final",
-        },
-      ],
     },
   ]
 
@@ -51,7 +27,6 @@ export default function AssessmentsDataTable({
         data={assessments}
         selectable={false}
         searchableColumns={searchableColumns}
-        filterableColumns={filterableColumns}
         urlHeader={`/${assessmentType.id}/reports`}
       />
     </div>

@@ -24,11 +24,11 @@ export default async function RootLayout(
     const links = [
       {
         url: `/${assessmentType.id}/reports`,
-        name: assessmentType.name,
+        name: `${assessmentType.name} Reports`,
       },
     ]
     if (assessment) {
-      children
+      return children
     }
     return <NotFound links={links} pageType="assessment" />
   }
