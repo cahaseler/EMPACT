@@ -93,6 +93,9 @@ export default async function Page(
                 assessmentUsers={assessmentUsers}
                 groups={groups}
                 assessmentAttributes={assessmentAttributesInPart}
+                urlHead={
+                  `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`
+                }
               />
             </section>
           </div>

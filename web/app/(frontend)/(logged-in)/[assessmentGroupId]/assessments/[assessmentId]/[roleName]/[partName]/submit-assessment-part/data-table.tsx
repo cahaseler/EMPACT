@@ -52,6 +52,7 @@ export default function DataTable({
     (assessmentUser: AssessmentUserWithResponses) => assessmentUser.user.assessmentUserResponse.some(
       (userResponse: AssessmentUserResponse & { level: Level }) => {
         return userResponse.assessmentId === assessmentUser.assessmentId &&
+          userResponse.assessmentUserGroupId === groupId &&
           attributeIds.includes(userResponse.attributeId)
       }
 

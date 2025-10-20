@@ -2,6 +2,8 @@ import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import {
   fetchAssessment,
   fetchAssessmentType,
+  fetchAssessmentUserGroups,
+  fetchScoreSummaries
 } from "../../../utils/dataFetchers"
 import AssessmentReport from "./report"
 
@@ -13,8 +15,10 @@ export default async function Page(
   const params = await props.params
   const assessment = await fetchAssessment(params.assessmentId)
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
+  const groups = await fetchAssessmentUserGroups(params.assessmentId)
+  const scores = await fetchScoreSummaries(params.assessmentId)
 
-  if (assessmentType && assessment) {
+  if (assessmentType && assessment && groups && scores) {
     const links = [
       {
         url: `/${assessmentType.id}/reports`,
@@ -27,12 +31,12 @@ export default async function Page(
           <div className="space-y-4 max-lg:ml-2">
             <Breadcrumbs
               links={links}
-              currentPage={`${assessment.name} Report`}
+              currentPage={`${assessment.name} Reports`}
             />
             <div className="flex flex-row justify-between">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter">
-                  {assessment.name} Report
+                  {assessment.name} Reports
                 </h1>
                 <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
                   {assessment.description}
@@ -42,7 +46,12 @@ export default async function Page(
           </div>
         </section>
         <section className="mb-16">
-          <AssessmentReport assessment={assessment} />
+          <AssessmentReport
+            assessmentId={assessment.id}
+            groups={groups}
+            scores={scores}
+            assessmentAttributes={assessment.assessmentAttributes}
+          />
         </section>
       </div>
     )

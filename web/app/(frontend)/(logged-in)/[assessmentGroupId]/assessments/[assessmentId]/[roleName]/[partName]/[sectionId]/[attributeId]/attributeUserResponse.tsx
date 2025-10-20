@@ -54,7 +54,6 @@ export default function AttributeUserResponse({
     !isFacilitator ? (assessmentUserGroupId || null) : (groups[0] ? groups[0].id : null)
   )
   const userResponse = userResponses.find((userResponse) => userResponse.assessmentUserGroupId === groupId)
-  const levelRef = useRef<HTMLSelectElement>(null)
   const [levelId, setLevelId] = useState<number | undefined>(userResponse?.levelId)
   const [notes, setNotes] = useState<string>(userResponse?.notes || "")
   const [saving, setSaving] = useState<boolean>(false)
@@ -76,7 +75,7 @@ export default function AttributeUserResponse({
         setSaving(false)
         router.refresh()
         toast({
-          title: "Response saved successfully.",
+          title: `Response for group ${groupId} saved successfully.`,
         })
       }).catch(error => {
         setSaving(false)
@@ -120,7 +119,7 @@ export default function AttributeUserResponse({
                 </SelectContent>
               </Select>
               <Label className="text-right">
-                User Group
+                User Group: {groupId}
               </Label>
             </div>
           </div>

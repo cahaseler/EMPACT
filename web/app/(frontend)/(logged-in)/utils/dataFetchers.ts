@@ -19,6 +19,7 @@ import {
   Level,
   Part,
   Permission,
+  ScoreSummary,
   Section,
   SystemRole,
   User,
@@ -604,4 +605,19 @@ export async function fetchNextAttribute(assessmentId: string, partName: string,
 
 export async function fetchLevels(attributeId: string): Promise<Level[]> {
   return await level.findMany({ where: { attributeId: attributeId } })
+}
+
+// *** SCORE SUMMARIES ***
+
+export async function fetchScoreSummaries(assessmentId: string): Promise<(ScoreSummary & { assessmentPart: AssessmentPart & { part: Part } })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.scoreSummary.findMany({
+    where: { assessmentId: idAsInteger },
+    include: { assessmentPart: { include: { part: true } } }
+  })
 }

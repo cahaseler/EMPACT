@@ -5,6 +5,7 @@ import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
 import {
   fetchAssessment,
+  fetchAssessmentPart,
   fetchAssessmentType,
   fetchAssessmentUsers,
   fetchPart,
@@ -73,6 +74,10 @@ export default async function Page(
       isLeadForAssessment(session, params.assessmentId)
 
     if (part) {
+
+      const assessmentPart = await fetchAssessmentPart(assessment.id, part.id)
+      const submittableStatuses = ["Active", "Inactive"]
+
       return (
         <div className="w-full max-w-4xl mx-auto">
           <section className="mb-8">
@@ -93,7 +98,7 @@ export default async function Page(
                       </Link>
                     </div>
                   }
-                  {!isParticipant && canSubmit &&
+                  {!isParticipant && canSubmit && submittableStatuses.includes(assessmentPart ? assessmentPart.status : "") &&
                     <div>
                       <SubmitModule
                         urlHead={`/${assessmentType.id}/assessments/${assessment.id}/Facilitator/${part.name}`}

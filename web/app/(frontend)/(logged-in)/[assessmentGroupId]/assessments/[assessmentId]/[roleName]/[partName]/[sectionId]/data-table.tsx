@@ -74,7 +74,7 @@ export default function DataTable({
 
   return (
     <div className="flex flex-col space-y-4">
-      {isFacilitator &&
+      {isFacilitator && role === "Participant" &&
         <div className="w-full flex flex-col items-end">
           <div className="flex flex-col space-y-2 w-1/3 sm:w-1/4">
             <Select

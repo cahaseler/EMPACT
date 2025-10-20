@@ -48,7 +48,7 @@ export default function SubmitModule({
       await createAssessmentFinalizedDate(assessment.id).then(() => {
         router.refresh()
         toast({
-          title: "Assessment submitted successfully.",
+          title: "Assessment finalized successfully.",
         })
       }).catch(error => {
         toast({

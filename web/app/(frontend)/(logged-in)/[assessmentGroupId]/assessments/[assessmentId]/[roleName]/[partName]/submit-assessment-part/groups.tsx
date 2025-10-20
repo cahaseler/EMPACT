@@ -55,6 +55,7 @@ export default function Groups({
   assessmentUsers,
   groups,
   assessmentAttributes,
+  urlHead
 }: {
   readonly assessmentId: number
   readonly assessmentPart: AssessmentPart
@@ -72,6 +73,7 @@ export default function Groups({
       section: Section & { part: Part & { assessmentPart: AssessmentPart[] } }
     }
   })[]
+  readonly urlHead: string
 }) {
   const attributesOfAssessmentAttributes = assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attribute)
 
@@ -102,7 +104,7 @@ export default function Groups({
     ).then(async () => {
       await createAssessmentPartFinalizedDate(assessmentPart.id).then(async () => {
         await createScoreSummaries(groupTotalScores).then(() => {
-          router.refresh()
+          router.push(urlHead)
           toast({
             title: "Assessment part finalized successfully.",
           })
