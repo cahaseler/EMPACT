@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button"
 
 import {
-  AssessmentAttribute,
   AssessmentPart,
   AssessmentUser,
   AssessmentUserGroup,
@@ -32,8 +31,6 @@ import {
 import { customChartColors } from "../../../../../components/chart-colors"
 import { Line } from "react-chartjs-2"
 
-import { sortAttributes } from "../../../../utils/dataCalculations"
-
 type Dataset = {
   groupName: string
   datapoints: {
@@ -46,7 +43,7 @@ type Dataset = {
 export default function PopulationDensity({
   assessmentId,
   groups,
-  assessmentAttributes
+  attributes
 }: Readonly<{
   assessmentId: number
   groups: (AssessmentUserGroup & {
@@ -59,27 +56,17 @@ export default function PopulationDensity({
       };
     })[]
   })[]
-  assessmentAttributes: (AssessmentAttribute & {
-    attribute: Attribute & {
-      levels: Level[],
-      section: Section & {
-        part: Part & {
-          assessmentPart: AssessmentPart[]
-        }
+  attributes: (Attribute & {
+    levels: Level[],
+    section: Section & {
+      part: Part & {
+        assessmentPart: AssessmentPart[]
       }
     }
   })[]
 }>) {
 
-  const attributesInEnvironment = sortAttributes(
-    assessmentAttributes.filter(
-      (assessmentAttribute) => assessmentAttribute.attribute.section.part.name === "Environment"
-    ).map(
-      (assessmentAttribute) => assessmentAttribute.attribute
-    )
-  )
-
-  const [currentAttribute, setCurrentAttribute] = useState(attributesInEnvironment[0])
+  const [currentAttribute, setCurrentAttribute] = useState(attributes[0])
 
   const maxLevelWeight = currentAttribute ? Math.max(...currentAttribute.levels.map(level => level.weight)) : 0
 
@@ -259,7 +246,7 @@ export default function PopulationDensity({
         <Line data={{ datasets }} options={options} />
         <h3 className="text-xl font-bold">Factors</h3>
         <div className="flex flex-row flex-wrap gap-4">
-          {attributesInEnvironment.map((attribute) => (
+          {attributes.map((attribute) => (
             <Button
               key={attribute.id}
               onClick={() => setCurrentAttribute(attribute)}

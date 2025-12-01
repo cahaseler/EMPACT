@@ -36,7 +36,7 @@ import { sortAttributes } from "../../../../utils/dataCalculations"
 export default function HeatMap({
   assessmentId,
   groups,
-  assessmentAttributes
+  attributes
 }: Readonly<{
   assessmentId: number
   groups: (AssessmentUserGroup & {
@@ -49,25 +49,15 @@ export default function HeatMap({
       };
     })[]
   })[]
-  assessmentAttributes: (AssessmentAttribute & {
-    attribute: Attribute & {
-      levels: Level[],
-      section: Section & {
-        part: Part & {
-          assessmentPart: AssessmentPart[]
-        }
+  attributes: (Attribute & {
+    levels: Level[],
+    section: Section & {
+      part: Part & {
+        assessmentPart: AssessmentPart[]
       }
     }
   })[]
 }>) {
-
-  const attributesInEnvironment = sortAttributes(
-    assessmentAttributes.filter(
-      (assessmentAttribute) => assessmentAttribute.attribute.section.part.name === "Environment"
-    ).map(
-      (assessmentAttribute) => assessmentAttribute.attribute
-    )
-  )
 
   const allAssessmentUsers = groups.flatMap(
     (group) => group.assessmentUser
@@ -90,7 +80,7 @@ export default function HeatMap({
             <TableHeader>
               <TableRow>
                 <TableHead className="sticky left-0 w-32 bg-white dark:bg-[#171537]" />
-                {attributesInEnvironment.map((attribute) => (
+                {attributes.map((attribute) => (
                   <TableHead key={attribute.id} className="w-14 text-center">
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
@@ -112,7 +102,7 @@ export default function HeatMap({
                   <TableHead className="sticky left-0 bg-white dark:bg-[#171537]">
                     {dataType === "ratings" ? "Rating" : "Score"} Average: {group.name}
                   </TableHead>
-                  {attributesInEnvironment.map((attribute) => {
+                  {attributes.map((attribute) => {
 
                     const groupAttributeResponses = group.assessmentUser.flatMap(
                       (assessmentUser) => assessmentUser.user.assessmentUserResponse
@@ -188,7 +178,7 @@ export default function HeatMap({
                 <TableHead className="font-bold sticky left-0 bg-white dark:bg-[#171537]">
                   {dataType === "ratings" ? "Rating" : "Score"} Average: Overall Total
                 </TableHead>
-                {attributesInEnvironment.map((attribute) => {
+                {attributes.map((attribute) => {
 
                   const attributeResponses = allAssessmentUsers.flatMap(
                     (assessmentUser) => assessmentUser.user.assessmentUserResponse

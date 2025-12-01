@@ -1,5 +1,6 @@
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import {
+  fetchAllResponsesForAssessment,
   fetchAssessment,
   fetchAssessmentType,
   fetchAssessmentUserGroups,
@@ -17,6 +18,7 @@ export default async function Page(
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const groups = await fetchAssessmentUserGroups(params.assessmentId)
   const scores = await fetchScoreSummaries(params.assessmentId)
+  const assessmentResponses = await fetchAllResponsesForAssessment(params.assessmentId)
 
   if (assessmentType && assessment && groups && scores) {
     const links = [
@@ -51,6 +53,7 @@ export default async function Page(
             groups={groups}
             scores={scores}
             assessmentAttributes={assessment.assessmentAttributes}
+            assessmentResponses={assessmentResponses}
           />
         </section>
       </div>
