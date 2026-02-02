@@ -74,12 +74,12 @@ export default async function Page(
         <section className="mb-8">
           <div className="space-y-4 max-lg:ml-2">
             <Breadcrumbs links={links} currentPage={assessment.name} />
-            <div className="flex flex-col max-sm:space-y-2 sm:flex-row justify-between">
+            <div className="flex flex-col items-center max-md:space-y-2 md:flex-row justify-between md:items-end">
               <h1 className="text-3xl font-bold tracking-tighter">
                 {assessment.name}
               </h1>
-              <div className="flex flex-col space-y-2">
-                <div className="flex flex-row space-x-2">
+              <div className="flex flex-col space-y-2 ml-2">
+                <div className="flex flex-row space-x-2 justify-center md:justify-end">
                   {canViewUsers(session) && (
                     <div>
                       <Link
@@ -103,8 +103,18 @@ export default async function Page(
                     </div>
                   )}
                 </div>
-                <div className="flex flex-row space-x-2 sm:justify-end">
+                <div className="flex flex-row space-x-2 justify-center md:justify-end">
                   {canEditStatus &&
+                    assessment.status === "Final" ?
+                    <div>
+                      <Link
+                        href={`/${assessmentType.id}/assessments/${assessment.id}/export-assessment-data`}
+                        prefetch={false}
+                      >
+                        <Button>Export Assessment Data</Button>
+                      </Link>
+                    </div>
+                    :
                     <SubmitModule assessment={assessment} buttonType="default" />
                   }
                   {canArchive &&

@@ -289,16 +289,31 @@ export async function fetchUserResponses(userId: string | undefined): Promise<As
 }
 
 export async function fetchAllResponsesForAssessment(
-  assessmentId: string
-): Promise<AssessmentUserResponse[]> {
+  assessmentId: string,
+): Promise<(AssessmentUserResponse & {
+  attribute: Attribute & {
+    section: Section & { part: Part }
+  },
+  user: User,
+  assessmentUserGroup: AssessmentUserGroup | null,
+  level: Level
+})[]> {
   // Since the id is coming from the url, it's a string, so we need to convert it to an integer
   const idAsInteger = parseInt(assessmentId, 10)
   // Technically, users could put anything into a URL, so we need to make sure it's a number
   if (isNaN(idAsInteger)) {
     return []
   }
-  return await assessmentUserResponse.findMany({
+  return await db.assessmentUserResponse.findMany({
     where: { assessmentId: idAsInteger },
+    include: {
+      attribute: {
+        include: { section: { include: { part: true } } }
+      },
+      user: true,
+      assessmentUserGroup: true,
+      level: true
+    },
   })
 }
 
