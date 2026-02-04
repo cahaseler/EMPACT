@@ -111,18 +111,28 @@ export default function PageView({
       <section className="mb-16">
         <div className="space-y-4">
           {responsesOrResults === "responses" && (
-            <ResponsesDataTables
-              assessment={assessment}
-              responses={responses}
-            />
+            assessment.assessmentParts.map(assessmentPart => {
+              return (
+                <ResponsesDataTables
+                  assessment={assessment}
+                  assessmentPart={assessmentPart}
+                  responses={responses}
+                />
+              )
+            })
           )}
           {responsesOrResults === "results" && (
-            <ResultsDataTables
-              assessment={assessment}
-              groups={groups}
-              assessmentUsers={assessmentUsers}
-              scores={scores}
-            />
+            assessment.assessmentParts.map(assessmentPart => {
+              return (
+                <ResultsDataTables
+                  assessment={assessment}
+                  assessmentPart={assessmentPart}
+                  groups={groups}
+                  assessmentUsers={assessmentUsers}
+                  scores={scores}
+                />
+              )
+            })
           )}
         </div>
       </section>

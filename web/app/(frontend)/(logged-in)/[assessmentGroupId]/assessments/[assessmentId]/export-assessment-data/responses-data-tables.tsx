@@ -41,12 +41,10 @@ type AssessmentUserResponseData = AssessmentUserResponse & {
 
 export default function ResponsesDataTables({
   assessment,
+  assessmentPart,
   responses
 }: {
   readonly assessment: Assessment & {
-    assessmentParts: (AssessmentPart & {
-      part: Part
-    })[],
     assessmentAttributes: (AssessmentAttribute & {
       attribute: Attribute & {
         levels: Level[],
@@ -58,6 +56,7 @@ export default function ResponsesDataTables({
       }
     })[]
   }
+  readonly assessmentPart: AssessmentPart & { part: Part }
   readonly responses: AssessmentUserResponseData[]
 }) {
 
@@ -74,118 +73,111 @@ export default function ResponsesDataTables({
     };
   }, []);
 
+  const attributeIds = sortAttributes(
+    assessment.assessmentAttributes.filter(
+      (attribute) => {
+        return attribute.attribute.section.partId === assessmentPart.part.id
+      }
+    ).map(
+      (attribute) => attribute.attribute
+    )
+  ).map(
+    (attribute) => attribute.id
+  )
+
+  const responsesInPart = responses.filter((responses => {
+    return attributeIds.includes(responses.attributeId)
+  }))
+
+  const [exporting, setExporting] = useState<boolean>(false)
+  const handleExport = () => {
+    setExporting(true)
+    exportResponses({
+      assessment,
+      assessmentPart,
+      attributeIds,
+      responses: responsesInPart
+    }).then(() => {
+      router.refresh()
+      toast({
+        title: `${assessmentPart.part.name} responses exported successfully.`
+      })
+      setExporting(false)
+    }).catch(error => {
+      router.refresh()
+      toast({
+        title: `Error exporting ${assessmentPart.part.name} responses: ${error}`
+      })
+      setExporting(false)
+    })
+  }
+
+  const [rowData] = useState<AssessmentUserResponseData[]>(responsesInPart);
+
+  const [colDefs] = useState<ColDef<AssessmentUserResponseData>[]>([
+    {
+      colId: "attributeId",
+      headerName: assessmentPart.part.attributeType,
+      width: 120,
+      valueGetter: (params) => {
+        return assessmentPart.part.attributeType === "Attribute" ?
+          params.data?.attributeId.toUpperCase() :
+          params.data?.attributeId
+      }
+    },
+    {
+      field: "assessmentUserGroup.name",
+      headerName: "Group"
+    },
+    {
+      field: "user.id",
+      headerName: "User ID",
+      width: 100,
+      filter: false
+    },
+    {
+      colId: "name",
+      headerName: "Name",
+      valueGetter: (params) => `${params.data?.user.lastName}, ${params.data?.user.firstName}`
+    },
+    {
+      field: "level.level",
+      headerName: "Rating",
+      width: 100,
+      filter: false
+    },
+    {
+      field: "notes",
+      headerName: "Comments",
+      width: 1000,
+      filter: false,
+      sortable: false
+    }
+  ]);
+
   return (
-    <div>
-      {assessment.assessmentParts.map((assessmentPart: AssessmentPart & { part: Part }) => {
-
-        const attributeIds = sortAttributes(
-          assessment.assessmentAttributes.filter(
-            (attribute) => {
-              return attribute.attribute.section.partId === assessmentPart.part.id
-            }
-          ).map(
-            (attribute) => attribute.attribute
-          )
-        ).map(
-          (attribute) => attribute.id
-        )
-
-        const responsesInPart = responses.filter((responses => {
-          return attributeIds.includes(responses.attributeId)
-        }))
-
-        const [exporting, setExporting] = useState<boolean>(false)
-        const handleExport = () => {
-          setExporting(true)
-          exportResponses({
-            assessment,
-            assessmentPart,
-            attributeIds,
-            responses: responsesInPart
-          }).then(() => {
-            router.refresh()
-            toast({
-              title: `${assessmentPart.part.name} responses exported successfully.`
-            })
-            setExporting(false)
-          }).catch(error => {
-            router.refresh()
-            toast({
-              title: `Error exporting ${assessmentPart.part.name} responses: ${error}`
-            })
-            setExporting(false)
-          })
-        }
-
-        const [rowData] = useState<AssessmentUserResponseData[]>(responsesInPart);
-
-        const [colDefs] = useState<ColDef<AssessmentUserResponseData>[]>([
-          {
-            colId: "attributeId",
-            headerName: assessmentPart.part.attributeType,
-            width: 120,
-            valueGetter: (params) => {
-              return assessmentPart.part.attributeType === "Attribute" ?
-                params.data?.attributeId.toUpperCase() :
-                params.data?.attributeId
-            }
-          },
-          {
-            field: "assessmentUserGroup.name",
-            headerName: "Group"
-          },
-          {
-            field: "user.id",
-            headerName: "User ID",
-            width: 100,
-            filter: false
-          },
-          {
-            colId: "name",
-            headerName: "Name",
-            valueGetter: (params) => `${params.data?.user.lastName}, ${params.data?.user.firstName}`
-          },
-          {
-            field: "level.level",
-            headerName: "Rating",
-            width: 100,
-            filter: false
-          },
-          {
-            field: "notes",
-            headerName: "Comments",
-            width: 1000,
-            filter: false,
-            sortable: false
-          }
-        ]);
-
-        return (
-          <div key={assessmentPart.id} className="mb-4">
-            <div className="mb-2">
-              <h2 className="text-2xl font-bold tracking-tighter">
-                {assessmentPart.part.name} Responses
-              </h2>
-            </div>
-            <AgGridReact
-              theme={theme}
-              rowData={rowData}
-              columnDefs={colDefs}
-              defaultColDef={defaultColDef}
-              alwaysMultiSort={true}
-              pagination={true}
-              paginationPageSize={10}
-              paginationPageSizeSelector={paginationPageSizeSelector}
-              domLayout="autoHeight"
-            />
-            <div className="mt-4 flex flex-col items-center">
-              <Button onClick={handleExport} disabled={exporting}>
-                {exporting && <Loader className="mr-2 h-4 w-4 animate-spin" />} Export {assessmentPart.part.name} Responses
-              </Button>
-            </div>
-          </div>
-        )
-      })}
+    <div key={assessmentPart.id} className="mb-4">
+      <div className="mb-2">
+        <h2 className="text-2xl font-bold tracking-tighter">
+          {assessmentPart.part.name} Responses
+        </h2>
+      </div>
+      <AgGridReact
+        theme={theme}
+        rowData={rowData}
+        columnDefs={colDefs}
+        defaultColDef={defaultColDef}
+        alwaysMultiSort={true}
+        pagination={true}
+        paginationPageSize={10}
+        paginationPageSizeSelector={paginationPageSizeSelector}
+        domLayout="autoHeight"
+      />
+      <div className="mt-4 flex flex-col items-center">
+        <Button onClick={handleExport} disabled={exporting}>
+          {exporting && <Loader className="mr-2 h-4 w-4 animate-spin" />} Export {assessmentPart.part.name} Responses
+        </Button>
+      </div>
     </div>
-  );
+  )
 };

@@ -235,7 +235,7 @@ function addAllGroupsWorksheet(
         })
       }
       else {
-        groups.map((group) => {
+        groups.forEach((group) => {
           const hasGroupResponses = assessmentUser.user.assessmentUserResponse.some(
             (userResponse: AssessmentUserResponse & { level: Level }) =>
               userResponse.assessmentId === assessmentUser.assessmentId &&
