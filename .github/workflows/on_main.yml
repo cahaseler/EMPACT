@@ -28,7 +28,7 @@ jobs:
       - name: Switch to Node.js 14
         uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 14.21.3
 
       - name: Semantic Release
         id: semantic-release
