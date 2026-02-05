@@ -19,8 +19,8 @@ import {
   Section,
   User
 } from "@/prisma/mssql/generated/client"
-import ResponsesDataTables from "./responses-data-tables"
-import ResultsDataTables from "./results-data-tables"
+import Responses from "./responses"
+import Results from "./results"
 
 export default function PageView({
   assessmentType,
@@ -113,7 +113,7 @@ export default function PageView({
           {responsesOrResults === "responses" && (
             assessment.assessmentParts.map(assessmentPart => {
               return (
-                <ResponsesDataTables
+                <Responses
                   assessment={assessment}
                   assessmentPart={assessmentPart}
                   responses={responses}
@@ -124,7 +124,7 @@ export default function PageView({
           {responsesOrResults === "results" && (
             assessment.assessmentParts.map(assessmentPart => {
               return (
-                <ResultsDataTables
+                <Results
                   assessment={assessment}
                   assessmentPart={assessmentPart}
                   groups={groups}
