@@ -1,5 +1,5 @@
 # Single-stage build: Install all dependencies, copy source, build, and run
-FROM node:22.11.0-bookworm
+FROM node:22.22.0-bookworm
 WORKDIR /app
 
 # Copy package files first for better caching
