@@ -1,9 +1,10 @@
+import React from "react"
 import NotFound from "@/app/(frontend)/components/notFound"
 import {
   fetchAssessment,
   fetchAssessmentType,
 } from "../../../utils/dataFetchers"
-
+import Stopwatch from "@/components/stopwatch/stopwatch"
 export default async function RootLayout(
   props: Readonly<{
     children: React.ReactNode
@@ -28,7 +29,13 @@ export default async function RootLayout(
       },
     ]
     if (assessment) {
-      return children
+      // Wrap children and add Stopwatch. Stopwatch uses absolute positioning.
+      return (
+        <>
+          {children}
+          <Stopwatch />
+        </>
+      )
     }
     return <NotFound links={links} pageType="assessment" />
   }
