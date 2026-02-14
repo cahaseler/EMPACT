@@ -109,8 +109,8 @@
     "@playwright/test": "1.49.1",
     "@tauri-apps/cli": "1.6.0",
     "@types/node": "20.14.15",
-    "@types/react": "19.0.12",
-    "@types/react-dom": "19.0.4",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
     "@typescript-eslint/parser": "^8.27.0",
     "autoprefixer": "^10.4.21",
@@ -142,8 +142,8 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "resolutions": {
-    "@types/react": "19.0.12",
-    "@types/react-dom": "19.0.4"
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
