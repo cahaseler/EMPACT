@@ -85,7 +85,7 @@ export default async function Page(
               <Breadcrumbs links={links} currentPage={`${part.name} Assessment`} />
               <div className="flex flex-row justify-between">
                 <h1 className="text-3xl font-bold tracking-tighter">
-                  {part.name} Assessment
+                  {assessment.name} {part.name} Assessment
                 </h1>
                 <div className="flex flex-row space-x-2">
                   {!isParticipant && canEdit &&

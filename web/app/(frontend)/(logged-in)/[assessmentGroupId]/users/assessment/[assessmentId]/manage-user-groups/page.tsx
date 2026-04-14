@@ -1,4 +1,5 @@
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import { auth } from "@/auth"
 import {
   fetchAssessment,
@@ -73,20 +74,6 @@ export default async function Page(
         </div>
       )
     }
-    return (
-      <div className="w-full max-w-4xl mx-auto">
-        <section className="mb-8">
-          <div className="space-y-4 max-lg:ml-2">
-            <Breadcrumbs
-              links={links}
-              currentPage="Edit Assessment User Groups"
-            />
-            <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-              You are not authorized to view this page.
-            </p>
-          </div>
-        </section>
-      </div>
-    )
+    return <NotAuthorized links={links} pageType="Edit Assessment User Groups" />
   }
 }

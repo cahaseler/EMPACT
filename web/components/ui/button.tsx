@@ -19,8 +19,8 @@ const buttonVariants = cva(
           "border-2 border-indigo-700/90 bg-transparent hover:bg-transparent hover:border-indigo-700/70 text-indigo-700/90 hover:text-indigo-700/70",
         dateInput:
           "border-2 border-indigo-100 bg-white hover:bg-white dark:border-indigo-900 dark:bg-black dark:hover:border-indigo-900 dark:hover:bg-black font-normal text-black dark:text-white",
-        secondary: "bg-indigo-100 hover:bg-indigo-200",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-950 dark:hover:bg-indigo-900",
+        ghost: "hover:bg-transparent hover:text-inherit",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -40,7 +40,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 

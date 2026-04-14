@@ -28,4 +28,27 @@ const TooltipContent = React.forwardRef<
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger }
+const TooltipButton = ({
+  children,
+  content,
+  sizeLarge
+}: {
+  children: React.ReactNode,
+  content: string
+  sizeLarge?: boolean
+}) => {
+  return (
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {children}
+        </TooltipTrigger>
+        <TooltipContent className={"text-center" + (sizeLarge && " w-60")}>
+          {content}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipButton }

@@ -3,6 +3,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { TooltipButton } from "@/components/ui/tooltip"
 
 import {
   AssessmentPart,
@@ -243,17 +245,24 @@ export default function PopulationDensity({
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Population Density Chart</h2>
         <h3 className="text-lg font-bold">{currentAttribute?.id}. {currentAttribute?.name}</h3>
+        <Card className="bg-white max-h-40 overflow-auto px-6 py-1">
+          <div
+            className="text-sm text-description text-muted-foreground dark:text-indigo-300/80"
+            dangerouslySetInnerHTML={{ __html: currentAttribute?.description || "" }}
+          />
+        </Card>
         <Line data={{ datasets }} options={options} />
         <h3 className="text-xl font-bold">Factors</h3>
         <div className="flex flex-row flex-wrap gap-4">
           {attributes.map((attribute) => (
-            <Button
-              key={attribute.id}
-              onClick={() => setCurrentAttribute(attribute)}
-              disabled={currentAttribute && currentAttribute.id === attribute.id}
-            >
-              {attribute.id}
-            </Button>
+            <TooltipButton key={attribute.id} content={`${attribute.id}. ${attribute.name}`}>
+              <Button
+                onClick={() => setCurrentAttribute(attribute)}
+                disabled={currentAttribute && currentAttribute.id === attribute.id}
+              >
+                {attribute.id}
+              </Button>
+            </TooltipButton>
           ))}
         </div>
       </div>

@@ -2,18 +2,17 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { FileChartColumn, Users } from "lucide-react"
+import {
+    Download,
+    FileChartColumn,
+    Users
+} from "lucide-react"
 import Link from "next/link"
 
 import { Session } from "@/auth"
 import { Button } from "@/components/ui/button"
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 
 import {
     Assessment,
@@ -24,9 +23,9 @@ import {
     User
 } from "@/prisma/mssql/generated/client"
 import {
-    canViewUsers,
     isAdmin,
     isCollectionManager,
+    isFacForAssessment,
     isLeadForAssessment,
     isManagerForCollection
 } from "../../utils/permissions"
@@ -61,7 +60,11 @@ function AssessmentActions({
         isAdmin(session) ||
         isManagerForCollection(session, assessment.assessmentCollectionId) ||
         isLeadForAssessment(session, assessment.id.toString())
-    const canView = canViewUsers(session)
+    const canView =
+        isAdmin(session) ||
+        isManagerForCollection(session, assessment.assessmentCollectionId) ||
+        isLeadForAssessment(session, assessment.id.toString()) ||
+        isFacForAssessment(session, assessment.id.toString())
     const canArchive =
         isAdmin(session) ||
         isManagerForCollection(session, assessment.assessmentCollectionId) ||
@@ -80,43 +83,40 @@ function AssessmentActions({
                     buttonType="icon"
                 />
             )}
-            <Link href={`/${assessmentType.id}/reports/${assessment.id}`}>
-                <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size="icon">
-                                <FileChartColumn className="w-5 h-5 text-white" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="text-center">
-                            View Assessment Reports
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            </Link>
-            {canView && (
-                <Link href={`/${assessmentType.id}/users/assessment/${assessment.id}`}>
-                    <TooltipProvider delayDuration={0}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button size="icon">
-                                    <Users className="w-5 h-5 text-white" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="text-center">
-                                Manage Assessment Users
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+            {assessment.status === "Final" && (
+                <Link href={`/${assessmentType.id}/reports/${assessment.id}`}>
+                    <TooltipButton content="View Assessment Reports">
+                        <Button size="icon">
+                            <FileChartColumn className="w-5 h-5 text-white" />
+                        </Button>
+                    </TooltipButton>
                 </Link>
             )}
-            {canEditStatus && assessment.status === "Active" && (
+            {canEdit && assessment.status === "Final" && (
+                <Link href={`/${assessmentType.id}/assessments/${assessment.id}/export-assessment-data`}>
+                    <TooltipButton content="Export Assessment Data">
+                        <Button size="icon">
+                            <Download className="w-5 h-5 text-white" />
+                        </Button>
+                    </TooltipButton>
+                </Link>
+            )}
+            {canView && assessment.status !== "Final" && assessment.status !== "Archived" && (
+                <Link href={`/${assessmentType.id}/users/assessment/${assessment.id}`}>
+                    <TooltipButton content="Manage Assessment Users">
+                        <Button size="icon">
+                            <Users className="w-5 h-5 text-white" />
+                        </Button>
+                    </TooltipButton>
+                </Link>
+            )}
+            {canEditStatus && assessment.status !== "Final" && assessment.status !== "Archived" && (
                 <SubmitModule
                     assessment={assessment}
                     buttonType="icon"
                 />
             )}
-            {canArchive && assessment.status !== "Active" && (
+            {canArchive && (
                 <ArchiveModule
                     assessment={assessment}
                     assessmentTypeId={assessmentType.id}

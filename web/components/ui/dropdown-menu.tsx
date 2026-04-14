@@ -3,7 +3,9 @@
 import * as React from "react"
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { Check, ChevronRight, Circle } from "lucide-react"
+import { Check, ChevronRight, Circle, Menu } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
 
@@ -182,6 +184,28 @@ const DropdownMenuShortcut = ({
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 
+const DropdownMenuWithChildren = ({
+  children,
+  size
+}: {
+  readonly children: React.ReactNode,
+  readonly size: "default" | "icon"
+}) => {
+  return <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button size={size}>
+        {size === "default" && "Actions"}
+        {size === "icon" && <Menu className="w-7 h-7" />}
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <div>
+        {children}
+      </div>
+    </DropdownMenuContent>
+  </DropdownMenu>
+}
+
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -198,4 +222,5 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuWithChildren
 }

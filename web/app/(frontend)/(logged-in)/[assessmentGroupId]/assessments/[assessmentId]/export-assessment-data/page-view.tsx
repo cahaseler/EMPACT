@@ -32,7 +32,13 @@ export default function PageView({
 }: {
   readonly assessmentType: AssessmentType
   readonly assessment: Assessment & {
-    assessmentParts: (AssessmentPart & { part: Part })[],
+    assessmentParts: (AssessmentPart & {
+      part: Part & {
+        sections: (Section & {
+          attributes: Attribute[]
+        })[]
+      }
+    })[],
     assessmentAttributes: (AssessmentAttribute & {
       attribute: Attribute & {
         levels: Level[],
@@ -49,7 +55,13 @@ export default function PageView({
     assessmentUserGroup: AssessmentUserGroup | null,
     level: Level
   })[]
-  readonly groups: AssessmentUserGroup[]
+  readonly groups: (AssessmentUserGroup & {
+    assessmentUser: (AssessmentUser & {
+      user: User & {
+        assessmentUserResponse: AssessmentUserResponse[]
+      }
+    })[]
+  })[]
   readonly assessmentUsers: (AssessmentUser & {
     user: User & {
       assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
@@ -69,6 +81,8 @@ export default function PageView({
       name: assessment.name,
     },
   ]
+
+  const finalizedParts = assessment.assessmentParts.filter(part => part.status === "Final")
 
   const [responsesOrResults, setResponsesOrResults] = useState<
     "responses" | "results"
@@ -111,9 +125,10 @@ export default function PageView({
       <section className="mb-16">
         <div className="space-y-4">
           {responsesOrResults === "responses" && (
-            assessment.assessmentParts.map(assessmentPart => {
+            finalizedParts.map(assessmentPart => {
               return (
                 <Responses
+                  key={assessmentPart.id}
                   assessment={assessment}
                   assessmentPart={assessmentPart}
                   responses={responses}
@@ -122,9 +137,10 @@ export default function PageView({
             })
           )}
           {responsesOrResults === "results" && (
-            assessment.assessmentParts.map(assessmentPart => {
+            finalizedParts.map(assessmentPart => {
               return (
                 <Results
+                  key={assessmentPart.id}
                   assessment={assessment}
                   assessmentPart={assessmentPart}
                   groups={groups}

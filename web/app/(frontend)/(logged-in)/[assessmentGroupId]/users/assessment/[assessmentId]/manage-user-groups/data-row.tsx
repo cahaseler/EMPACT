@@ -7,12 +7,8 @@ import { useRouter } from "next/navigation"
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogPortal,
-  AlertDialogTrigger,
+  AlertDialogPortalContent,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,28 +17,21 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select"
 import { TableCell, TableRow } from "@/components/ui/table"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
+
 import {
   AssessmentUser,
   AssessmentUserGroup,
-  User,
+  User
 } from "@/prisma/mssql/generated/client"
 import {
   deleteAssessmentUserGroup,
   updateAssessmentUserGroup,
 } from "../../../../../utils/dataActions"
-
-// TODO: Convert to React-Table
-// TODO: Filtering, sorting, search, pagination
 
 export default function DataTable({
   group,
@@ -68,6 +57,7 @@ export default function DataTable({
         toast({
           title: "Assessment user group updated successfully.",
         })
+        setIsEditing(false)
       }).catch(error => {
         setSaving(false)
         toast({
@@ -116,62 +106,41 @@ export default function DataTable({
         <div className="grid grid-cols-2 gap-2 w-20">
           {!isEditing ? (
             <>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button onClick={() => setIsEditing(true)} size="icon">
-                      <SquarePen className="w-5 h-5 text-white" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-center">
-                    Edit Assessment User Group
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <TooltipButton content="Edit Assessment User Group">
+                <Button onClick={() => setIsEditing(true)} size="icon">
+                  <SquarePen className="w-5 h-5 text-white" />
+                </Button>
+              </TooltipButton>
               <DeleteModule group={group} />
             </>
           ) : (
             <>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={() => {
-                        setIsEditing(false)
-                        setName(group.name)
-                        setStatus(group.status)
-                      }}
-                      variant="outline"
-                      size="icon"
-                      className="border-[3px]"
-                    >
-                      <X className="w-5 h-5 stroke-[3px]" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-center">
-                    Cancel
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={(e: React.FormEvent) => handleUpdate(e)}
-                      size="icon"
-                    >
-                      {saving ? (
-                        <Loader className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <Save className="w-5 h-5 text-white" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-center">
-                    Save Changes
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <TooltipButton content="Cancel">
+                <Button
+                  onClick={() => {
+                    setIsEditing(false)
+                    setName(group.name)
+                    setStatus(group.status)
+                  }}
+                  variant="outline"
+                  size="icon"
+                  className="border-[3px]"
+                >
+                  <X className="w-5 h-5 stroke-[3px]" />
+                </Button>
+              </TooltipButton>
+              <TooltipButton content="Save Changes">
+                <Button
+                  onClick={(e: React.FormEvent) => handleUpdate(e)}
+                  size="icon"
+                >
+                  {saving ? (
+                    <Loader className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Save className="w-5 h-5 text-white" />
+                  )}
+                </Button>
+              </TooltipButton>
             </>
           )}
         </div>
@@ -197,58 +166,33 @@ function DeleteModule({
   }
 
   return group.assessmentUser.length > 0 ? (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="default"
-            size="icon"
-            className="cursor-default opacity-50"
-          >
-            <Trash2 className="w-5 h-5 text-white" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="w-60 text-center">
-          In order to delete this user group, you must delete or reassign any
-          associated assessment users.
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TooltipButton
+      content="In order to delete this user group, you must delete or reassign any associated assessment users."
+      sizeLarge
+    >
+      <Button
+        variant="default"
+        size="icon"
+        className="cursor-default opacity-50"
+      >
+        <Trash2 className="w-5 h-5 text-white" />
+      </Button>
+    </TooltipButton>
   ) : (
     <AlertDialog>
-
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AlertDialogTrigger asChild>
-              <Button size="icon">
-                <Trash2 className="w-5 h-5 text-white" />
-              </Button>
-            </AlertDialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="w-60 text-center">
-            Delete Assessment User Group
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <AlertDialogPortal>
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <div className="flex flex-col space-y-6 text center">
-            <p>Are you sure you want to delete this user group?</p>
-            <div className="flex flex-row space-x-2 justify-end">
-              <AlertDialogCancel asChild>
-                <Button variant="outline">Cancel</Button>
-              </AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
-                  Delete
-                </Button>
-              </AlertDialogAction>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialogPortal>
+      <TooltipButton content="Delete Assessment User Group">
+        <AlertDialogTrigger asChild>
+          <Button size="icon">
+            <Trash2 className="w-5 h-5 text-white" />
+          </Button>
+        </AlertDialogTrigger>
+      </TooltipButton>
+      <AlertDialogPortalContent
+        title="Delete Assessment User Group"
+        description="Are you sure you want to delete this user group?"
+        actionName="Delete"
+        action={(e: React.FormEvent) => handleDelete(e)}
+      />
     </AlertDialog>
   )
 }

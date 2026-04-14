@@ -30,8 +30,6 @@ import {
 import { Button } from "@/components/ui/button"
 import {
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow
@@ -164,7 +162,13 @@ export default function Results({
     assessmentAttributes: (AssessmentAttribute & { attribute: Attribute & { levels: Level[], section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } })[]
   }
   readonly assessmentPart: AssessmentPart & { part: Part }
-  readonly groups: AssessmentUserGroup[]
+  readonly groups: (AssessmentUserGroup & {
+    assessmentUser: (AssessmentUser & {
+      user: User & {
+        assessmentUserResponse: AssessmentUserResponse[]
+      }
+    })[]
+  })[]
   readonly assessmentUsers: (AssessmentUser & {
     user: User & {
       assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
@@ -189,11 +193,22 @@ export default function Results({
     (total, groupTotalScore) => total + groupTotalScore.score, 0
   ) / scoresInPart?.length)
 
-  const assessmentUsersInPart = assessmentUsers.filter((assessmentUser) => {
-    return assessmentUser.assessmentUserGroupId !== null ||
-      assessmentUser.participantParts.some(
-        (participantPart) => participantPart.id === assessmentPart.id
+  const groupsWithResponsesInPart = groups.filter(
+    group => group.assessmentUser.some(
+      assessmentUser => assessmentUser.user.assessmentUserResponse.some(
+        response =>
+          response.assessmentId === assessment.id &&
+          attributeIds.includes(response.attributeId)
       )
+    )
+  )
+
+  const assessmentUsersInPart = assessmentUsers.filter((assessmentUser) => {
+    return assessmentUser.user.assessmentUserResponse.some(
+      response =>
+        response.assessmentId === assessment.id &&
+        attributeIds.includes(response.attributeId)
+    )
   })
 
   const [exporting, setExporting] = useState<boolean>(false)
@@ -202,7 +217,7 @@ export default function Results({
     exportResults({
       assessmentName: assessment.name,
       assessmentPartName: assessmentPart.part.name,
-      groups,
+      groups: groupsWithResponsesInPart,
       attributeType: assessmentPart.part.attributeType,
       attributeIds,
       assessmentUsers: assessmentUsersInPart,
@@ -234,16 +249,18 @@ export default function Results({
         collapsible={true}
         className="bg-indigo-50/60 dark:bg-black/60 rounded-lg border-2 border-indigo-100 dark:border-indigo-900"
       >
-        {groups.map(group => {
+        {groupsWithResponsesInPart.map(group => {
+
           const groupTotalScore = scoresInPart?.find(
             groupTotalScore => groupTotalScore.assessmentUserGroupId === group.id
           )?.score
+
           const groupAssessmentUsers = assessmentUsersInPart.filter((assessmentUser) => {
-            return assessmentUser.assessmentUserGroupId === group.id ||
-              assessmentUser.participantParts.some(
-                (participantPart) => participantPart.id === assessmentPart.id
-              )
+            return assessmentUser.user.assessmentUserResponse.some(
+              response => response.assessmentUserGroupId === group.id
+            )
           })
+
           return (
             <ResultsAccordionItem
               key={group.id}
@@ -257,7 +274,7 @@ export default function Results({
         })}
         <ResultsAccordionItem
           assessmentPart={assessmentPart}
-          groups={groups}
+          groups={groupsWithResponsesInPart}
           attributeIds={attributeIds}
           assessmentUsers={assessmentUsersInPart}
           totalScore={averageTotalScore}

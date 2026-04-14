@@ -155,6 +155,16 @@ export default async function Page(
                   }}
                 />
                 {params.roleName === "Facilitator" &&
+                  <Navigation
+                    urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
+                    isParticipating={isParticipating}
+                    userResponses={userResponses}
+                    prevAttribute={prevAttribute}
+                    nextAttribute={nextAttribute}
+                    canReview={hasUserSubmittedAllResponses}
+                  />
+                }
+                {params.roleName === "Facilitator" &&
                   <AttributeResponseTable
                     assessmentStatus={assessment.status}
                     userResponses={activeGroups.length > 0 ? activeGroupsUserResponses : userResponses}
@@ -183,14 +193,16 @@ export default async function Page(
               isFacilitator={isFacilitator}
             />
           }
-          <Navigation
-            urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
-            isParticipating={isParticipating}
-            userResponses={userResponses}
-            prevAttribute={prevAttribute}
-            nextAttribute={nextAttribute}
-            canReview={hasUserSubmittedAllResponses}
-          />
+          {isParticipating &&
+            <Navigation
+              urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
+              isParticipating={isParticipating}
+              userResponses={userResponses}
+              prevAttribute={prevAttribute}
+              nextAttribute={nextAttribute}
+              canReview={hasUserSubmittedAllResponses}
+            />
+          }
         </div >
       )
     }

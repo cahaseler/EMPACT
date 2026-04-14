@@ -5,13 +5,8 @@ import { useRouter } from "next/navigation"
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogPortal,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogPortalContent,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,15 +15,11 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
+
 import { AssessmentCollectionUser, User } from "@/prisma/mssql/generated/client"
 import { deleteAssessmentCollectionUser } from "../../../../utils/dataActions"
 
@@ -94,61 +85,32 @@ function DeleteModule({
   }
 
   return numUsers === 1 ? (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            variant="default"
-            size="icon"
-            className="cursor-default opacity-50"
-          >
-            <Trash2 className="w-5 h-5 text-white" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="w-60 text-center">
-          In order to remove this collection manager, you must add at least one
-          other manager.
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TooltipButton
+      content="In order to remove this collection manager, you must add at least one other manager."
+      sizeLarge
+    >
+      <Button
+        size="icon"
+        className="cursor-default opacity-50"
+      >
+        <Trash2 className="w-5 h-5 text-white" />
+      </Button>
+    </TooltipButton>
   ) : (
     <AlertDialog>
-
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AlertDialogTrigger asChild>
-              <Button size="icon">
-                <Trash2 className="w-5 h-5 text-white" />
-              </Button>
-            </AlertDialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="w-60 text-center">
-            Remove Collection Manager
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <AlertDialogPortal>
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <div className="flex flex-col space-y-6 text center">
-            <AlertDialogTitle>
-              Remove Collection Manager
-            </AlertDialogTitle>
-            <p>Are you sure you want to remove this collection manager?</p>
-            <div className="flex flex-row space-x-2 justify-end">
-              <AlertDialogCancel asChild>
-                <Button variant="outline">Cancel</Button>
-              </AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
-                  Remove
-                </Button>
-              </AlertDialogAction>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialogPortal>
+      <TooltipButton content="Remove Collection Manager">
+        <AlertDialogTrigger asChild>
+          <Button size="icon">
+            <Trash2 className="w-5 h-5 text-white" />
+          </Button>
+        </AlertDialogTrigger>
+      </TooltipButton>
+      <AlertDialogPortalContent
+        title="Remove Collection Manager"
+        description="Are you sure you want to remove this collection manager?"
+        actionName="Remove"
+        action={(e: React.FormEvent) => handleDelete(e)}
+      />
     </AlertDialog>
   )
 }

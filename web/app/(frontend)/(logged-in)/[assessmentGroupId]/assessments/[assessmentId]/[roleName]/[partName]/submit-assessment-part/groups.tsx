@@ -27,20 +27,10 @@ import {
 } from "@/components/ui/accordion"
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogPortal,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogPortalContent,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 
 import { useRouter } from "next/navigation"
@@ -176,44 +166,25 @@ export default function Groups({
           Average Total Score: {(averageTotalScore && !isNaN(averageTotalScore)) ? averageTotalScore : "N/A"}
         </span>
         {someScoreNotANumber ?
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button className="cursor-default opacity-50">
-                  Finalize Assessment Part
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="w-60 text-center">
-                In order to finalize this assessment part, all groups must have a valid total score.
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <TooltipButton
+            content="In order to finalize this assessment part, all groups must have a valid total score."
+            sizeLarge
+          >
+            <Button className="cursor-default opacity-50">
+              Finalize Assessment Part
+            </Button>
+          </TooltipButton>
           :
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button>Finalize Assessment Part</Button>
             </AlertDialogTrigger>
-            <AlertDialogPortal>
-              <AlertDialogOverlay />
-              <AlertDialogContent>
-                <div className="flex flex-col space-y-6 text center">
-                  <AlertDialogTitle>Finalize Assessment Part</AlertDialogTitle>
-                  <p>
-                    Are you sure you want to finalize this assessment part?
-                  </p>
-                  <div className="flex flex-row space-x-2 justify-end">
-                    <AlertDialogCancel asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                      <Button onClick={(e: React.FormEvent) => handleSubmit(e)}>
-                        Finalize
-                      </Button>
-                    </AlertDialogAction>
-                  </div>
-                </div>
-              </AlertDialogContent>
-            </AlertDialogPortal>
+            <AlertDialogPortalContent
+              title={`Finalize ${part.name} Assessment`}
+              description="Are you sure you want to finalize this assessment part?"
+              actionName="Finalize"
+              action={(e: React.FormEvent) => handleSubmit(e)}
+            />
           </AlertDialog>
         }
       </div>

@@ -3,12 +3,8 @@ import Link from "next/link"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { DropdownMenuWithChildren } from "@/components/ui/dropdown-menu"
+import { TooltipButton } from "@/components/ui/tooltip"
 import {
   fetchAssessment,
   fetchAssessmentParts,
@@ -76,27 +72,40 @@ export default async function Page(
               links={links}
               currentPage={`${assessment.name} Users`}
             />
-            <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between">
+            <div className="flex flex-col max-md:space-y-2 md:flex-row justify-between items-end">
               <h1 className="text-3xl font-bold tracking-tighter">
                 {assessment.name} Users
               </h1>
-              <div className="flex h-fit flex-row space-x-2 justify-end">
-                {canRegroup && (
-                  <Link
-                    href={`/${assessmentType.id}/users/assessment/${assessment.id}/manage-user-groups`}
-                    prefetch={false}
-                  >
-                    <Button>Manage User Groups</Button>
-                  </Link>
-                )}
-                {canAddEdit && (
-                  <AddUsersButton
-                    assessmentTypeId={assessmentType.id}
-                    assessmentId={assessment.id}
-                    doGroupsExist={groups.length > 0}
-                  />
-                )}
-              </div>
+              {(canAddEdit || canRegroup) &&
+                <DropdownMenuWithChildren size="default">
+                  <div className="flex flex-col space-y-2 p-2 items-center">
+                    {canRegroup && (
+                      <Link
+                        href={`/${assessmentType.id}/users/assessment/${assessment.id}/manage-user-groups`}
+                        prefetch={false}
+                      >
+                        <Button>Manage User Groups</Button>
+                      </Link>
+                    )}
+                    {canAddEdit && (
+                      <AddUsersButton
+                        assessmentTypeId={assessmentType.id}
+                        assessmentId={assessment.id}
+                        doGroupsExist={groups.length > 0}
+                      />
+
+                    )}
+                    {canAddEdit && (
+                      <Link
+                        href={`/${assessmentType.id}/users/assessment/${assessment.id}/bulk-edit-assessment-users`}
+                        prefetch={false}
+                      >
+                        <Button>Bulk Edit Assessment Users</Button>
+                      </Link>
+                    )}
+                  </div>
+                </DropdownMenuWithChildren>
+              }
             </div>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
               {assessment.description}
@@ -138,18 +147,13 @@ function AddUsersButton({
       <Button>Add Users to Assessment</Button>
     </Link>
   ) : (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button className="cursor-default opacity-50">
-            Add Users to Assessment
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="w-60 text-center">
-          In order to add users to this assessment, you must create at least one
-          user group.
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TooltipButton
+      content="In order to add users to this assessment, you must create at least one user group."
+      sizeLarge
+    >
+      <Button className="cursor-default opacity-50">
+        Add Users to Assessment
+      </Button>
+    </TooltipButton>
   )
 }

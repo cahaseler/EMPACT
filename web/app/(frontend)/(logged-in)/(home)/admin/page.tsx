@@ -1,3 +1,4 @@
+import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import { fetchUsers } from "../../utils/dataFetchers"
 import { AddUsersDialog } from "./add-users-dialog"
 import UsersDataTable from "./data-table"
@@ -32,14 +33,6 @@ export default async function Page() {
     )
   }
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <section className="mb-8">
-        <div className="space-y-8 max-lg:ml-2">
-          <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-            You are not authorized to view this page.
-          </p>
-        </div>
-      </section>
-    </div>
+    <NotAuthorized />
   )
 }

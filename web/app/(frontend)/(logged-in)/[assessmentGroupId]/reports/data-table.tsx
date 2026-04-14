@@ -18,6 +18,28 @@ export default function AssessmentsDataTable({
       id: "name",
       title: "Name",
     },
+    {
+      id: "status",
+      title: "Assessment Status",
+      options: [
+        {
+          label: "Active",
+          value: "Active"
+        },
+        {
+          label: "Inactive",
+          value: "Inactive"
+        },
+        {
+          label: "Final",
+          value: "Final"
+        },
+        {
+          label: "Archived",
+          value: "Archived"
+        }
+      ]
+    }
   ]
 
   return (

@@ -20,12 +20,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
@@ -64,6 +59,7 @@ export default function EditModule({
     const [isUpdating, setIsUpdating] = useState(false)
 
     const [role, setRole] = useState<string>(assessmentUser.role)
+    const somePartFinalized = parts.some((part) => part.status === "Final")
     const [groupId, setGroupId] = useState<number | null>(
         assessmentUser.assessmentUserGroupId
     )
@@ -133,18 +129,11 @@ export default function EditModule({
     return (
         <>
             <div className="flex justify-start">
-                <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
-                                <SquarePen className="w-5 h-5 text-white" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent className="text-center">
-                            Edit Assessment User
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <TooltipButton content="Edit Assessment User">
+                    <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
+                        <SquarePen className="w-5 h-5 text-white" />
+                    </Button>
+                </TooltipButton>
             </div>
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
@@ -186,32 +175,43 @@ export default function EditModule({
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div className="flex flex-row justify-center items-center space-x-4">
-                            <Label className="text-right">
-                                Group
-                            </Label>
-                            <Select
-                                onValueChange={(value) => {
-                                    setGroupId(parseInt(value, 10))
-                                }}
-                                disabled={groupId === null}
-                            >
-                                <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
-                                    <SelectValue
-                                        placeholder={
-                                            groups.find((group) => group.id === groupId)?.name
-                                        }
-                                        defaultValue={groupId?.toString() || undefined}
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {groupId !== null && groups.map((group) => (
-                                        <SelectItem value={group.id.toString()} key={group.id}>
-                                            {group.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                        <div className="flex flex-col space-y-1">
+                            <div className="flex flex-row justify-center items-center space-x-4">
+                                <Label className="text-right">
+                                    Group
+                                </Label>
+                                <Select
+                                    onValueChange={(value) => {
+                                        setGroupId(parseInt(value, 10))
+                                    }}
+                                    disabled={groupId === null || somePartFinalized}
+                                >
+                                    <SelectTrigger className="focus:ring-offset-indigo-400 focus:ring-transparent">
+                                        <SelectValue
+                                            placeholder={
+                                                groups.find((group) => group.id === groupId)?.name
+                                            }
+                                            defaultValue={groupId?.toString() || undefined}
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {groupId !== null && groups.map((group) => (
+                                            <SelectItem value={group.id.toString()} key={group.id}>
+                                                {group.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            {somePartFinalized &&
+                                <div className="flex flex-row justify-end">
+                                    <p className="text-xs italic text-right text-muted-foreground dark:text-indigo-300/80">
+                                        The assessment this user is assigned to has one or more finalized parts.
+                                        In order to change this user's group, you must un-finalize the
+                                        part(s) and re-submit for scoring after the user's group has been changed.
+                                    </p>
+                                </div>
+                            }
                         </div>
                         {role !== "Participant" &&
                             <div className="flex flex-col justify-center space-y-4">

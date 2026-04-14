@@ -4,7 +4,7 @@ import * as React from "react"
 
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const AlertDialog = AlertDialogPrimitive.Root
@@ -127,6 +127,42 @@ const AlertDialogCancel = React.forwardRef<
 ))
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
+const AlertDialogPortalContent = ({
+  title,
+  description,
+  actionName,
+  action
+}: {
+  title: string
+  description: string
+  actionName: string
+  action: React.MouseEventHandler<HTMLButtonElement>
+}) => {
+  return (
+    <AlertDialogPortal>
+      <AlertDialogOverlay />
+      <AlertDialogContent>
+        <div className="flex flex-col space-y-6 text center">
+          <AlertDialogTitle>
+            {title}
+          </AlertDialogTitle>
+          <p>{description}</p>
+          <div className="flex flex-row space-x-2 justify-end">
+            <AlertDialogCancel asChild>
+              <Button variant="outline">Cancel</Button>
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button onClick={action}>
+                {actionName}
+              </Button>
+            </AlertDialogAction>
+          </div>
+        </div>
+      </AlertDialogContent>
+    </AlertDialogPortal>
+  )
+}
+
 export {
   AlertDialog,
   AlertDialogAction,
@@ -139,4 +175,5 @@ export {
   AlertDialogPortal,
   AlertDialogTitle,
   AlertDialogTrigger,
+  AlertDialogPortalContent
 }
