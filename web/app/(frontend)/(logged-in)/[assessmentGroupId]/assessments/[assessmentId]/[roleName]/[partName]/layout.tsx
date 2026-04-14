@@ -1,8 +1,8 @@
-import { AssessmentSidebar } from "@/app/(frontend)/components/assessment-sidebar"
+import { AssessmentSidebar } from "@/app/(frontend)/components/assessment-sidebar/assessment-sidebar"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import NotFound from "@/app/(frontend)/components/notFound"
 import { auth } from "@/auth"
-import { SidebarProvider } from "@/components/ui/sidebar"
 import {
   fetchAssessment,
   fetchAssessmentUsers,
@@ -54,6 +54,8 @@ export default async function RootLayout(
     params.roleName
   )
 
+  console.log(typeof window !== "undefined" && localStorage.getItem("sidebarPinnedOpen"))
+
   if (assessmentType && assessment && parts) {
 
     const links = [
@@ -95,32 +97,20 @@ export default async function RootLayout(
         )
       ) {
         return (
-          <SidebarProvider defaultOpen={false}>
-            <AssessmentSidebar
-              assessment={assessment}
-              assessmentType={assessmentType}
-              assessmentUsers={assessmentUsers}
-              isParticipant={isParticipant}
-              role={params.roleName}
-              parts={parts}
-              userResponses={userResponses}
-            />
+          <AssessmentSidebar
+            assessment={assessment}
+            assessmentType={assessmentType}
+            assessmentUsers={assessmentUsers}
+            isParticipant={isParticipant}
+            role={params.roleName}
+            parts={parts}
+            userResponses={userResponses}
+          >
             {children}
-          </SidebarProvider>
+          </AssessmentSidebar>
         )
       }
-      return (
-        <div className="w-full max-w-4xl mx-auto">
-          <section className="mb-8">
-            <div className="space-y-4 max-lg:ml-2">
-              <Breadcrumbs links={links} currentPage={part.name} />
-              <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-                You are not authorized to view this page.
-              </p>
-            </div>
-          </section>
-        </div>
-      )
+      return <NotAuthorized links={links} pageType={part.name} />
     }
     return <NotFound links={links} pageType="part" />
   }

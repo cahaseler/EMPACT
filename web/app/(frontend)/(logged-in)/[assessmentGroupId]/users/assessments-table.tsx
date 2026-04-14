@@ -35,11 +35,7 @@ export default function AssessmentsDataTable({
         {
           label: "Inactive",
           value: "Inactive",
-        },
-        {
-          label: "Final",
-          value: "Final",
-        },
+        }
       ],
     },
   ]

@@ -19,36 +19,23 @@ import {
 } from "@/components/ui/tooltip"
 
 import {
-  AssessmentAttribute,
   AssessmentPart,
-  AssessmentUser,
   AssessmentUserGroup,
   AssessmentUserResponse,
   Attribute,
   Level,
   Section,
-  Part,
-  User
+  Part
 } from "@/prisma/mssql/generated/client"
 
-import { sortAttributes } from "../../../../utils/dataCalculations"
-
-export default function HeatMap({
+export default function GapAnalysis({
   assessmentId,
   groups,
-  attributes
+  attributes,
+  assessmentResponses
 }: Readonly<{
   assessmentId: number
-  groups: (AssessmentUserGroup & {
-    assessmentUser: (AssessmentUser & {
-      user: User & {
-        assessmentUserResponse: (AssessmentUserResponse & {
-          user: User;
-          level: Level;
-        })[];
-      };
-    })[]
-  })[]
+  groups: AssessmentUserGroup[]
   attributes: (Attribute & {
     levels: Level[],
     section: Section & {
@@ -57,22 +44,31 @@ export default function HeatMap({
       }
     }
   })[]
+  assessmentResponses: (AssessmentUserResponse & { level: Level })[]
 }>) {
-
-  const allAssessmentUsers = groups.flatMap(
-    (group) => group.assessmentUser
-  )
 
   const [dataType, setDataType] = useState<"ratings" | "scores">("ratings")
 
   return (
     <div className="w-full flex flex-col space-y-8">
       <div className="space-y-4">
-        <div className="flex md:flex-row md:justify-between max-md:space-y-4">
+        <div className="flex md:flex-row md:justify-between items-end max-md:space-y-4">
           <h2 className="text-2xl font-bold">Gap Analysis</h2>
-          <div className="flex md:flex-row md:space-x-4 max-md:space-y-2">
-            <Button onClick={() => setDataType("ratings")}>Ratings</Button>
-            <Button onClick={() => setDataType("scores")}>Scores</Button>
+          <div>
+            <Button
+              className="rounded-r-none"
+              onClick={() => setDataType("ratings")}
+              disabled={dataType === "ratings"}
+            >
+              Ratings
+            </Button>
+            <Button
+              className="rounded-l-none"
+              onClick={() => setDataType("scores")}
+              disabled={dataType === "scores"}
+            >
+              Scores
+            </Button>
           </div>
         </div>
         <div className="rounded-md border-2 border-indigo-100 dark:border-indigo-800">
@@ -103,10 +99,7 @@ export default function HeatMap({
                     {dataType === "ratings" ? "Rating" : "Score"} Average: {group.name}
                   </TableHead>
                   {attributes.map((attribute) => {
-
-                    const groupAttributeResponses = group.assessmentUser.flatMap(
-                      (assessmentUser) => assessmentUser.user.assessmentUserResponse
-                    ).filter(
+                    const groupAttributeResponses = assessmentResponses.filter(
                       (assessmentUserResponse) =>
                         assessmentUserResponse.assessmentId === assessmentId &&
                         assessmentUserResponse.assessmentUserGroupId === group.id &&
@@ -121,9 +114,7 @@ export default function HeatMap({
                       (total, response) => total + response.level.weight, 0
                     ) / groupAttributeResponses.length).toFixed(2)
 
-                    const attributeResponses = allAssessmentUsers.flatMap(
-                      (assessmentUser) => assessmentUser.user.assessmentUserResponse
-                    ).filter(
+                    const attributeResponses = assessmentResponses.filter(
                       (assessmentUserResponse) =>
                         assessmentUserResponse.assessmentId === assessmentId &&
                         assessmentUserResponse.attributeId === attribute.id
@@ -179,10 +170,7 @@ export default function HeatMap({
                   {dataType === "ratings" ? "Rating" : "Score"} Average: Overall Total
                 </TableHead>
                 {attributes.map((attribute) => {
-
-                  const attributeResponses = allAssessmentUsers.flatMap(
-                    (assessmentUser) => assessmentUser.user.assessmentUserResponse
-                  ).filter(
+                  const attributeResponses = assessmentResponses.filter(
                     (assessmentUserResponse) =>
                       assessmentUserResponse.assessmentId === assessmentId &&
                       assessmentUserResponse.attributeId === attribute.id

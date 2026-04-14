@@ -1,4 +1,5 @@
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import { auth } from "@/auth"
 import {
   fetchAssessment,
@@ -63,6 +64,16 @@ export default async function Page(
       assessmentAttribute => partAttributeIds.includes(assessmentAttribute.attributeId)
     )
 
+    const groupsWithResponsesInPart = groups.filter(
+      group => group.assessmentUser.some(
+        assessmentUser => assessmentUser.user.assessmentUserResponse.some(
+          response =>
+            response.assessmentId === assessment.id &&
+            partAttributeIds.includes(response.attributeId)
+        )
+      )
+    )
+
     const canSubmit =
       isAdmin(session) ||
       isManagerForCollection(session, assessment.assessmentCollectionId) ||
@@ -91,7 +102,7 @@ export default async function Page(
                 assessmentPart={assessmentPart}
                 part={part}
                 assessmentUsers={assessmentUsers}
-                groups={groups}
+                groups={groupsWithResponsesInPart}
                 assessmentAttributes={assessmentAttributesInPart}
                 urlHead={
                   `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`
@@ -101,18 +112,7 @@ export default async function Page(
           </div>
         )
       }
-      return (
-        <div className="w-full max-w-4xl mx-auto">
-          <section className="mb-8">
-            <div className="space-y-4 max-lg:ml-2">
-              <Breadcrumbs links={links} currentPage={part.name} />
-              <p className="text-md text-muted-foreground dark:text-indigo-300/80">
-                You are not authorized to view this page.
-              </p>
-            </div>
-          </section>
-        </div>
-      )
+      return <NotAuthorized links={links} pageType="Bulk Edit Assessment Users" />
     }
   }
 }

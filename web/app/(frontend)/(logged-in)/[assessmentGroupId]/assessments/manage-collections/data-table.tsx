@@ -39,9 +39,9 @@ export default function DataTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-32">Collection ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Assessments</TableHead>
-            <TableHead>Manager(s)</TableHead>
+            <TableHead className="w-36">Name</TableHead>
+            <TableHead className="w-40">Assessments</TableHead>
+            <TableHead className="w-40">Manager(s)</TableHead>
             <TableHead className="w-32">Actions</TableHead>
           </TableRow>
         </TableHeader>

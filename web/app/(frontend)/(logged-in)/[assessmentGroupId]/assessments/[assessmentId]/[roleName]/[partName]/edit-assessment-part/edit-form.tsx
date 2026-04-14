@@ -6,6 +6,15 @@ import { format } from "date-fns"
 import { Calendar as CalendarIcon, Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
 
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
@@ -127,13 +136,63 @@ export default function EditForm({
           </div>
         </div>
         <div className="flex flex-col items-center">
-          <Button type="submit" disabled={saving}>
-            {saving &&
-              <Loader className="mr-2 h-4 w-4 animate-spin" />
-            } Save Changes to Assessment Part Info
-          </Button>
+          <SaveButton
+            willUnfinalize={assessmentPart.status === "Final" && status !== "Final"}
+            handleSubmit={handleSubmit}
+            saving={saving}
+          />
         </div>
       </div>
     </form>
+  )
+}
+
+function SaveButton({
+  willUnfinalize,
+  handleSubmit,
+  saving
+}: Readonly<{
+  willUnfinalize: boolean
+  handleSubmit: (e: React.FormEvent) => void
+  saving: boolean
+}>) {
+  if (willUnfinalize) {
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button>
+            Save Changes to Assessment Part Info
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogPortal>
+          <AlertDialogOverlay />
+          <AlertDialogContent>
+            <div className="flex flex-col space-y-6 text center">
+              <AlertDialogTitle>Save Changes to Assessment Part Info</AlertDialogTitle>
+              <p>
+                Are you sure you want to unfinalize this assessment part?
+              </p>
+              <div className="flex flex-row space-x-2 justify-end">
+                <AlertDialogCancel asChild>
+                  <Button variant="outline">Cancel</Button>
+                </AlertDialogCancel>
+                <Button onClick={handleSubmit} disabled={saving}>
+                  {saving &&
+                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  } Save Changes
+                </Button>
+              </div>
+            </div>
+          </AlertDialogContent>
+        </AlertDialogPortal>
+      </AlertDialog>
+    )
+  }
+  return (
+    <Button type="submit" disabled={saving}>
+      {saving &&
+        <Loader className="mr-2 h-4 w-4 animate-spin" />
+      } Save Changes to Assessment Part Info
+    </Button>
   )
 }

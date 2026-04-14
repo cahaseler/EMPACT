@@ -10,6 +10,7 @@ import PopulationDensity from "./components/pop-density";
 import WordCloud from "./components/word-cloud";
 
 import {
+  Assessment,
   AssessmentAttribute,
   AssessmentPart,
   AssessmentUser,
@@ -58,10 +59,15 @@ export default function AssessmentReport({
       }
     }
   })[]
-  assessmentResponses: AssessmentUserResponse[]
+  assessmentResponses: (AssessmentUserResponse & { level: Level })[]
 }>) {
 
-  const [report, setReport] = useState("Heat Map")
+  const environmentFinal = scores.some(
+    (score) => score.assessmentPart.part.name === "Environment"
+  )
+  const maturityFinal = scores.some(
+    (score) => score.assessmentPart.part.name === "Maturity"
+  )
 
   const attributesInEnvironment = sortAttributes(
     assessmentAttributes.filter(
@@ -71,28 +77,39 @@ export default function AssessmentReport({
     )
   )
 
+  const [report, setReport] = useState(environmentFinal && maturityFinal ? "Heat Map" : "Gap Analysis")
+
   return (
     <div className="flex flex-col space-y-8">
       <div className="flex flex-row flex-wrap gap-4">
-        <Button onClick={() => setReport("Heat Map")}>
-          Heat Map
-        </Button>
-        <Button onClick={() => setReport("Gap Analysis")}>
-          Gap Analysis
-        </Button>
-        <Button onClick={() => setReport("Population Density")}>
-          Population Density Chart
-        </Button>
-        <Button onClick={() => setReport("Word Cloud")}>
-          Word Cloud
-        </Button>
+        {environmentFinal && maturityFinal &&
+          <Button onClick={() => setReport("Heat Map")}>
+            Heat Map
+          </Button>
+        }
+        {environmentFinal &&
+          <>
+            <Button onClick={() => setReport("Gap Analysis")}>
+              Gap Analysis
+            </Button>
+            <Button onClick={() => setReport("Population Density")}>
+              Population Density Chart
+            </Button>
+            <Button onClick={() => setReport("Word Cloud")}>
+              Word Cloud
+            </Button>
+          </>
+        }
       </div>
-      {report === "Heat Map" && <HeatMap groups={groups} scores={scores} />}
+      {report === "Heat Map" &&
+        <HeatMap groups={groups} scores={scores} />
+      }
       {report === "Gap Analysis" &&
         <GapAnalysis
           assessmentId={assessmentId}
           groups={groups}
           attributes={attributesInEnvironment}
+          assessmentResponses={assessmentResponses}
         />
       }
       {report === "Population Density" &&

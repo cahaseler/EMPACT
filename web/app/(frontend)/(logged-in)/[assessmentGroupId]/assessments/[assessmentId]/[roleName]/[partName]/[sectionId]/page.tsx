@@ -7,12 +7,15 @@ import {
   fetchAttributes,
   fetchPart,
   fetchSection,
+  fetchPreviousSection,
+  fetchNextSection
 } from "../../../../../../utils/dataFetchers"
 import {
   isFacForAssessment,
   isLeadForAssessment,
   viewableResponses
 } from "../../../../../../utils/permissions"
+import Navigation from "./navigation"
 import DataTable from "./data-table"
 
 export default async function Page(
@@ -45,6 +48,7 @@ export default async function Page(
   )
 
   if (assessmentType && assessment && part && section) {
+
     const links = [
       {
         url: `/${assessmentType.id}/assessments`,
@@ -59,6 +63,10 @@ export default async function Page(
         name: `${part.name} Assessment`,
       },
     ]
+
+    const prevSection = await fetchPreviousSection(params.assessmentGroupId, params.partName, params.sectionId)
+    const nextSection = await fetchNextSection(params.assessmentGroupId, params.partName, params.sectionId)
+
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -66,6 +74,11 @@ export default async function Page(
             <Breadcrumbs
               links={links}
               currentPage={`${section.id.toString().toUpperCase()}. ${section.name}`}
+            />
+            <Navigation
+              urlHead={`/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`}
+              prevSection={prevSection}
+              nextSection={nextSection}
             />
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter">

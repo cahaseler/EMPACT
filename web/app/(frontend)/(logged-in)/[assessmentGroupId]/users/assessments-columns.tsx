@@ -53,14 +53,6 @@ export function columns({
                     <DataTableColumnHeader column={column} title="Location" />
                 ),
                 cell: ({ row }) => <div>{row.getValue("location")}</div>
-            },
-            {
-                accessorKey: "completedDate",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Completion Date" />
-                ),
-                cell: ({ row }) => <div>{row.original.completedDate ? format(row.getValue("completedDate"), "MM/dd/yyyy") : "N/A"}</div>,
-                enableSorting: true
             }
         ]
     )

@@ -140,7 +140,7 @@ export async function fetchAssessments(
 
 export async function fetchAssessment(assessmentId: string): Promise<
   (Assessment & {
-    assessmentParts: (AssessmentPart & { part: Part })[],
+    assessmentParts: (AssessmentPart & { part: Part & { sections: (Section & { attributes: Attribute[] })[] } })[],
     assessmentAttributes: (AssessmentAttribute & { attribute: Attribute & { levels: Level[], section: Section & { part: Part & { assessmentPart: AssessmentPart[] } } } })[]
   }) | null
 > {
@@ -154,7 +154,7 @@ export async function fetchAssessment(assessmentId: string): Promise<
   return await db.assessment.findUnique({
     where: { id: idAsInteger },
     include: {
-      assessmentParts: { include: { part: true } },
+      assessmentParts: { include: { part: { include: { sections: { include: { attributes: true } } } } } },
       assessmentAttributes: {
         include: {
           attribute: {
@@ -553,6 +553,42 @@ export async function fetchPart(
 
 export async function fetchSection(sectionId: string): Promise<Section | null> {
   return await section.findUnique({ where: { id: sectionId } })
+}
+
+export async function fetchPreviousSection(typeId: string, partName: string, sectionId: string): Promise<Section | null> {
+  const part = await fetchPart(typeId, partName)
+  const currentSectionIndex = part?.sections.findIndex(section => section.id === sectionId)
+
+  // Check if current section exists and if there is a previous section (index > 0)
+  if (
+    currentSectionIndex === undefined ||
+    currentSectionIndex === -1 ||
+    currentSectionIndex === 0
+  ) return null
+
+  // Safely access the previous section
+  const previousSection = part?.sections[currentSectionIndex - 1];
+  return previousSection ?? null;
+}
+
+export async function fetchNextSection(assessmentId: string, partName: string, sectionId: string): Promise<Section | null> {
+  const part = await fetchPart(assessmentId, partName)
+
+  if (part) {
+    const currentSectionIndex = part.sections.findIndex(section => section.id === sectionId)
+
+    // Check if current section exists and if there is a next section (index < length - 1)
+    if (
+      currentSectionIndex === undefined ||
+      currentSectionIndex === -1 ||
+      currentSectionIndex >= part.sections.length - 1
+    ) return null
+
+    // Safely access the next section
+    const nextSection = part.sections[currentSectionIndex + 1];
+    return nextSection ?? null;
+  }
+  return null
 }
 
 // *** ATTRIBUTES ***

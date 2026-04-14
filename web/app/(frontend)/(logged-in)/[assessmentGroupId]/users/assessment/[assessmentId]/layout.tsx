@@ -1,3 +1,5 @@
+import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
+import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import NotFound from "@/app/(frontend)/components/notFound"
 import {
   fetchAssessment,
@@ -19,6 +21,7 @@ export default async function RootLayout(
 
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
+  const viewableStatuses = ["Planned", "Active", "Inactive"]
 
   if (assessmentType) {
     const links = [
@@ -28,7 +31,10 @@ export default async function RootLayout(
       },
     ]
     if (assessment) {
-      return children
+      if (viewableStatuses.includes(assessment.status)) {
+        return children
+      }
+      return <NotAuthorized links={links} pageType={`${assessment.name} Users`} />
     }
     return <NotFound links={links} pageType="assessment" />
   }

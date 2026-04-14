@@ -21,12 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
@@ -111,18 +106,11 @@ export default function EditModule({
     <>
       <div className="flex justify-start">
         {buttonType === "icon" &&
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
-                  <SquarePen className="w-5 h-5 text-white" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="text-center">
-                Edit Assessment
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <TooltipButton content="Edit Assessment">
+            <Button size="icon" onClick={() => setIsEditDialogOpen(true)}>
+              <SquarePen className="w-5 h-5 text-white" />
+            </Button>
+          </TooltipButton>
         }
         {buttonType === "default" &&
           <Button onClick={() => setIsEditDialogOpen(true)}>

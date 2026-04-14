@@ -1,14 +1,11 @@
-import Link from "next/link"
-
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import NotAuthorized from "@/app/(frontend)/components/notAuthorized"
 import { auth } from "@/auth"
-import { Button } from "@/components/ui/button"
 import {
   fetchAssessment,
   fetchAssessmentType,
-  fetchAssessmentUserGroups,
-  fetchUsers,
+  fetchAssessmentUsers,
+  fetchAssessmentUserGroups
 } from "../../../../../utils/dataFetchers"
 import {
   isAdmin,
@@ -32,9 +29,8 @@ export default async function Page(
   const assessmentType = await fetchAssessmentType(params.assessmentGroupId)
   const assessment = await fetchAssessment(params.assessmentId)
   const groups = await fetchAssessmentUserGroups(params.assessmentId)
-  const users = await fetchUsers()
 
-  if (assessmentType && assessment && users) {
+  if (assessmentType && assessment) {
     const links = [
       {
         url: `/${assessmentType.id}/users`,
@@ -51,32 +47,18 @@ export default async function Page(
       isLeadForAssessment(session, params.assessmentId) ||
       isFacForAssessment(session, params.assessmentId)
     if (canAdd) {
-      const usersNotInAssessment = users.filter(
-        (user) =>
-          user.assessmentUser.find(
-            (uc) => uc.assessmentId === parseInt(params.assessmentId, 10)
-          ) === undefined
-      )
+      const assessmentUsers = await fetchAssessmentUsers(params.assessmentId)
+      const somePartFinalized = assessment.assessmentParts.some((part) => part.status === "Final")
 
       return (
         <div className="w-full max-w-4xl mx-auto">
           <section className="mb-8">
             <div className="space-y-4">
-              <Breadcrumbs links={links} currentPage="Add Assessment Users" />
+              <Breadcrumbs links={links} currentPage="Bulk Edit Assessment Users" />
               <div className="flex flex-row justify-between">
                 <h1 className="text-3xl font-bold tracking-tighter">
-                  Add Users to {assessment.name}
+                  Bulk Edit {assessment.name} Users
                 </h1>
-                {isAdmin(session) && (
-                  <div>
-                    <Link
-                      href={`/admin`}
-                      prefetch={false}
-                    >
-                      <Button>Import New Users</Button>
-                    </Link>
-                  </div>
-                )}
               </div>
             </div>
           </section>
@@ -85,12 +67,13 @@ export default async function Page(
               assessmentTypeId={parseInt(params.assessmentGroupId, 10)}
               assessmentId={parseInt(params.assessmentId, 10)}
               groups={groups}
-              users={usersNotInAssessment}
+              assessmentUsers={assessmentUsers}
+              somePartFinalized={somePartFinalized}
             />
           </section>
         </div>
       )
     }
-    return <NotAuthorized links={links} pageType="Add Assessment Users" />
+    return <NotAuthorized links={links} pageType="Bulk Edit Assessment Users" />
   }
 }

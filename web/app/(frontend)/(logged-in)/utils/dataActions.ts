@@ -274,6 +274,12 @@ export async function updateAssessmentUser(
   })
 }
 
+export async function updateAssessmentUsers(
+  users: AssessmentUser[]
+): Promise<BatchPayload> {
+  return await assessmentUser.createMany({ data: users })
+}
+
 export async function deleteAssessmentUser(
   assessmentUserId: number
 ): Promise<AssessmentUser> {

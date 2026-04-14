@@ -4,6 +4,7 @@ import {
   AssessmentPart,
   AssessmentType,
   AssessmentUser,
+  AssessmentUserGroup,
   AssessmentUserResponse,
   Attribute,
   Part,
@@ -23,9 +24,15 @@ export default function PartContent({
   part,
   userResponses
 }: Readonly<{
-  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] },
+  assessment: Assessment & {
+    assessmentParts: AssessmentPart[],
+    assessmentAttributes: AssessmentAttribute[]
+  },
   assessmentType: AssessmentType,
-  assessmentUsers: (AssessmentUser & { participantParts: AssessmentPart[] })[],
+  assessmentUsers: (AssessmentUser & {
+    assessmentUserGroup: AssessmentUserGroup | null,
+    participantParts: AssessmentPart[]
+  })[],
   isParticipant: boolean,
   role: string,
   part: Part & { sections: (Section & { attributes: Attribute[] })[] },
@@ -39,7 +46,8 @@ export default function PartContent({
   )
   const partParticipants = assessmentUsers.filter(
     assessmentUser =>
-      assessmentUser.role === "Participant" ||
+      (assessmentUser.role === "Participant" &&
+        assessmentUser.assessmentUserGroup?.status === "Active") ||
       assessmentUser.participantParts.some(
         participantPart => participantPart.partId === part.id
       )
@@ -48,6 +56,7 @@ export default function PartContent({
   return (
     <div className="flex flex-col space-y-2">
       {part.sections.map((section: Section & { attributes: Attribute[] }, key: number) => {
+        const assessmentPart = assessment.assessmentParts.find(assessmentPart => assessmentPart.partId === part.id)
         const sectionAttributesInAssessment = section.attributes.filter(
           attribute => assessmentAttributeIds.includes(attribute.id)
         )
@@ -56,6 +65,7 @@ export default function PartContent({
           responseAttributeId => sectionAttributeIds.includes(responseAttributeId)
         )
         const unfinishedSection =
+          assessmentPart?.status !== "Final" &&
           sectionAttributeIds.length * numParticipants !== sectionResponseAttributeIds.length
         if (sectionAttributesInAssessment.length === 0) return null
         return (

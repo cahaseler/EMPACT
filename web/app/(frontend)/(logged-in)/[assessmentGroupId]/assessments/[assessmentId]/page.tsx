@@ -3,6 +3,7 @@ import Link from "next/link"
 import Breadcrumbs from "@/app/(frontend)/components/breadcrumbs"
 import { auth } from "@/auth"
 import { Button } from "@/components/ui/button"
+import { DropdownMenuWithChildren } from "@/components/ui/dropdown-menu"
 import {
   fetchAssessment,
   fetchAssessmentParts,
@@ -10,9 +11,9 @@ import {
   fetchAssessmentUserGroup
 } from "../../../utils/dataFetchers"
 import {
-  canViewUsers,
   isAdmin,
   isCollectionManager,
+  isFacForAssessment,
   isLeadForAssessment,
   isManagerForCollection,
   viewableCollections
@@ -62,12 +63,19 @@ export default async function Page(
       isAdmin(session) ||
       isManagerForCollection(session, assessment.assessmentCollectionId) ||
       isLeadForAssessment(session, params.assessmentId)
+    const canView =
+      isAdmin(session) ||
+      isManagerForCollection(session, assessment.assessmentCollectionId) ||
+      isLeadForAssessment(session, assessment.id.toString()) ||
+      isFacForAssessment(session, assessment.id.toString())
     const canArchive =
       isAdmin(session) ||
       isManagerForCollection(session, assessment.assessmentCollectionId) ||
       permissions?.find(
         (permission) => permission.name === "Archive assessment"
       ) !== undefined
+
+    const assessmentHasFinalizedParts = parts.some((part) => part.status === "Final")
 
     return (
       <div className="w-full max-w-4xl mx-auto">
@@ -78,54 +86,64 @@ export default async function Page(
               <h1 className="text-3xl font-bold tracking-tighter">
                 {assessment.name}
               </h1>
-              <div className="flex flex-col space-y-2 ml-2">
-                <div className="flex flex-row space-x-2 justify-center md:justify-end">
-                  {canViewUsers(session) && (
-                    <div>
-                      <Link
-                        href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
-                        prefetch={false}
-                      >
-                        <Button>Manage Assessment Users</Button>
-                      </Link>
-                    </div>
-                  )}
-                  {canEdit && (
-                    <div>
-                      <EditModule
-                        assessmentType={assessmentType}
+              {(canEdit || canEditStatus || canEditCollection || canView || canArchive) &&
+                <DropdownMenuWithChildren size="default">
+                  <div className="flex flex-col space-y-2 p-2 items-center">
+                    {canEdit && (
+                      <div>
+                        <EditModule
+                          assessmentType={assessmentType}
+                          assessment={assessment}
+                          assessmentCollections={collections}
+                          canEditCollection={canEditCollection}
+                          canEditStatus={canEditStatus}
+                          buttonType="default"
+                        />
+                      </div>
+                    )}
+                    {canView && assessment.status !== "Final" && assessment.status !== "Archived" && (
+                      <div>
+                        <Link
+                          href={`/${assessmentType.id}/users/assessment/${assessment.id}`}
+                          prefetch={false}
+                        >
+                          <Button>Manage Assessment Users</Button>
+                        </Link>
+                      </div>
+                    )}
+                    {assessment.status === "Final" && (
+                      <div>
+                        <Link
+                          href={`/${assessmentType.id}/reports/${assessment.id}`}
+                          prefetch={false}
+                        >
+                          <Button>View Assessment Reports</Button>
+                        </Link>
+                      </div>
+                    )}
+                    {canEditStatus && assessmentHasFinalizedParts &&
+                      <div>
+                        <Link
+                          href={`/${assessmentType.id}/assessments/${assessment.id}/export-assessment-data`}
+                          prefetch={false}
+                        >
+                          <Button>Export Assessment Data</Button>
+                        </Link>
+                      </div>
+                    }
+                    {canEditStatus && assessment.status !== "Final" && assessment.status !== "Archived" &&
+                      <SubmitModule assessment={assessment} buttonType="default" />
+                    }
+                    {canArchive &&
+                      <ArchiveModule
                         assessment={assessment}
-                        assessmentCollections={collections}
-                        canEditCollection={canEditCollection}
-                        canEditStatus={canEditStatus}
+                        assessmentTypeId={assessmentType.id}
                         buttonType="default"
                       />
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-row space-x-2 justify-center md:justify-end">
-                  {canEditStatus &&
-                    assessment.status === "Final" ?
-                    <div>
-                      <Link
-                        href={`/${assessmentType.id}/assessments/${assessment.id}/export-assessment-data`}
-                        prefetch={false}
-                      >
-                        <Button>Export Assessment Data</Button>
-                      </Link>
-                    </div>
-                    :
-                    <SubmitModule assessment={assessment} buttonType="default" />
-                  }
-                  {canArchive &&
-                    <ArchiveModule
-                      assessment={assessment}
-                      assessmentTypeId={assessmentType.id}
-                      buttonType="default"
-                    />
-                  }
-                </div>
-              </div>
+                    }
+                  </div>
+                </DropdownMenuWithChildren>
+              }
             </div>
             <p className="text-sm text-muted-foreground dark:text-indigo-300/80">
               {assessment.description}

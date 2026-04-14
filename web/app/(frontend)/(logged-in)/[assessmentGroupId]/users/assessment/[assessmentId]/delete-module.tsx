@@ -5,23 +5,13 @@ import { useRouter } from "next/navigation"
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  AlertDialogPortal,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogPortalContent,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { TooltipButton } from "@/components/ui/tooltip"
 import { toast } from "@/components/ui/use-toast"
+
 import {
   AssessmentUser,
   AssessmentUserResponse,
@@ -57,61 +47,29 @@ export default function DeleteModule({
   }
 
   return assessmentUser.user.assessmentUserResponse.length > 0 ? (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button size="icon" className="cursor-default opacity-50">
-            <Trash2 className="w-5 h-5 text-white" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="w-60 text-center">
-          This user cannot be removed because they have submitted responses to
-          this assessment.
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <TooltipButton
+      content="This user cannot be removed because they have submitted responses to this assessment."
+      sizeLarge
+    >
+      <Button size="icon" className="cursor-default opacity-50">
+        <Trash2 className="w-5 h-5 text-white" />
+      </Button>
+    </TooltipButton>
   ) : (
     <AlertDialog>
-
-      <TooltipProvider delayDuration={0}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <AlertDialogTrigger asChild>
-              <Button size="icon">
-                <Trash2 className="w-5 h-5 text-white" />
-              </Button>
-            </AlertDialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent className="w-60 text-center">
-            Remove Assessment User
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <AlertDialogPortal>
-        <AlertDialogOverlay />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Remove Assessment User
-            </AlertDialogTitle>
-          </AlertDialogHeader>
-          <div className="flex flex-col space-y-6 text center">
-            <p>
-              Are you sure you want to remove this user from this assessment?
-            </p>
-            <div className="flex flex-row space-x-2 justify-end">
-              <AlertDialogCancel asChild>
-                <Button variant="outline">Cancel</Button>
-              </AlertDialogCancel>
-              <AlertDialogAction asChild>
-                <Button onClick={(e: React.FormEvent) => handleDelete(e)}>
-                  Remove
-                </Button>
-              </AlertDialogAction>
-            </div>
-          </div>
-        </AlertDialogContent>
-      </AlertDialogPortal>
+      <TooltipButton content="Remove Assessment User">
+        <AlertDialogTrigger asChild>
+          <Button size="icon">
+            <Trash2 className="w-5 h-5 text-white" />
+          </Button>
+        </AlertDialogTrigger>
+      </TooltipButton>
+      <AlertDialogPortalContent
+        title="Remove Assessment User"
+        description="Are you sure you want to remove this user from this assessment?"
+        actionName="Remove"
+        action={(e: React.FormEvent) => handleDelete(e)}
+      />
     </AlertDialog>
   )
 }

@@ -16,7 +16,12 @@ export default async function Page(
   )
 
   if (assessmentType) {
-    const finalizedAssessments = assessments.filter(assessment => assessment.status === "Final")
+    const assessmentsWithReports = assessments.filter(assessment =>
+      assessment.status !== "Planned" &&
+      assessment.assessmentParts.some(
+        assessmentPart => assessmentPart.status === "Final"
+      )
+    )
     return (
       <div className="w-full max-w-4xl mx-auto">
         <section className="mb-8">
@@ -32,7 +37,7 @@ export default async function Page(
         <section className="mb-16">
           <div className="space-y-4">
             <AssessmentsDataTable
-              assessments={finalizedAssessments}
+              assessments={assessmentsWithReports}
               assessmentType={assessmentType}
             />
           </div>

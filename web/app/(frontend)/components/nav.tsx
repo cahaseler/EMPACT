@@ -1,10 +1,9 @@
 "use client"
 
-import { UserButton, SignOutButton } from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
 import {
   BookCopy,
   FileChartColumn,
-  Menu,
   Moon,
   NotebookPen,
   Sun,
@@ -16,11 +15,7 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenuWithChildren } from "@/components/ui/dropdown-menu"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -160,16 +155,9 @@ function NavigationView({ children }: { readonly children: React.ReactNode }) {
             EMPACT
           </Link>
         </NavigationMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="mx-5">
-            <Menu className="w-7 h-7" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <div>
-              {children}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <DropdownMenuWithChildren size="icon">
+          {children}
+        </DropdownMenuWithChildren>
       </div>
     </div>
   )
