@@ -27,6 +27,7 @@ import {
   AssessmentPart,
   AssessmentType,
   AssessmentUserGroup,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Attribute,
   Level,
@@ -47,10 +48,14 @@ export default function DataTable({
   section,
   attributes,
   userResponses,
+  userReconciliations,
   isParticipating,
   isFacilitator
 }: Readonly<{
-  assessment: Assessment & { assessmentAttributes: AssessmentAttribute[] },
+  assessment: Assessment & {
+    assessmentParts: AssessmentPart[],
+    assessmentAttributes: AssessmentAttribute[]
+  },
   assessmentType: AssessmentType,
   groups: AssessmentUserGroup[],
   role: string,
@@ -60,6 +65,7 @@ export default function DataTable({
     levels: Level[],
     section: Section & { part: Part & { assessmentPart: AssessmentPart[] } }
   })[],
+  userReconciliations: AssessmentUserReconciliation[],
   userResponses: AssessmentUserResponse[],
   isParticipating: boolean
   isFacilitator: boolean
@@ -67,6 +73,9 @@ export default function DataTable({
   const [groupId, setGroupId] = useState<number | null>(groups[0] ? groups[0].id : null)
 
   const router = useRouter()
+
+  const assessmentPart = assessment.assessmentParts.find(assessmentPart => assessmentPart.partId === part.id)
+  const showRec = assessmentPart?.status === "Reconciliation" || userReconciliations.length > 0
 
   const assessmentAttributeIds = assessment.assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attributeId)
   const attributesInAssessment = attributes.filter(attribute => assessmentAttributeIds.includes(attribute.id))
@@ -116,7 +125,8 @@ export default function DataTable({
                 ) : (
                   <>
                     <TableHead className="w-28">Number of Submitted Responses</TableHead>
-                    <TableHead>Average Rating</TableHead>
+                    <TableHead>{showRec && "Initial "}Average Rating</TableHead>
+                    {showRec && <TableHead>Reconciliation Average Rating</TableHead>}
                   </>
                 )
               }
@@ -125,28 +135,40 @@ export default function DataTable({
           <TableBody className="cursor-pointer">
             {sortedAttributes.map(
               (attribute: Attribute & { levels: Level[] }, key: number) => {
-                const attributeResponses = userResponses.filter(
-                  (userResponse: AssessmentUserResponse) => {
-                    if (isParticipating && isFacilitator) {
-                      return userResponse.attributeId === attribute.id && userResponse.assessmentUserGroupId === groupId
-                    }
-                    return userResponse.attributeId === attribute.id
+                const attributeResponses = userResponses.filter((userResponse) => {
+                  if (isParticipating && isFacilitator) {
+                    return userResponse.attributeId === attribute.id && userResponse.assessmentUserGroupId === groupId
                   }
+                  return userResponse.attributeId === attribute.id
+                })
+                const attributeResponseLevels = attributeResponses.map((attributeResponse) =>
+                  attributeResponse.levelId
                 )
-                const attributeResponseLevels = attributeResponses.map(
-                  (attributeResponse: AssessmentUserResponse) => attributeResponse.levelId
+                const resLevels = attribute.levels.filter((level) =>
+                  attributeResponseLevels.includes(level.id)
+                ).map((level) => level.level)
+                const averageResLevel = resLevels.reduce((a, b) => a + b, 0) / resLevels.length
+
+                const attributeReconciliations = userReconciliations.filter((userReconciliation) => {
+                  if (isParticipating && isFacilitator) {
+                    return userReconciliation.attributeId === attribute.id && userReconciliation.assessmentUserGroupId === groupId
+                  }
+                  return userReconciliation.attributeId === attribute.id
+                })
+                const attributeReconciliationLevels = attributeReconciliations.map((attributeReconciliation) =>
+                  attributeReconciliation.levelId
                 )
+                const recLevels = attribute.levels.filter((level) =>
+                  attributeReconciliationLevels.includes(level.id)
+                ).map((level) => level.level)
+                const averageRecLevel = recLevels.reduce((a, b) => a + b, 0) / recLevels.length
+
+                const urlAttributeId = attribute.id.replace(".", "")
                 const attributeIdDisplay =
                   part.attributeType === "Attribute" ?
                     attribute.id.toUpperCase() :
                     attribute.id
-                const levels = attribute.levels.filter(
-                  (level: Level) => attributeResponseLevels.includes(level.id)
-                ).map(
-                  (level: Level) => level.level
-                )
-                const averageLevel = levels.reduce((a, b) => a + b, 0) / levels.length
-                const urlAttributeId = attribute.id.replace(".", "")
+
                 return (
                   <TableRow
                     key={key}
@@ -162,7 +184,7 @@ export default function DataTable({
                     {isParticipating ? (
                       <>
                         <TableCell className="w-20">
-                          {levels.length > 0 ? levels[0] : "---"}
+                          {resLevels.length > 0 ? resLevels[0] : "---"}
                         </TableCell>
                         <TableCell>
                           {attributeResponses.length > 0
@@ -176,8 +198,13 @@ export default function DataTable({
                           {attributeResponses.length}
                         </TableCell>
                         <TableCell className="w-20">
-                          {averageLevel || "---"}
+                          {averageResLevel || "---"}
                         </TableCell>
+                        {showRec &&
+                          <TableCell className="w-20">
+                            {averageRecLevel || "---"}
+                          </TableCell>
+                        }
                       </>
                     )}
                   </TableRow>

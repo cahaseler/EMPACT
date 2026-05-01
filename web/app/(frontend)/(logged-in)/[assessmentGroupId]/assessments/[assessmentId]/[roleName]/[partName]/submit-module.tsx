@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { BookCheck } from "lucide-react"
 
 import {
   AlertDialog,
@@ -12,20 +13,30 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
+import { TooltipButton } from "@/components/ui/tooltip"
 
 export default function SubmitModule({
   urlHead,
-  assessmentPartName
+  assessmentPartName,
+  buttonType
 }: {
   readonly urlHead: string
   readonly assessmentPartName: string
+  readonly buttonType: "icon" | "default"
 }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>
-          Submit for Scoring
-        </Button>
+        <span>
+          {buttonType === "icon" ?
+            <TooltipButton content="Submit for Scoring">
+              <Button size="icon">
+                <BookCheck className="w-5 h-5 text-white" />
+              </Button>
+            </TooltipButton> :
+            <Button>Submit for Scoring</Button>
+          }
+        </span>
       </AlertDialogTrigger>
       <AlertDialogPortal>
         <AlertDialogOverlay />

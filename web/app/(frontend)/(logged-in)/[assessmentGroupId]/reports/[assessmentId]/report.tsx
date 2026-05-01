@@ -10,7 +10,6 @@ import PopulationDensity from "./components/pop-density";
 import WordCloud from "./components/word-cloud";
 
 import {
-  Assessment,
   AssessmentAttribute,
   AssessmentPart,
   AssessmentUser,
@@ -77,6 +76,14 @@ export default function AssessmentReport({
     )
   )
 
+  const attributesInMaturity = sortAttributes(
+    assessmentAttributes.filter(
+      (assessmentAttribute) => assessmentAttribute.attribute.section.part.name === "Maturity"
+    ).map(
+      (assessmentAttribute) => assessmentAttribute.attribute
+    )
+  )
+
   const [report, setReport] = useState(environmentFinal && maturityFinal ? "Heat Map" : "Gap Analysis")
 
   return (
@@ -88,10 +95,17 @@ export default function AssessmentReport({
           </Button>
         }
         {environmentFinal &&
+          <Button onClick={() => setReport("Environment Gap Analysis")}>
+            Environment Gap Analysis
+          </Button>
+        }
+        {maturityFinal &&
+          <Button onClick={() => setReport("Maturity Gap Analysis")}>
+            Maturity Gap Analysis
+          </Button>
+        }
+        {environmentFinal &&
           <>
-            <Button onClick={() => setReport("Gap Analysis")}>
-              Gap Analysis
-            </Button>
             <Button onClick={() => setReport("Population Density")}>
               Population Density Chart
             </Button>
@@ -104,12 +118,24 @@ export default function AssessmentReport({
       {report === "Heat Map" &&
         <HeatMap groups={groups} scores={scores} />
       }
-      {report === "Gap Analysis" &&
+      {report === "Environment Gap Analysis" &&
         <GapAnalysis
           assessmentId={assessmentId}
+          assessmentPartName="Environment"
           groups={groups}
           attributes={attributesInEnvironment}
           assessmentResponses={assessmentResponses}
+          deltaGroupName="Average"
+        />
+      }
+      {report === "Maturity Gap Analysis" &&
+        <GapAnalysis
+          assessmentId={assessmentId}
+          assessmentPartName="Maturity"
+          groups={groups}
+          attributes={attributesInMaturity}
+          assessmentResponses={assessmentResponses}
+          deltaGroupName="Review Team"
         />
       }
       {report === "Population Density" &&

@@ -6,21 +6,24 @@ import { useRouter } from "next/navigation"
 import { DataTable } from "@/components/ui/data-table/data-table"
 
 import {
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Level,
   User,
 } from "@/prisma/mssql/generated/client"
 
-import { columns } from "./columns"
+import { columns, recColumns } from "./columns"
 
 export default function AttributeResponseTable({
-  assessmentStatus,
+  assessmentPartStatus,
   userResponses,
+  userReconciliations,
   levels,
   numParticipants
 }: {
-  readonly assessmentStatus: string
+  readonly assessmentPartStatus: string
   readonly userResponses: (AssessmentUserResponse & { user?: User, level?: Level })[]
+  readonly userReconciliations: (AssessmentUserReconciliation & { user?: User, level?: Level })[]
   readonly levels: Level[]
   readonly numParticipants: number
 }) {
@@ -30,12 +33,17 @@ export default function AttributeResponseTable({
   // While the assessment is active and not all responses for the attribute have been submitted, 
   // refresh the page every 10 seconds to get updated response data
   useEffect(() => {
-    if (assessmentStatus === "Active" && userResponses.length < numParticipants) {
+    if (assessmentPartStatus === "Active" && userResponses.length < numParticipants) {
       setTimeout(() => {
         router.refresh()
       }, 10000)
     }
   }, [userResponses])
+
+  const userResponsesWithRec = userResponses.map((response) => ({
+    ...response,
+    reconciliation: userReconciliations.find((rec) => rec.user?.id === response.user?.id)
+  }))
 
   // Define searchable and filterable columns
   const searchableColumns = [
@@ -58,6 +66,29 @@ export default function AttributeResponseTable({
     },
   ]
 
+  const recFilterableColumns = [
+    {
+      id: "level",
+      title: "Initial Rating",
+      options: levels.map(
+        level => ({
+          label: level.level.toString(),
+          value: level.level.toString()
+        })
+      ),
+    },
+    {
+      id: "recLevel",
+      title: "Reconciliation Rating",
+      options: levels.map(
+        level => ({
+          label: level.level.toString(),
+          value: level.level.toString()
+        })
+      ),
+    },
+  ]
+
   return (
     <section className="mb-16 flex flex-col space-y-4">
       <div className="flex flex-col max-md:space-y-2 md:flex-row md:justify-between md:items-end">
@@ -67,13 +98,22 @@ export default function AttributeResponseTable({
         </p>
       </div>
       <div className="space-y-4">
-        <DataTable
-          columns={columns}
-          data={userResponses}
-          selectable={false}
-          searchableColumns={searchableColumns}
-          filterableColumns={filterableColumns}
-        />
+        {assessmentPartStatus === "Reconciliation" || userReconciliations.length > 0 ?
+          <DataTable
+            columns={recColumns}
+            data={userResponsesWithRec}
+            selectable={false}
+            searchableColumns={searchableColumns}
+            filterableColumns={recFilterableColumns}
+          /> :
+          <DataTable
+            columns={columns}
+            data={userResponses}
+            selectable={false}
+            searchableColumns={searchableColumns}
+            filterableColumns={filterableColumns}
+          />
+        }
       </div>
     </section>
   )

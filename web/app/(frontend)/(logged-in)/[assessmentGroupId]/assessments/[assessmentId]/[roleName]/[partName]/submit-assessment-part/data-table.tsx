@@ -15,6 +15,7 @@ import {
 import {
   AssessmentPart,
   AssessmentUser,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Attribute,
   Level,
@@ -27,6 +28,9 @@ import { sortAttributes } from "../../../../../../utils/dataCalculations"
 type AssessmentUserWithResponses = AssessmentUser & {
   user: User & {
     assessmentUserResponse: (AssessmentUserResponse & {
+      level: Level
+    })[]
+    assessmentUserReconciliation: (AssessmentUserReconciliation & {
       level: Level
     })[]
   },
@@ -45,21 +49,21 @@ export default function DataTable({
   assessmentUsers: AssessmentUserWithResponses[],
   groupTotalScore: number | undefined
 }>) {
+
   const attributeIds = attributes.map(attribute => attribute.id)
   const sortedAttributes = sortAttributes(attributes)
 
   const assessmentUsersWithResponses = assessmentUsers.filter(
-    (assessmentUser: AssessmentUserWithResponses) => assessmentUser.user.assessmentUserResponse.some(
-      (userResponse: AssessmentUserResponse & { level: Level }) => {
-        return userResponse.assessmentId === assessmentUser.assessmentId &&
-          userResponse.assessmentUserGroupId === groupId &&
-          attributeIds.includes(userResponse.attributeId)
-      }
-
-    )
+    (assessmentUser) => assessmentUser.user.assessmentUserResponse.some((userResponse) => {
+      return userResponse.assessmentId === assessmentUser.assessmentId &&
+        userResponse.assessmentUserGroupId === groupId &&
+        attributeIds.includes(userResponse.attributeId)
+    })
   )
+
   const [buttonDisplay, setButtonDisplay] = useState("Show")
   const [visibleUsers, setVisibleUsers] = useState(assessmentUsersWithResponses)
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex justify-end">
@@ -99,13 +103,20 @@ export default function DataTable({
                     <TableHead>{assessmentUser.user.lastName}, {assessmentUser.user.firstName}</TableHead>
                     {sortedAttributes.map(
                       (attribute: Attribute) => {
-                        const attributeResponse = assessmentUser.user.assessmentUserResponse.find(
-                          (userResponse: AssessmentUserResponse & { level: Level }) =>
-                            userResponse.assessmentId === assessmentUser.assessmentId &&
-                            userResponse.assessmentUserGroupId === groupId &&
-                            userResponse.attributeId === attribute.id
+                        const attributeResponse = assessmentUser.user.assessmentUserResponse.find((userResponse) =>
+                          userResponse.assessmentId === assessmentUser.assessmentId &&
+                          userResponse.assessmentUserGroupId === groupId &&
+                          userResponse.attributeId === attribute.id
                         )
-                        if (attributeResponse) {
+                        const attributeReconciliation = assessmentUser.user.assessmentUserReconciliation.find((userReconciliation) =>
+                          userReconciliation.assessmentId === assessmentUser.assessmentId &&
+                          userReconciliation.assessmentUserGroupId === groupId &&
+                          userReconciliation.attributeId === attribute.id
+                        )
+                        if (attributeReconciliation) {
+                          return <TableCell key={attribute.id}>{attributeReconciliation.level.level}</TableCell>
+                        }
+                        else if (attributeResponse) {
                           return <TableCell key={attribute.id}>{attributeResponse.level.level}</TableCell>
                         }
                         return <TableCell key={attribute.id}>--</TableCell>
@@ -119,13 +130,18 @@ export default function DataTable({
                 <TableHead className="font-bold">Average Rating</TableHead>
                 {sortedAttributes.map(
                   (attribute: Attribute, key: number) => {
-                    const attributeResponses = assessmentUsers.flatMap(
-                      (assessmentUser: AssessmentUserWithResponses) => assessmentUser.user.assessmentUserResponse.filter(
-                        (userResponse: AssessmentUserResponse & { level: Level }) =>
+                    const attributeResponses = assessmentUsers.flatMap((assessmentUser) =>
+                      assessmentUser.user.assessmentUserResponse.filter((userResponse) => {
+                        const userReconciliation = assessmentUser.user.assessmentUserReconciliation.find((userReconciliation) =>
+                          userReconciliation.assessmentId === assessmentUser.assessmentId &&
+                          userReconciliation.assessmentUserGroupId === groupId &&
+                          userReconciliation.attributeId === userResponse.attributeId
+                        )
+                        return userReconciliation ? userReconciliation :
                           userResponse.assessmentId === assessmentUser.assessmentId &&
                           userResponse.assessmentUserGroupId === groupId &&
                           userResponse.attributeId === attribute.id
-                      )
+                      })
                     )
                     const average = Math.round(attributeResponses.reduce(
                       (total, attributeResponse) => total + attributeResponse.level.level, 0

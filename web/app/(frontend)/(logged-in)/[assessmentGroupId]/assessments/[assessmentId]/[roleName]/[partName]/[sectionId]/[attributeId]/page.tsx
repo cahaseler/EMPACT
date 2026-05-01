@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 
 import {
   fetchAssessment,
+  fetchAssessmentPart,
   fetchAssessmentAttribute,
   fetchAssessmentType,
   fetchAssessmentUsers,
@@ -19,6 +20,7 @@ import {
 import {
   isFacForAssessment,
   isLeadForAssessment,
+  viewableAttributeReconciliations,
   viewableAttributeResponses,
   viewableResponses
 } from "../../../../../../../utils/permissions"
@@ -49,6 +51,8 @@ export default async function Page(
   const section = await fetchSection(params.sectionId)
 
   if (assessmentType && assessment && part && section) {
+    const assessmentPart = await fetchAssessmentPart(assessment.id, part.id)
+
     const idPart1 = params.attributeId.charAt(0)
     const idPart2 = params.attributeId.slice(1)
     const newId = idPart1.concat(".", idPart2)
@@ -76,14 +80,8 @@ export default async function Page(
       params.assessmentId,
       params.roleName
     )
-    const userResponses = await viewableAttributeResponses(
-      session,
-      params.assessmentId,
-      attributeId,
-      params.roleName
-    )
 
-    if (assessmentAttribute && assessmentUsers) {
+    if (assessmentPart && assessmentAttribute && assessmentUsers) {
       const links = [
         {
           url: `/${assessmentType.id}/assessments`,
@@ -103,16 +101,24 @@ export default async function Page(
         },
       ]
 
-      const activeGroups = groups.filter(group => group.status === "Active")
-      const activeGroupsUserResponses = activeGroups.flatMap(
-        group => group.assessmentUser
-      ).flatMap(
-        user => user.user.assessmentUserResponse
-      ).filter(
-        response => response.attributeId ===
-          attributeId &&
-          response.assessmentId === assessment.id
+      const userResponses = await viewableAttributeResponses(
+        session,
+        params.assessmentId,
+        attributeId,
+        params.roleName
       )
+      const userReconciliations = await viewableAttributeReconciliations(
+        session,
+        params.assessmentId,
+        attributeId,
+        params.roleName
+      )
+
+      const activeGroups = groups.filter(group => group.status === "Active")
+      const activeGroupsUserResponses = userResponses.filter(response =>
+        activeGroups.map(group => group.id).includes(response.assessmentUserGroupId)
+      )
+
       const partParticipants = assessmentUsers.filter(
         assessmentUser =>
           assessmentUser.role === "Participant" ||
@@ -166,8 +172,9 @@ export default async function Page(
                 }
                 {params.roleName === "Facilitator" &&
                   <AttributeResponseTable
-                    assessmentStatus={assessment.status}
+                    assessmentPartStatus={assessmentPart.status}
                     userResponses={activeGroups.length > 0 ? activeGroupsUserResponses : userResponses}
+                    userReconciliations={userReconciliations}
                     levels={levels}
                     numParticipants={numParticipants}
                   />
@@ -184,12 +191,14 @@ export default async function Page(
           <AttributeLevels levels={levels} />
           {isParticipating &&
             <AttributeUserResponse
-              assessment={assessment}
+              assessmentId={assessment.id}
+              assessmentPartStatus={assessmentPart.status}
               groups={groups}
               userId={session?.user?.id}
               attributeId={assessmentAttribute.attributeId}
               levels={levels}
               userResponses={userResponses}
+              userReconciliations={userReconciliations}
               isFacilitator={isFacilitator}
             />
           }
