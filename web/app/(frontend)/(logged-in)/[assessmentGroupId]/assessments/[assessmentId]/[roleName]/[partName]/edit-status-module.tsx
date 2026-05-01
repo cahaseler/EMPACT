@@ -43,13 +43,6 @@ export default function EditStatusModule({
 
   const statusToSet = () => {
     switch (assessmentPart.status) {
-      default:
-        return [
-          {
-            status: "Inactive",
-            icon: <ToggleRight className="w-5 h-5 text-white" />
-          }
-        ]
       case "Planned":
       case "Inactive":
         return [
@@ -67,6 +60,13 @@ export default function EditStatusModule({
           {
             status: "Reconciliation",
             icon: <Handshake className="w-5 h-5 text-white" />
+          }
+        ]
+      default:
+        return [
+          {
+            status: "Inactive",
+            icon: <ToggleRight className="w-5 h-5 text-white" />
           }
         ]
     }

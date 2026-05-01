@@ -140,7 +140,7 @@ export default function GapAnalysis({
                     ) / attributeResponses.length).toFixed(2)
                     const deltaGroupAverage = attributeResponses[0] ? attributeResponses[0].level.level : 0
 
-                    var delta = parseFloat(groupAverage) - (deltaGroupName === "Average" ? parseFloat(average) : deltaGroupAverage)
+                    let delta = parseFloat(groupAverage) - (deltaGroupName === "Average" ? parseFloat(average) : deltaGroupAverage)
                     if (deltaGroupName !== "Average") {
                       delta = delta / 10
                     }
