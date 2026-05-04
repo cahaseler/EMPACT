@@ -16,8 +16,7 @@ type AssessmentUserResponseWithInfo = AssessmentUserResponse & {
   reconciliation?: AssessmentUserReconciliation & { level?: Level }
 }
 
-// Column definitions
-export const columns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
+const defaultColumns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
   {
     accessorKey: "userId",
     header: ({ column }) => (
@@ -35,6 +34,11 @@ export const columns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
     enableHiding: false
   },
+]
+
+// Column definitions
+export const columns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
+  ...defaultColumns,
   {
     accessorFn: (row) => row.level?.level,
     id: "level",
@@ -56,23 +60,7 @@ export const columns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
 
 // Column definitions for reconciliation
 export const recColumns: ColumnDef<AssessmentUserResponseWithInfo>[] = [
-  {
-    accessorKey: "userId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="User ID" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("userId")}</div>,
-    enableHiding: false
-  },
-  {
-    accessorFn: (row) => `${row.user?.lastName}, ${row.user?.firstName}`,
-    id: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
-    enableHiding: false
-  },
+  ...defaultColumns,
   {
     accessorFn: (row) => row.level?.level,
     id: "level",

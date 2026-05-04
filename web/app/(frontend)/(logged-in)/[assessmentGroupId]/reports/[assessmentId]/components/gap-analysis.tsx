@@ -56,6 +56,28 @@ export default function GapAnalysis({
   const deltaGroup = groups.find((g) => g.name === deltaGroupName)
   const nonDeltaGroups = groups.filter((g) => g.name !== deltaGroupName)
 
+  function getAttributeResponses(attribute: Attribute) {
+    return assessmentResponses.filter((assessmentUserResponse) => {
+      const assessmentAttributeEqual =
+        assessmentUserResponse.assessmentId === assessmentId &&
+        assessmentUserResponse.attributeId === attribute.id
+      if (deltaGroupName === "Average") {
+        return assessmentAttributeEqual
+      }
+      return assessmentAttributeEqual &&
+        assessmentUserResponse.assessmentUserGroupId === deltaGroup?.id
+    })
+  }
+
+  function getAverage(
+    responses: (AssessmentUserResponse & { level: Level })[],
+    levelOrWeight: "level" | "weight"
+  ) {
+    return (responses.reduce((total, response) =>
+      total + (levelOrWeight === "weight" ? response.level.weight : response.level.level), 0
+    ) / responses.length).toFixed(2)
+  }
+
   return (
     <div className="w-full flex flex-col space-y-8">
       <div className="space-y-4">
@@ -110,34 +132,16 @@ export default function GapAnalysis({
                     {dataType === "ratings" ? "Rating" : "Score"} Average: {group.name}
                   </TableHead>
                   {attributes.map((attribute) => {
-                    const groupAttributeResponses = assessmentResponses.filter(
-                      (assessmentUserResponse) =>
-                        assessmentUserResponse.assessmentId === assessmentId &&
-                        assessmentUserResponse.assessmentUserGroupId === group.id &&
-                        assessmentUserResponse.attributeId === attribute.id
+                    const groupAttributeResponses = assessmentResponses.filter((assessmentUserResponse) =>
+                      assessmentUserResponse.assessmentId === assessmentId &&
+                      assessmentUserResponse.assessmentUserGroupId === group.id &&
+                      assessmentUserResponse.attributeId === attribute.id
                     )
+                    const groupAverage = getAverage(groupAttributeResponses, "level")
+                    const groupAverageScore = getAverage(groupAttributeResponses, "weight")
 
-                    const groupAverage = (groupAttributeResponses.reduce(
-                      (total, response) => total + response.level.level, 0
-                    ) / groupAttributeResponses.length).toFixed(2)
-
-                    const groupAverageScore = (groupAttributeResponses.reduce(
-                      (total, response) => total + response.level.weight, 0
-                    ) / groupAttributeResponses.length).toFixed(2)
-
-                    const attributeResponses = assessmentResponses.filter((assessmentUserResponse) => {
-                      if (deltaGroupName === "Average") {
-                        return assessmentUserResponse.assessmentId === assessmentId &&
-                          assessmentUserResponse.attributeId === attribute.id
-                      }
-                      return assessmentUserResponse.assessmentId === assessmentId &&
-                        assessmentUserResponse.assessmentUserGroupId === deltaGroup?.id &&
-                        assessmentUserResponse.attributeId === attribute.id
-                    })
-
-                    const average = (attributeResponses.reduce(
-                      (total, response) => total + response.level.level, 0
-                    ) / attributeResponses.length).toFixed(2)
+                    const attributeResponses = getAttributeResponses(attribute)
+                    const average = getAverage(attributeResponses, "level")
                     const deltaGroupAverage = attributeResponses[0] ? attributeResponses[0].level.level : 0
 
                     let delta = parseFloat(groupAverage) - (deltaGroupName === "Average" ? parseFloat(average) : deltaGroupAverage)
@@ -191,24 +195,12 @@ export default function GapAnalysis({
                   {dataType === "ratings" ? "Rating" : "Score"} Average: {deltaGroupName === "Average" ? "Overall Total" : deltaGroupName}
                 </TableHead>
                 {attributes.map((attribute) => {
-                  const attributeResponses = assessmentResponses.filter((assessmentUserResponse) => {
-                    if (deltaGroupName === "Average") {
-                      return assessmentUserResponse.assessmentId === assessmentId &&
-                        assessmentUserResponse.attributeId === attribute.id
-                    }
-                    return assessmentUserResponse.assessmentId === assessmentId &&
-                      assessmentUserResponse.assessmentUserGroupId === deltaGroup?.id &&
-                      assessmentUserResponse.attributeId === attribute.id
-                  })
+                  const attributeResponses = getAttributeResponses(attribute)
 
-                  const average = (attributeResponses.reduce(
-                    (total, response) => total + response.level.level, 0
-                  ) / attributeResponses.length).toFixed(2)
+                  const average = getAverage(attributeResponses, "level")
                   const deltaGroupAverage = attributeResponses[0] ? attributeResponses[0].level.level : 0
 
-                  const averageScore = (attributeResponses.reduce(
-                    (total, response) => total + response.level.weight, 0
-                  ) / attributeResponses.length).toFixed(2)
+                  const averageScore = getAverage(attributeResponses, "weight")
                   const deltaGroupAverageScore = attributeResponses[0] ? attributeResponses[0].level.weight : 0
 
                   return (
