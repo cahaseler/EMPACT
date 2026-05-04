@@ -6,6 +6,7 @@ import {
   AssessmentPart,
   AssessmentUser,
   AssessmentUserGroup,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Level,
   Part,
@@ -45,6 +46,7 @@ export default function Groups({
   assessmentUsers,
   groups,
   assessmentAttributes,
+  isAfterReconciliation,
   urlHead
 }: {
   readonly assessmentId: number
@@ -52,7 +54,8 @@ export default function Groups({
   readonly part: Part
   readonly assessmentUsers: (AssessmentUser & {
     user: User & {
-      assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
+      assessmentUserResponse: (AssessmentUserResponse & { level: Level })[],
+      assessmentUserReconciliation: (AssessmentUserReconciliation & { level: Level })[]
     },
     participantParts: AssessmentPart[]
   })[]
@@ -63,6 +66,7 @@ export default function Groups({
       section: Section & { part: Part & { assessmentPart: AssessmentPart[] } }
     }
   })[]
+  readonly isAfterReconciliation: boolean
   readonly urlHead: string
 }) {
   const attributesOfAssessmentAttributes = assessmentAttributes.map(assessmentAttribute => assessmentAttribute.attribute)
@@ -73,13 +77,16 @@ export default function Groups({
       assessmentPart.id,
       group.id,
       attributesOfAssessmentAttributes,
-      assessmentUsers
+      assessmentUsers,
+      isAfterReconciliation
     )
   })
-  const someScoreNotANumber = groupTotalScores.some(groupTotalScore => isNaN(groupTotalScore.score))
   const averageTotalScore = Math.round(groupTotalScores.reduce(
     (total, groupTotalScore) => total + groupTotalScore.score, 0
   ) / groupTotalScores.length)
+  const someScoreNotANumber =
+    groupTotalScores.some(groupTotalScore => isNaN(groupTotalScore.score)) ||
+    isNaN(averageTotalScore)
 
   const router = useRouter()
 

@@ -71,7 +71,7 @@ export default async function RootLayout(
 
     if (part) {
       const currentAssessmentPart = assessment.assessmentParts.find((p) => p.partId === part.id)
-      const viewableStatuses = ["Active", "Final"]
+      const viewableStatuses = ["Active", "Reconciliation", "Final"]
 
       const canViewAsFac =
         isAdmin(session) ||

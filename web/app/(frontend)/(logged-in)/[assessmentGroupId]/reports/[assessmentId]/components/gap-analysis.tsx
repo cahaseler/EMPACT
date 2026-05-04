@@ -30,11 +30,14 @@ import {
 
 export default function GapAnalysis({
   assessmentId,
+  assessmentPartName,
   groups,
   attributes,
-  assessmentResponses
+  assessmentResponses,
+  deltaGroupName
 }: Readonly<{
   assessmentId: number
+  assessmentPartName: string
   groups: AssessmentUserGroup[]
   attributes: (Attribute & {
     levels: Level[],
@@ -45,15 +48,41 @@ export default function GapAnalysis({
     }
   })[]
   assessmentResponses: (AssessmentUserResponse & { level: Level })[]
+  deltaGroupName: string
 }>) {
 
   const [dataType, setDataType] = useState<"ratings" | "scores">("ratings")
+
+  const deltaGroup = groups.find((g) => g.name === deltaGroupName)
+  const nonDeltaGroups = groups.filter((g) => g.name !== deltaGroupName)
+
+  function getAttributeResponses(attribute: Attribute) {
+    return assessmentResponses.filter((assessmentUserResponse) => {
+      const assessmentAttributeEqual =
+        assessmentUserResponse.assessmentId === assessmentId &&
+        assessmentUserResponse.attributeId === attribute.id
+      if (deltaGroupName === "Average") {
+        return assessmentAttributeEqual
+      }
+      return assessmentAttributeEqual &&
+        assessmentUserResponse.assessmentUserGroupId === deltaGroup?.id
+    })
+  }
+
+  function getAverage(
+    responses: (AssessmentUserResponse & { level: Level })[],
+    levelOrWeight: "level" | "weight"
+  ) {
+    return (responses.reduce((total, response) =>
+      total + (levelOrWeight === "weight" ? response.level.weight : response.level.level), 0
+    ) / responses.length).toFixed(2)
+  }
 
   return (
     <div className="w-full flex flex-col space-y-8">
       <div className="space-y-4">
         <div className="flex md:flex-row md:justify-between items-end max-md:space-y-4">
-          <h2 className="text-2xl font-bold">Gap Analysis</h2>
+          <h2 className="text-2xl font-bold">{assessmentPartName} Gap Analysis</h2>
           <div>
             <Button
               className="rounded-r-none"
@@ -76,75 +105,71 @@ export default function GapAnalysis({
             <TableHeader>
               <TableRow>
                 <TableHead className="sticky left-0 w-32 bg-white dark:bg-[#171537]" />
-                {attributes.map((attribute) => (
-                  <TableHead key={attribute.id} className="w-14 text-center">
-                    <TooltipProvider delayDuration={0}>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {attribute.id}
-                        </TooltipTrigger>
-                        <TooltipContent className="text-center">
-                          {attribute.id}. {attribute.name}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableHead>
-                ))}
+                {attributes.map((attribute) => {
+                  const attributeIdDisplay =
+                    attribute.section.part.attributeType === "Factor" ? attribute.id : attribute.id.toUpperCase()
+                  return (
+                    <TableHead key={attribute.id} className="w-14 text-center">
+                      <TooltipProvider delayDuration={0}>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {attributeIdDisplay}
+                          </TooltipTrigger>
+                          <TooltipContent className="text-center">
+                            {attributeIdDisplay}. {attribute.name}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableHead>
+                  )
+                })}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {groups.map((group) => (
+              {nonDeltaGroups.map((group) => (
                 <TableRow key={group.id}>
                   <TableHead className="sticky left-0 bg-white dark:bg-[#171537]">
                     {dataType === "ratings" ? "Rating" : "Score"} Average: {group.name}
                   </TableHead>
                   {attributes.map((attribute) => {
-                    const groupAttributeResponses = assessmentResponses.filter(
-                      (assessmentUserResponse) =>
-                        assessmentUserResponse.assessmentId === assessmentId &&
-                        assessmentUserResponse.assessmentUserGroupId === group.id &&
-                        assessmentUserResponse.attributeId === attribute.id
+                    const groupAttributeResponses = assessmentResponses.filter((assessmentUserResponse) =>
+                      assessmentUserResponse.assessmentId === assessmentId &&
+                      assessmentUserResponse.assessmentUserGroupId === group.id &&
+                      assessmentUserResponse.attributeId === attribute.id
                     )
+                    const groupAverage = getAverage(groupAttributeResponses, "level")
+                    const groupAverageScore = getAverage(groupAttributeResponses, "weight")
 
-                    const groupAverage = (groupAttributeResponses.reduce(
-                      (total, response) => total + response.level.level, 0
-                    ) / groupAttributeResponses.length).toFixed(2)
+                    const attributeResponses = getAttributeResponses(attribute)
+                    const average = getAverage(attributeResponses, "level")
+                    const deltaGroupAverage = attributeResponses[0] ? attributeResponses[0].level.level : 0
 
-                    const groupAverageScore = (groupAttributeResponses.reduce(
-                      (total, response) => total + response.level.weight, 0
-                    ) / groupAttributeResponses.length).toFixed(2)
-
-                    const attributeResponses = assessmentResponses.filter(
-                      (assessmentUserResponse) =>
-                        assessmentUserResponse.assessmentId === assessmentId &&
-                        assessmentUserResponse.attributeId === attribute.id
-                    )
-
-                    const average = (attributeResponses.reduce(
-                      (total, response) => total + response.level.level, 0
-                    ) / attributeResponses.length).toFixed(2)
-
-                    const delta = (parseFloat(groupAverage) - parseFloat(average)) / parseFloat(average)
+                    let delta = parseFloat(groupAverage) - (deltaGroupName === "Average" ? parseFloat(average) : deltaGroupAverage)
+                    if (deltaGroupName !== "Average") {
+                      delta = delta / 10
+                    }
                     var bgColor = delta >= 0 ? "bg-blue-400/40 dark:bg-blue-800/40" : "bg-orange-400/40 dark:bg-orange-800/40"
-                    if (delta <= -0.2) {
+                    if (delta <= -0.4) {
                       bgColor = "bg-orange-800/80 dark:bg-orange-400/80"
-                    } else if (delta > -0.2 && delta <= -0.15) {
+                    } else if (delta > -0.4 && delta <= -0.3) {
                       bgColor = "bg-orange-700/70 dark:bg-orange-500/70"
-                    } else if (delta > -0.15 && delta <= -0.1) {
+                    } else if (delta > -0.3 && delta <= -0.2) {
                       bgColor = "bg-orange-600/60 dark:bg-orange-600/60"
-                    } else if (delta > -0.1 && delta <= -0.05) {
+                    } else if (delta > -0.2 && delta <= -0.1) {
                       bgColor = "bg-orange-500/50 dark:bg-orange-700/50"
-                    } else if (delta > -0.05 && delta <= 0) {
+                    } else if (delta > -0.1 && delta < 0) {
                       bgColor = "bg-orange-400/40 dark:bg-orange-800/40"
-                    } else if (delta > 0 && delta <= 0.05) {
+                    } else if (delta === 0) {
+                      bgColor = "bg-transparent"
+                    } else if (delta > 0 && delta <= 0.1) {
                       bgColor = "bg-blue-400/40 dark:bg-blue-800/40"
-                    } else if (delta > 0.05 && delta <= 0.1) {
+                    } else if (delta > 0.1 && delta <= 0.2) {
                       bgColor = "bg-blue-500/50 dark:bg-blue-700/50"
-                    } else if (delta > 0.1 && delta <= 0.15) {
+                    } else if (delta > 0.2 && delta <= 0.3) {
                       bgColor = "bg-blue-600/60 dark:bg-blue-600/60"
-                    } else if (delta > 0.15 && delta <= 0.2) {
+                    } else if (delta > 0.3 && delta <= 0.4) {
                       bgColor = "bg-blue-700/70 dark:bg-blue-500/70"
-                    } else if (delta > 0.2) {
+                    } else if (delta > 0.4) {
                       bgColor = "bg-blue-800/80 dark:bg-blue-400/80"
                     }
 
@@ -167,25 +192,25 @@ export default function GapAnalysis({
               ))}
               <TableRow className="font-bold">
                 <TableHead className="font-bold sticky left-0 bg-white dark:bg-[#171537]">
-                  {dataType === "ratings" ? "Rating" : "Score"} Average: Overall Total
+                  {dataType === "ratings" ? "Rating" : "Score"} Average: {deltaGroupName === "Average" ? "Overall Total" : deltaGroupName}
                 </TableHead>
                 {attributes.map((attribute) => {
-                  const attributeResponses = assessmentResponses.filter(
-                    (assessmentUserResponse) =>
-                      assessmentUserResponse.assessmentId === assessmentId &&
-                      assessmentUserResponse.attributeId === attribute.id
-                  )
+                  const attributeResponses = getAttributeResponses(attribute)
 
-                  const average = (attributeResponses.reduce(
-                    (total, response) => total + response.level.level, 0
-                  ) / attributeResponses.length).toFixed(2)
+                  const average = getAverage(attributeResponses, "level")
+                  const deltaGroupAverage = attributeResponses[0] ? attributeResponses[0].level.level : 0
 
-                  const averageScore = (attributeResponses.reduce(
-                    (total, response) => total + response.level.weight, 0
-                  ) / attributeResponses.length).toFixed(2)
+                  const averageScore = getAverage(attributeResponses, "weight")
+                  const deltaGroupAverageScore = attributeResponses[0] ? attributeResponses[0].level.weight : 0
 
                   return (
-                    <TableCell key={attribute.id}>{dataType === "ratings" ? average : averageScore}</TableCell>
+                    <TableCell key={attribute.id}>
+                      {
+                        dataType === "ratings" ?
+                          (deltaGroupName === "Average" ? average : `${deltaGroupAverage}.00`) :
+                          (deltaGroupName === "Average" ? averageScore : `${deltaGroupAverageScore}.00`)
+                      }
+                    </TableCell>
                   )
                 })}
               </TableRow>
@@ -200,7 +225,7 @@ export default function GapAnalysis({
             <TableHeader>
               <TableRow>
                 <TableHead colSpan={10} className="text-center">
-                  Delta = (group average - total average) / total average
+                  Delta = (group average - {deltaGroupName === "Average" ? "total" : deltaGroupName} average){assessmentPartName === "Maturity" && " / 10"}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -218,15 +243,15 @@ export default function GapAnalysis({
                 <TableCell className="bg-blue-800/80 dark:bg-blue-400/80" />
               </TableRow>
               <TableRow>
+                <TableCell className="text-right pr-0">-0.4</TableCell>
+                <TableCell className="text-right pr-0">-0.3</TableCell>
                 <TableCell className="text-right pr-0">-0.2</TableCell>
-                <TableCell className="text-right pr-0">-0.15</TableCell>
                 <TableCell className="text-right pr-0">-0.1</TableCell>
-                <TableCell className="text-right pr-0">-0.05</TableCell>
                 <TableCell colSpan={2} className="text-center">0</TableCell>
-                <TableCell className="pl-0">0.05</TableCell>
                 <TableCell className="pl-0">0.1</TableCell>
-                <TableCell className="pl-0">0.15</TableCell>
                 <TableCell className="pl-0">0.2</TableCell>
+                <TableCell className="pl-0">0.3</TableCell>
+                <TableCell className="pl-0">0.4</TableCell>
               </TableRow>
             </TableBody>
           </Table>

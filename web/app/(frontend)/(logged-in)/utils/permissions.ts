@@ -5,6 +5,7 @@ import {
   AssessmentCollectionUser,
   AssessmentPart,
   AssessmentUser,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Attribute,
   Level,
@@ -13,11 +14,16 @@ import {
   User,
 } from "@/prisma/mssql/generated/client"
 import {
+  fetchAllReconciliationsForAssessment,
   fetchAllResponsesForAssessment,
+  fetchAllReconciliationsForAssessmentAttribute,
   fetchAllResponsesForAssessmentAttribute,
   fetchAssessmentCollections,
   fetchAssessments,
   fetchPartsSectionsAttributes,
+  fetchUserReconciliationForAssessmentAttribute,
+  fetchUserReconciliationsForAssessmentAttribute,
+  fetchUserReconciliationsForAssessment,
   fetchUserResponseForAssessmentAttribute,
   fetchUserResponsesForAssessmentAttribute,
   fetchUserResponsesForAssessment,
@@ -257,6 +263,25 @@ export async function viewableResponses(
   return []
 }
 
+export async function viewableReconciliations(
+  session: Session | null,
+  assessmentId: string,
+  role: string
+): Promise<AssessmentUserResponse[]> {
+  if (session) {
+    const user = session.user as UserInfo
+    if (role === "Participant") {
+      return await fetchUserReconciliationsForAssessment(
+        user.id,
+        assessmentId
+      )
+    } else {
+      return await fetchAllReconciliationsForAssessment(assessmentId)
+    }
+  }
+  return []
+}
+
 export async function viewableAttributeResponses(
   session: Session | null,
   assessmentId: string,
@@ -289,6 +314,46 @@ export async function viewableAttributeResponses(
       return []
     } else {
       return await fetchAllResponsesForAssessmentAttribute(
+        assessmentId,
+        attributeId
+      )
+    }
+  }
+  return []
+}
+
+export async function viewableAttributeReconciliations(
+  session: Session | null,
+  assessmentId: string,
+  attributeId: string,
+  role: string
+): Promise<(AssessmentUserReconciliation & { user?: User, level?: Level })[]> {
+  if (session) {
+    const user = session.user as UserInfo
+    if (role === "Participant") {
+      const assessmentUser = session.user.assessmentUser?.find(
+        (uc) => uc.assessmentId === parseInt(assessmentId, 10)
+      )
+      if (assessmentUser) {
+        if (assessmentUser.role === "Participant" && assessmentUser.assessmentUserGroupId) {
+          const reconciliation = await fetchUserReconciliationForAssessmentAttribute(
+            user.id,
+            assessmentId,
+            assessmentUser.assessmentUserGroupId,
+            attributeId
+          )
+          return reconciliation ? [reconciliation] : []
+        } else {
+          return await fetchUserReconciliationsForAssessmentAttribute(
+            user.id,
+            assessmentId,
+            attributeId
+          )
+        }
+      }
+      return []
+    } else {
+      return await fetchAllReconciliationsForAssessmentAttribute(
         assessmentId,
         attributeId
       )

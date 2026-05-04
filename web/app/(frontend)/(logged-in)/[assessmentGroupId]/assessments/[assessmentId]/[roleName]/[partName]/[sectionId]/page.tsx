@@ -13,6 +13,7 @@ import {
 import {
   isFacForAssessment,
   isLeadForAssessment,
+  viewableReconciliations,
   viewableResponses
 } from "../../../../../../utils/permissions"
 import Navigation from "./navigation"
@@ -42,6 +43,11 @@ export default async function Page(
   const isParticipating = params.roleName === "Participant"
   const isFacilitator = isFacForAssessment(session, params.assessmentId) || isLeadForAssessment(session, params.assessmentId)
   const userResponses = await viewableResponses(
+    session,
+    params.assessmentId,
+    params.roleName
+  )
+  const userReconciliations = await viewableReconciliations(
     session,
     params.assessmentId,
     params.roleName
@@ -100,6 +106,7 @@ export default async function Page(
             section={section}
             attributes={attributes}
             userResponses={userResponses}
+            userReconciliations={userReconciliations}
             isParticipating={isParticipating}
             isFacilitator={isFacilitator}
           />

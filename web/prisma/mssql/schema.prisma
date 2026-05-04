@@ -16,14 +16,15 @@ datasource db {
 
 // Users in the system. Most user data will be passed in via SSO.
 model User {
-    id                       Int                        @id() @default(autoincrement())
-    firstName                String
-    lastName                 String
-    email                    String                     @unique()
-    systemRoles              SystemRole[]
-    assessmentUser           AssessmentUser[]
-    assessmentCollectionUser AssessmentCollectionUser[]
-    assessmentUserResponse   AssessmentUserResponse[]
+    id                           Int                            @id() @default(autoincrement())
+    firstName                    String
+    lastName                     String
+    email                        String                         @unique()
+    systemRoles                  SystemRole[]
+    assessmentUser               AssessmentUser[]
+    assessmentCollectionUser     AssessmentCollectionUser[]
+    assessmentUserResponse       AssessmentUserResponse[]
+    assessmentUserReconciliation AssessmentUserReconciliation[]
 }
 
 // System roles that users can be assigned to, such as Admin, Facilitator, etc. This is different from a role on a particular assessment.
@@ -35,22 +36,23 @@ model SystemRole {
 
 // Represents a specific assessment being done
 model Assessment {
-    id                     Int                       @id() @default(autoincrement())
-    projectId              String //A unique identifier for the project that this assessment belongs to, for example a PARSID
-    name                   String
-    location               String
-    description            String                    @db.VarChar(Max)
-    status                 String
-    completedDate          DateTime?
-    finalizedDates         AssessmentFinalizedDate[]
-    assessmentParts        AssessmentPart[]
-    assessmentAttributes   AssessmentAttribute[]
-    assessmentUserGroup    AssessmentUserGroup[]
-    assessmentUser         AssessmentUser[]
-    assessmentCollection   AssessmentCollection?     @relation(fields: [assessmentCollectionId], references: [id])
-    assessmentCollectionId Int?
-    scoreSummaries         ScoreSummary[]
-    assessmentUserResponse AssessmentUserResponse[]
+    id                           Int                            @id() @default(autoincrement())
+    projectId                    String //A unique identifier for the project that this assessment belongs to, for example a PARSID
+    name                         String
+    location                     String
+    description                  String                         @db.VarChar(Max)
+    status                       String
+    completedDate                DateTime?
+    finalizedDates               AssessmentFinalizedDate[]
+    assessmentParts              AssessmentPart[]
+    assessmentAttributes         AssessmentAttribute[]
+    assessmentUserGroup          AssessmentUserGroup[]
+    assessmentUser               AssessmentUser[]
+    assessmentCollection         AssessmentCollection?          @relation(fields: [assessmentCollectionId], references: [id])
+    assessmentCollectionId       Int?
+    scoreSummaries               ScoreSummary[]
+    assessmentUserResponse       AssessmentUserResponse[]
+    assessmentUserReconciliation AssessmentUserReconciliation[]
 }
 
 // Represents a part of a specific assessment being done
@@ -107,6 +109,7 @@ model ScoreSummary {
     assessmentPartId      Int
     assessmentUserGroup   AssessmentUserGroup @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
     assessmentUserGroupId Int
+    isAfterReconciliation Boolean // Specifies whether or not reconciliation has taken place after the initial assessment
 }
 
 // A collection of assessments that might be run at the same time, potentially with different groups of users
@@ -136,14 +139,15 @@ model AssessmentCollectionUser {
 // Groups of users that are assigned to an assessment
 // Different groups can have access to the assessment at different times
 model AssessmentUserGroup {
-    id                      Int                      @id() @default(autoincrement())
-    name                    String
-    assessment              Assessment               @relation(fields: [assessmentId], references: [id])
-    assessmentUser          AssessmentUser[]
-    status                  String
-    assessmentId            Int
-    assessmentUserResponses AssessmentUserResponse[]
-    scoreSummaries          ScoreSummary[]
+    id                           Int                            @id() @default(autoincrement())
+    name                         String
+    assessment                   Assessment                     @relation(fields: [assessmentId], references: [id])
+    assessmentUser               AssessmentUser[]
+    status                       String
+    assessmentId                 Int
+    assessmentUserResponses      AssessmentUserResponse[]
+    assessmentUserReconciliation AssessmentUserReconciliation[]
+    scoreSummaries               ScoreSummary[]
 }
 
 // Users that are assigned to an assessment
@@ -187,6 +191,7 @@ model Part {
     description       String           @db.VarChar(Max)
     attributeType     String
     canFacParticipate Boolean // Specifies whether or not a facilitator can also submit responses to the part
+    hasReconciliation Boolean // Specifies whether or not reconciliation can take place for a part after the initial assessment
     assessmentType    AssessmentType   @relation(fields: [assessmentTypeId], references: [id])
     assessmentTypeId  Int
     sections          Section[]
@@ -205,30 +210,50 @@ model Section {
 
 // The questions being asked in each section
 model Attribute {
-    id                     String                   @id()
-    name                   String
-    description            String                   @db.VarChar(Max)
-    section                Section                  @relation(fields: [sectionId], references: [id])
-    sectionId              String
-    levels                 Level[]
-    assessmentAttributes   AssessmentAttribute[]
-    assessmentUserResponse AssessmentUserResponse[]
+    id                           String                         @id()
+    name                         String
+    description                  String                         @db.VarChar(Max)
+    section                      Section                        @relation(fields: [sectionId], references: [id])
+    sectionId                    String
+    levels                       Level[]
+    assessmentAttributes         AssessmentAttribute[]
+    assessmentUserResponse       AssessmentUserResponse[]
+    assessmentUserReconciliation AssessmentUserReconciliation[]
 }
 
 // The answer choices for each attribute
 model Level {
-    id                     Int                      @id()
-    shortDescription       String                   @db.VarChar(Max)
-    longDescription        String                   @db.VarChar(Max)
-    level                  Int
-    weight                 Int
-    attribute              Attribute                @relation(fields: [attributeId], references: [id])
-    attributeId            String
-    assessmentUserResponse AssessmentUserResponse[]
+    id                           Int                            @id()
+    shortDescription             String                         @db.VarChar(Max)
+    longDescription              String                         @db.VarChar(Max)
+    level                        Int
+    weight                       Int
+    attribute                    Attribute                      @relation(fields: [attributeId], references: [id])
+    attributeId                  String
+    assessmentUserResponse       AssessmentUserResponse[]
+    assessmentUserReconciliation AssessmentUserReconciliation[]
 }
 
 // The actual responses to the specific survey questions
 model AssessmentUserResponse {
+    id                    Int                 @id() @default(autoincrement())
+    user                  User                @relation(fields: [userId], references: [id])
+    userId                Int
+    assessment            Assessment          @relation(fields: [assessmentId], references: [id])
+    assessmentId          Int
+    assessmentUserGroup   AssessmentUserGroup @relation(fields: [assessmentUserGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    assessmentUserGroupId Int
+    attribute             Attribute           @relation(fields: [attributeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    attributeId           String
+    level                 Level               @relation(fields: [levelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    levelId               Int
+    notes                 String              @db.VarChar(Max)
+
+    @@unique([assessmentId, userId, assessmentUserGroupId, attributeId])
+}
+
+// Responses to the specific survey questions after the initial assessment during reconciliation
+model AssessmentUserReconciliation {
     id                    Int                 @id() @default(autoincrement())
     user                  User                @relation(fields: [userId], references: [id])
     userId                Int

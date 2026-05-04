@@ -7,8 +7,7 @@ import { DropdownMenuWithChildren } from "@/components/ui/dropdown-menu"
 import {
   fetchAssessment,
   fetchAssessmentParts,
-  fetchAssessmentType,
-  fetchAssessmentUserGroup
+  fetchAssessmentType
 } from "../../../utils/dataFetchers"
 import {
   isAdmin,
@@ -41,7 +40,6 @@ export default async function Page(
       assessmentUser.assessmentId === parseInt(params.assessmentId, 10)
   )
   const permissions = assessmentUser?.permissions
-  const group = await fetchAssessmentUserGroup(assessmentUser?.assessmentUserGroupId)
 
   if (assessmentType && assessment) {
 
@@ -154,7 +152,6 @@ export default async function Page(
           <AssessmentContent
             assessment={assessment}
             assessmentType={assessmentType}
-            group={group}
             parts={parts}
             session={session}
           />

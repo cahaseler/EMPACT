@@ -5,6 +5,7 @@ import * as assessmentCollectionUser from "@/app/utils/assessmentCollectionUser"
 import * as assessmentUser from "@/app/utils/assessmentUser"
 import * as assessmentUserGroup from "@/app/utils/assessmentUserGroup"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
+import * as assessmentUserReconciliation from "@/app/utils/assessmentUserReconciliation"
 import { db } from "@/lib/db"
 import {
   Assessment,
@@ -16,6 +17,7 @@ import {
   AssessmentPartFinalizedDate,
   AssessmentUser,
   AssessmentUserGroup,
+  AssessmentUserReconciliation,
   AssessmentUserResponse
 } from "@/prisma/mssql/generated/client"
 
@@ -48,6 +50,7 @@ type NewScoreSummary = {
   assessmentId: number
   assessmentPartId: number
   assessmentUserGroupId: number
+  isAfterReconciliation: boolean
 }
 
 export async function createAssessmentCollection(
@@ -311,6 +314,44 @@ export async function upsertAssessmentUserResponse(
   notes: string
 ): Promise<AssessmentUserResponse> {
   return await assessmentUserResponse.upsert({
+    where: {
+      assessmentId_userId_assessmentUserGroupId_attributeId: {
+        assessmentId,
+        userId,
+        assessmentUserGroupId,
+        attributeId
+      }
+    },
+    create: { assessmentId, userId, assessmentUserGroupId, attributeId, levelId, notes },
+    update: { levelId, notes },
+  })
+}
+
+export async function updateAssessmentUserReconciliationsGroupId(
+  assessmentId: number,
+  userId: number,
+  assessmentUserGroupId: number,
+): Promise<BatchPayload> {
+  return await db.assessmentUserReconciliation.updateMany({
+    where: {
+      AND: {
+        assessmentId,
+        userId
+      }
+    },
+    data: { assessmentUserGroupId },
+  })
+}
+
+export async function upsertAssessmentUserReconciliation(
+  assessmentId: number,
+  userId: number,
+  assessmentUserGroupId: number,
+  attributeId: string,
+  levelId: number,
+  notes: string
+): Promise<AssessmentUserReconciliation> {
+  return await assessmentUserReconciliation.upsert({
     where: {
       assessmentId_userId_assessmentUserGroupId_attributeId: {
         assessmentId,

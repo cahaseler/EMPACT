@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 
 import { Loader } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -21,30 +21,37 @@ import {
   Assessment,
   AssessmentUser,
   AssessmentUserGroup,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Level
 } from "@/prisma/mssql/generated/client"
 import {
-  upsertAssessmentUserResponse,
+  upsertAssessmentUserReconciliation,
+  upsertAssessmentUserResponse
 } from "../../../../../../../utils/dataActions"
 
 export default function AttributeUserResponse({
-  assessment,
+  assessmentId,
+  assessmentPartStatus,
   groups,
   userId,
   attributeId,
   levels,
   userResponses,
+  userReconciliations,
   isFacilitator
 }: {
-  readonly assessment: Assessment
+  readonly assessmentId: number
+  readonly assessmentPartStatus: string
   readonly groups: (AssessmentUserGroup & { assessmentUser: (AssessmentUser)[] })[]
   readonly userId: string | undefined
   readonly attributeId: string
   readonly levels: Level[]
   readonly userResponses: AssessmentUserResponse[]
+  readonly userReconciliations: AssessmentUserReconciliation[]
   readonly isFacilitator: boolean
 }) {
+
   const assessmentUserGroupId = groups.find(
     (group) => group.assessmentUser.find(
       (assessmentUser: AssessmentUser) => userId && assessmentUser.userId === parseInt(userId, 10)
@@ -53,9 +60,25 @@ export default function AttributeUserResponse({
   const [groupId, setGroupId] = useState<number | null>(
     !isFacilitator ? (assessmentUserGroupId || null) : (groups[0] ? groups[0].id : null)
   )
-  const userResponse = userResponses.find((userResponse) => userResponse.assessmentUserGroupId === groupId)
-  const [levelId, setLevelId] = useState<number | undefined>(userResponse?.levelId)
-  const [notes, setNotes] = useState<string>(userResponse?.notes || "")
+
+  const userResponse = userResponses.find(
+    (userResponse) =>
+      userId && userResponse.userId === parseInt(userId, 10) &&
+      userResponse.assessmentUserGroupId === groupId
+  )
+  const [resLevelId, setResLevelId] = useState<number | undefined>(userResponse?.levelId)
+  const [resNotes, setResNotes] = useState<string>(userResponse?.notes || "")
+
+  const userReconciliation = userReconciliations.find(
+    (userReconciliation) =>
+      userId && userReconciliation.userId === parseInt(userId, 10) &&
+      userReconciliation.assessmentUserGroupId === groupId
+  )
+  const [recLevelId, setRecLevelId] = useState<number | undefined>(userReconciliation?.levelId)
+  const [recNotes, setRecNotes] = useState<string>(userReconciliation?.notes || "")
+
+  const showRec = assessmentPartStatus === "Reconciliation" || (assessmentPartStatus === "Final" && userReconciliation)
+
   const [saving, setSaving] = useState<boolean>(false)
 
   const router = useRouter()
@@ -63,26 +86,50 @@ export default function AttributeUserResponse({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
-    if (userId && levelId && notes !== "") {
-      await upsertAssessmentUserResponse(
-        assessment.id,
-        parseInt(userId, 10),
-        groupId || 0,
-        attributeId,
-        levelId,
-        notes
-      ).then(() => {
-        setSaving(false)
-        router.refresh()
-        toast({
-          title: `Response for group ${groupId} saved successfully.`,
+    if (assessmentPartStatus === "Active") {
+      if (userId && resLevelId && resNotes !== "") {
+        await upsertAssessmentUserResponse(
+          assessmentId,
+          parseInt(userId, 10),
+          groupId || 0,
+          attributeId,
+          resLevelId,
+          resNotes
+        ).then(() => {
+          setSaving(false)
+          router.refresh()
+          toast({
+            title: `Response saved successfully.`,
+          })
+        }).catch(error => {
+          setSaving(false)
+          toast({
+            title: `Error saving response: ${error}`
+          })
         })
-      }).catch(error => {
-        setSaving(false)
-        toast({
-          title: `Error saving response: ${error}`
+      }
+    } else if (assessmentPartStatus === "Reconciliation") {
+      if (userId && recLevelId) {
+        await upsertAssessmentUserReconciliation(
+          assessmentId,
+          parseInt(userId, 10),
+          groupId || 0,
+          attributeId,
+          recLevelId,
+          recNotes
+        ).then(() => {
+          setSaving(false)
+          router.refresh()
+          toast({
+            title: `Reconciliation response saved successfully.`,
+          })
+        }).catch(error => {
+          setSaving(false)
+          toast({
+            title: `Error saving reconciliation response: ${error}`
+          })
         })
-      })
+      }
     }
     setSaving(false)
   }
@@ -96,12 +143,15 @@ export default function AttributeUserResponse({
               <Select
                 onValueChange={(value) => {
                   setGroupId(parseInt(value, 10))
-                  const userResponse = userResponses.find(
-                    (userResponse) => userResponse.assessmentUserGroupId === parseInt(value, 10)
-                  )
-                  setLevelId(undefined)
-                  setLevelId(userResponse?.levelId)
-                  setNotes(userResponse?.notes || "")
+                  if (showRec) {
+                    setRecLevelId(undefined)
+                    setRecLevelId(userReconciliation?.levelId)
+                    setRecNotes(userReconciliation?.notes || "")
+                  } else {
+                    setResLevelId(undefined)
+                    setResLevelId(userResponse?.levelId)
+                    setResNotes(userResponse?.notes || "")
+                  }
                 }}
               >
                 <SelectTrigger className="h-fit min-h-[32px] focus:ring-offset-indigo-400 focus:ring-transparent">
@@ -128,20 +178,20 @@ export default function AttributeUserResponse({
           <h2 className="text-2xl font-bold max-lg:ml-2">Rating</h2>
           <div className="w-1/3 sm:w-1/4 lg:w-1/6">
             <Select
-              value={levelId?.toString()}
+              value={showRec ? recLevelId?.toString() : resLevelId?.toString()}
               onValueChange={(value) => {
-                setLevelId(parseInt(value, 10))
+                showRec ? setRecLevelId(parseInt(value, 10)) : setResLevelId(parseInt(value, 10))
               }}
             >
               <SelectTrigger className="h-fit min-h-[32px] focus:ring-offset-indigo-400 focus:ring-transparent">
                 <SelectValue
                   placeholder={
-                    levels.find(
-                      (level: Level) => level.id === levelId
+                    levels.find((level: Level) =>
+                      showRec ? level.id === recLevelId : level.id === resLevelId
                     )?.level.toString() ||
                     "Select Rating"
                   }
-                  defaultValue={levelId?.toString()}
+                  defaultValue={showRec ? recLevelId?.toString() : resLevelId?.toString()}
                 />
               </SelectTrigger>
               <SelectContent>
@@ -159,20 +209,26 @@ export default function AttributeUserResponse({
         <h2 className="text-2xl font-bold max-lg:ml-2">Comments</h2>
         <Textarea
           className="h-40 border-indigo-100 dark:border-indigo-900 focus-visible:outline-indigo-400 dark:focus-visible:ring-indigo-400 rounded-lg p-4 placeholder:text-indigo-900/50 dark:placeholder:text-indigo-400/40 resize-none"
-          placeholder="Notes for rating (required)"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          placeholder={showRec ? "Comments for reconciliation (optional)" : "Comments for rating (required)"}
+          value={showRec ? recNotes : resNotes}
+          onChange={(e) =>
+            showRec ? setRecNotes(e.target.value) : setResNotes(e.target.value)
+          }
         />
       </section>
-      {assessment.status === "Active" && (
+      {(assessmentPartStatus === "Active" || assessmentPartStatus === "Reconciliation") && (
         <section className="mb-8 flex justify-center">
           <Button
             type="submit"
-            disabled={saving || !levelId || notes === ""}
+            disabled={
+              saving ||
+              (assessmentPartStatus === "Active" && (!resLevelId || resNotes === "")) ||
+              (assessmentPartStatus === "Reconciliation" && (!recLevelId))
+            }
             size="lg"
           >
             {saving && <Loader className="mr-2 h-4 w-4 animate-spin" />} Save
-            Response
+            {assessmentPartStatus === "Reconciliation" && " Reconciliation"} Response
           </Button>
         </section>
       )}

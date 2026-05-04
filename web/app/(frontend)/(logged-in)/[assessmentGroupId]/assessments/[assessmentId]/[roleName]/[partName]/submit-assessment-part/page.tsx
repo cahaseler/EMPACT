@@ -104,6 +104,7 @@ export default async function Page(
                 assessmentUsers={assessmentUsers}
                 groups={groupsWithResponsesInPart}
                 assessmentAttributes={assessmentAttributesInPart}
+                isAfterReconciliation={assessment.status === "Reconciliation"}
                 urlHead={
                   `/${assessmentType.id}/assessments/${assessment.id}/${params.roleName}/${part.name}`
                 }

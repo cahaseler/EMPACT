@@ -2,6 +2,7 @@
 import * as assessment from "@/app/utils/assessment"
 import * as assessmentType from "@/app/utils/assessmentType"
 import * as assessmentUserResponse from "@/app/utils/assessmentUserResponse"
+import * as assessmentUserReconciliation from "@/app/utils/assessmentUserReconciliation"
 import * as level from "@/app/utils/level"
 import * as section from "@/app/utils/section"
 import { db } from "@/lib/db"
@@ -14,6 +15,7 @@ import {
   AssessmentType,
   AssessmentUser,
   AssessmentUserGroup,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Attribute,
   Level,
@@ -175,7 +177,8 @@ export async function fetchAssessmentUserGroups(assessmentId: string): Promise<
   (AssessmentUserGroup & {
     assessmentUser: (AssessmentUser & {
       user: User & {
-        assessmentUserResponse: (AssessmentUserResponse & { user: User, level: Level })[]
+        assessmentUserResponse: (AssessmentUserResponse & { user: User, level: Level })[],
+        assessmentUserReconciliation: (AssessmentUserReconciliation & { user: User, level: Level })[],
       }
     })[]
   })[]
@@ -194,7 +197,8 @@ export async function fetchAssessmentUserGroups(assessmentId: string): Promise<
         include: {
           user: {
             include: {
-              assessmentUserResponse: { include: { user: true, level: true } }
+              assessmentUserResponse: { include: { user: true, level: true } },
+              assessmentUserReconciliation: { include: { user: true, level: true } }
             }
           }
         }
@@ -250,7 +254,8 @@ export async function fetchAssessmentUser(assessmentUserId: string): Promise<
 export async function fetchAssessmentUsers(assessmentId: string): Promise<
   (AssessmentUser & {
     user: User & {
-      assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
+      assessmentUserResponse: (AssessmentUserResponse & { level: Level })[],
+      assessmentUserReconciliation: (AssessmentUserReconciliation & { level: Level })[]
     },
     assessmentUserGroup: AssessmentUserGroup | null,
     participantParts: AssessmentPart[],
@@ -270,6 +275,9 @@ export async function fetchAssessmentUsers(assessmentId: string): Promise<
       user: {
         include: {
           assessmentUserResponse: {
+            include: { level: true }
+          },
+          assessmentUserReconciliation: {
             include: { level: true }
           }
         }
@@ -383,6 +391,119 @@ export async function fetchUserResponseForAssessmentAttribute(
     return null
   }
   return await db.assessmentUserResponse.findUnique({
+    where: {
+      assessmentId_userId_assessmentUserGroupId_attributeId: {
+        assessmentId: idAsInteger,
+        userId: parseInt(userId, 10),
+        assessmentUserGroupId,
+        attributeId
+      }
+    }
+  })
+}
+
+// *** ASSESSMENT USER RECONCILIATION RESPONSES ***
+
+export async function fetchUserReconciliations(userId: string | undefined): Promise<AssessmentUserReconciliation[]> {
+  if (!userId) return []
+  return await assessmentUserReconciliation.findMany({ where: { userId: parseInt(userId, 10) } })
+}
+
+export async function fetchAllReconciliationsForAssessment(
+  assessmentId: string,
+): Promise<(AssessmentUserReconciliation & {
+  attribute: Attribute & {
+    section: Section & { part: Part }
+  },
+  user: User,
+  assessmentUserGroup: AssessmentUserGroup | null,
+  level: Level
+})[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentUserReconciliation.findMany({
+    where: { assessmentId: idAsInteger },
+    include: {
+      attribute: {
+        include: { section: { include: { part: true } } }
+      },
+      user: true,
+      assessmentUserGroup: true,
+      level: true
+    },
+  })
+}
+
+export async function fetchUserReconciliationsForAssessment(
+  userId: string | undefined,
+  assessmentId: string
+): Promise<AssessmentUserReconciliation[]> {
+  if (!userId) return []
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await assessmentUserReconciliation.findMany({
+    where: {
+      userId: parseInt(userId, 10),
+      assessmentId: idAsInteger,
+    },
+  })
+}
+
+export async function fetchAllReconciliationsForAssessmentAttribute(
+  assessmentId: string,
+  attributeId: string
+): Promise<(AssessmentUserReconciliation & { user: User, level: Level })[]> {
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentUserReconciliation.findMany({
+    where: { assessmentId: idAsInteger, attributeId: attributeId },
+    include: { user: true, level: true },
+  })
+}
+
+export async function fetchUserReconciliationsForAssessmentAttribute(
+  userId: string | undefined,
+  assessmentId: string,
+  attributeId: string
+): Promise<(AssessmentUserReconciliation)[]> {
+  if (!userId) return []
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return []
+  }
+  return await db.assessmentUserReconciliation.findMany({
+    where: { assessmentId: idAsInteger, userId: parseInt(userId, 10), attributeId: attributeId }
+  })
+}
+
+export async function fetchUserReconciliationForAssessmentAttribute(
+  userId: string | undefined,
+  assessmentId: string,
+  assessmentUserGroupId: number,
+  attributeId: string
+): Promise<AssessmentUserReconciliation | null> {
+  if (!userId) return null
+  // Since the id is coming from the url, it's a string, so we need to convert it to an integer
+  const idAsInteger = parseInt(assessmentId, 10)
+  // Technically, users could put anything into a URL, so we need to make sure it's a number
+  if (isNaN(idAsInteger)) {
+    return null
+  }
+  return await db.assessmentUserReconciliation.findUnique({
     where: {
       assessmentId_userId_assessmentUserGroupId_attributeId: {
         assessmentId: idAsInteger,

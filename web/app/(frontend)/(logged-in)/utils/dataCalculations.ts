@@ -1,6 +1,7 @@
 import {
   AssessmentPart,
   AssessmentUser,
+  AssessmentUserReconciliation,
   AssessmentUserResponse,
   Attribute,
   Level,
@@ -51,9 +52,11 @@ export function calculateTotalScore(
   assessmentUsers: (AssessmentUser & {
     user: User & {
       assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
+      assessmentUserReconciliation: (AssessmentUserReconciliation & { level: Level })[]
     },
     participantParts: AssessmentPart[]
-  })[]
+  })[],
+  isAfterReconciliation: boolean
 ) {
   const attributeIds = attributes.map(attribute => attribute.id)
   const groupAssessmentUsers = assessmentUsers.filter((assessmentUser) => {
@@ -63,23 +66,23 @@ export function calculateTotalScore(
       )
   })
   const responsesInPart = groupAssessmentUsers.flatMap(
-    (assessmentUser: AssessmentUser & {
-      user: User & {
-        assessmentUserResponse: (AssessmentUserResponse & { level: Level })[]
-      }
-    }) => assessmentUser.user.assessmentUserResponse.filter(
-      (userResponse: AssessmentUserResponse & { level: Level }) => {
-        return userResponse.assessmentId === assessmentUser.assessmentId &&
-          userResponse.assessmentUserGroupId === groupId &&
-          attributeIds.includes(userResponse.attributeId)
-      }
-
+    (assessmentUser) => assessmentUser.user.assessmentUserResponse.filter((userResponse) => {
+      const userReconciliation = assessmentUser.user.assessmentUserReconciliation.find((userReconciliation) =>
+        userReconciliation.assessmentId === assessmentUser.assessmentId &&
+        userReconciliation.assessmentUserGroupId === groupId &&
+        userReconciliation.attributeId === userResponse.attributeId
+      )
+      return userReconciliation ?
+        attributeIds.includes(userReconciliation.attributeId) :
+        userResponse.assessmentId === assessmentUser.assessmentId &&
+        userResponse.assessmentUserGroupId === groupId &&
+        attributeIds.includes(userResponse.attributeId)
+    }
     )
   )
-  const averages = attributes.map((attribute: Attribute & { levels: Level[] }) => {
+  const averages = attributes.map((attribute) => {
     const attributeResponses = responsesInPart.filter(
-      (userResponse: AssessmentUserResponse & { level: Level }) =>
-        userResponse.attributeId === attribute.id
+      (userResponse) => userResponse.attributeId === attribute.id
     )
     return (
       attributeResponses.reduce(
@@ -88,8 +91,7 @@ export function calculateTotalScore(
     )
   })
   const highestAttributeLevelWeights = attributes.flatMap(
-    (attribute: Attribute & { levels: Level[] }) =>
-      attribute.levels.filter(level => level.level === 5).map(level => level.weight)
+    (attribute) => attribute.levels.filter(level => level.level === 5).map(level => level.weight)
   )
   const groupTotalScore = Math.round(
     averages.reduce(
@@ -102,6 +104,7 @@ export function calculateTotalScore(
     assessmentId,
     assessmentPartId,
     assessmentUserGroupId: groupId,
-    score: groupTotalScore
+    score: groupTotalScore,
+    isAfterReconciliation
   }
 }
