@@ -28,11 +28,11 @@ jobs:
       - name: Switch to Node.js 14
         uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 14.21.3
 
       - name: Semantic Release
         id: semantic-release
-        uses: cycjimmy/semantic-release-action@v3
+        uses: cycjimmy/semantic-release-action@v3.4.2
         with:
           extra_plugins: |
             @semantic-release/changelog

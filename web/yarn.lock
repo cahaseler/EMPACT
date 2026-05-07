@@ -1668,7 +1668,7 @@
   dependencies:
     tslib "^2.8.0"
 
-"@tanstack/react-table@^8.21.2":
+"@tanstack/react-table@8.21.2":
   version "8.21.2"
   resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.21.2.tgz#6a7fce828b64547e33f4606ada8114db496007cc"
   integrity sha512-11tNlEDTdIhMJba2RBH+ecJ9l1zgS2kjmexDPAraulc8jeNA4xocSNeyzextT0XJyASil4XsCYlJmf5jEWAtYg==
@@ -1840,7 +1840,7 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/file-saver@^2.0.7":
+"@types/file-saver@2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.7.tgz#8dbb2f24bdc7486c54aa854eb414940bbd056f7d"
   integrity sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==
@@ -1906,7 +1906,7 @@
   resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
 
-"@typescript-eslint/eslint-plugin@^8.27.0":
+"@typescript-eslint/eslint-plugin@8.27.0":
   version "8.27.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.27.0.tgz#fbef10802365832ee1d1bd5d2117dcec82727a72"
   integrity sha512-4henw4zkePi5p252c8ncBLzLce52SEUz2Ebj8faDnuUXz2UuHEONYcJ+G0oaCF+bYCWVZtrGzq3FD7YXetmnSA==
@@ -1921,6 +1921,17 @@
     natural-compare "^1.4.0"
     ts-api-utils "^2.0.1"
 
+"@typescript-eslint/parser@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.27.0.tgz#3f6beaa83934467eda34ae82ef04090014df8227"
+  integrity sha512-XGwIabPallYipmcOk45DpsBSgLC64A0yvdAkrwEzwZ2viqGqRUJ8eEYoPz0CWnutgAFbNMPdsGGvzjSmcWVlEA==
+  dependencies:
+    "@typescript-eslint/scope-manager" "8.27.0"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/typescript-estree" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
+    debug "^4.3.4"
+
 "@typescript-eslint/parser@^5.4.2 || ^6.0.0 || 7.0.0 - 7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-7.2.0.tgz#44356312aea8852a3a82deebdacd52ba614ec07a"
@@ -1930,17 +1941,6 @@
     "@typescript-eslint/types" "7.2.0"
     "@typescript-eslint/typescript-estree" "7.2.0"
     "@typescript-eslint/visitor-keys" "7.2.0"
-    debug "^4.3.4"
-
-"@typescript-eslint/parser@^8.27.0":
-  version "8.27.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.27.0.tgz#3f6beaa83934467eda34ae82ef04090014df8227"
-  integrity sha512-XGwIabPallYipmcOk45DpsBSgLC64A0yvdAkrwEzwZ2viqGqRUJ8eEYoPz0CWnutgAFbNMPdsGGvzjSmcWVlEA==
-  dependencies:
-    "@typescript-eslint/scope-manager" "8.27.0"
-    "@typescript-eslint/types" "8.27.0"
-    "@typescript-eslint/typescript-estree" "8.27.0"
-    "@typescript-eslint/visitor-keys" "8.27.0"
     debug "^4.3.4"
 
 "@typescript-eslint/scope-manager@7.2.0":
@@ -2120,7 +2120,7 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.5.0.tgz#5768c6bba4a27833a48a8a77e50eb01b520d0962"
   integrity sha512-wAvXp4k7jhioi4SebXW/yfzzYwsUCr9kIX4gCsUFKpCTUf8Mi7vScJXI3S+kupSUf0LbVHudR8qBbe2wFMSNUw==
 
-"@userback/react@^0.3.9":
+"@userback/react@0.3.9":
   version "0.3.9"
   resolved "https://registry.yarnpkg.com/@userback/react/-/react-0.3.9.tgz#96d82b8b369117e5c353f6f279d395bf311c4793"
   integrity sha512-w4UwKY6DSI3KvgAGBl8ExTxb1eKYSokvkb64kiTd2zP2NaA+c3uftbi34j8ZH/Lm+RbsEXLVbHgM3B01vETrfA==
@@ -2146,7 +2146,7 @@
     classnames "^2.3.1"
     prop-types "^15.6.2"
 
-"@visx/responsive@^3.12.0":
+"@visx/responsive@3.12.0":
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@visx/responsive/-/responsive-3.12.0.tgz#5622e2dcf951642ff8ca49b81c8a477281fe6066"
   integrity sha512-GV1BTYwAGlk/K5c9vH8lS2syPnTuIqEacI7L6LRPbsuaLscXMNi+i9fZyzo0BWvAdtRV8v6Urzglo++lvAXT1Q==
@@ -2156,14 +2156,14 @@
     lodash "^4.17.21"
     prop-types "^15.6.1"
 
-"@visx/scale@^3.12.0":
+"@visx/scale@3.12.0":
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-3.12.0.tgz#1b6e8655e9be17ea73c59506b1aba9ad06825679"
   integrity sha512-+ubijrZ2AwWCsNey0HGLJ0YKNeC/XImEFsr9rM+Uef1CM3PNM43NDdNTrdBejSlzRq0lcfQPWYMYQFSlkLcPOg==
   dependencies:
     "@visx/vendor" "3.12.0"
 
-"@visx/text@^3.12.0":
+"@visx/text@3.12.0":
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@visx/text/-/text-3.12.0.tgz#2d023a6ac561557c5a7e7538bea4015d987e5238"
   integrity sha512-0rbDYQlbuKPhBqXkkGYKFec1gQo05YxV45DORzr6hCyaizdJk1G+n9VkuKSHKBy1vVQhBA0W3u/WXd7tiODQPA==
@@ -2200,7 +2200,7 @@
     d3-time-format "4.1.0"
     internmap "2.0.3"
 
-"@visx/wordcloud@^3.12.0":
+"@visx/wordcloud@3.12.0":
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/@visx/wordcloud/-/wordcloud-3.12.0.tgz#4dc0c2aa8ffeb5c734a4e3ffcf3d37d11c114bbe"
   integrity sha512-TAo9w1Z65ddRM1OPmrELXNvDSOYf4MRO0+VAIX5FNFAc8v4FNmTJriSWc+A/FIZL+1svDOKnDP9SwF86NX4Alg==
@@ -2231,7 +2231,7 @@ ag-grid-community@33.2.3:
   dependencies:
     ag-charts-types "11.2.3"
 
-ag-grid-react@^33.2.1:
+ag-grid-react@33.2.3:
   version "33.2.3"
   resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-33.2.3.tgz#b85ae769c7c67a0ec9e401518df7d082d509561a"
   integrity sha512-uljvrWKhaPjA+5AT5VuBtGUgIkaFMAWKcennC3gz1vWsmKS9zL8hZlGl7LjSalKHe6RTgBOTTMxGqXIy90zp+Q==
@@ -2740,7 +2740,7 @@ async@^3.2.3, async@^3.2.4:
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz#1b0728e14929d51b85b449b7f06e27c1145e38ce"
   integrity sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==
 
-autoprefixer@^10.4.21:
+autoprefixer@10.4.21:
   version "10.4.21"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.21.tgz#77189468e7a8ad1d9a37fbc08efc9f480cf0a95d"
   integrity sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==
@@ -2939,14 +2939,14 @@ chalk@^4.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chart.js@^4.5.0:
+chart.js@4.5.1:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.5.1.tgz#19dd1a9a386a3f6397691672231cb5fc9c052c35"
   integrity sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==
   dependencies:
     "@kurkle/color" "^0.3.0"
 
-chartjs-plugin-datalabels@^2.2.0:
+chartjs-plugin-datalabels@2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/chartjs-plugin-datalabels/-/chartjs-plugin-datalabels-2.2.0.tgz#369578e131d743c2e34b5fbe2d3f9335f6639b8f"
   integrity sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==
@@ -3981,7 +3981,7 @@ esutils@^2.0.2:
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-exceljs@^4.4.0:
+exceljs@4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/exceljs/-/exceljs-4.4.0.tgz#cfb1cb8dcc82c760a9fc9faa9e52dadab66b0156"
   integrity sha512-XctvKaEMaj1Ii9oDOqbW/6e1gXknSY4g/aLCDicOXqBE4M0nRWkUu0PTp++UPNzoFY12BNHMfs/VadKIS6llvg==
@@ -4081,7 +4081,7 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
-file-saver@^2.0.5:
+file-saver@2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
   integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
@@ -5256,7 +5256,7 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
-lucide-react@^0.476.0:
+lucide-react@0.476.0:
   version "0.476.0"
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.476.0.tgz#a33354832ea85b2c3764faf09d85c9a9332f7f60"
   integrity sha512-x6cLTk8gahdUPje0hSgLN1/MgiJH+Xl90Xoxy9bkPAsMPOUiyRSKR4JCDPGVCEpyqnZXH3exFWNItcvra9WzUQ==
@@ -5420,7 +5420,7 @@ next-themes@0.3.0:
   resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.3.0.tgz#b4d2a866137a67d42564b07f3a3e720e2ff3871a"
   integrity sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==
 
-next@^15.3.0-canary.14:
+next@15.3.0-canary.17:
   version "15.3.0-canary.17"
   resolved "https://registry.yarnpkg.com/next/-/next-15.3.0-canary.17.tgz#df49526cc913a6a749019965474095c1f1c54fb5"
   integrity sha512-uTQPf+80W7n4ZZIStulH2NtXd7fvoWNNbBIXZrnhNXm0BYe9Vhuc2Ov8GS5NezRGZ7ifJdjND9Da+S1u8qdiAw==
@@ -5916,12 +5916,12 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier-plugin-organize-imports@^4.1.0:
+prettier-plugin-organize-imports@4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/prettier-plugin-organize-imports/-/prettier-plugin-organize-imports-4.1.0.tgz#f3d3764046a8e7ba6491431158b9be6ffd83b90f"
   integrity sha512-5aWRdCgv645xaa58X8lOxzZoiHAldAPChljr/MT0crXVOWTZ+Svl4hIWlz+niYSlO6ikE5UXkN1JrRvIP2ut0A==
 
-prettier@^3.5.3:
+prettier@3.5.3:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.5.3.tgz#4fc2ce0d657e7a02e602549f053b239cb7dfe1b5"
   integrity sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==
@@ -6054,7 +6054,7 @@ radio-symbol@^2.0.0:
     ansi-green "^0.1.1"
     is-windows "^1.0.1"
 
-react-chartjs-2@^5.3.0:
+react-chartjs-2@5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-5.3.0.tgz#2d3286339a742bc7f77b5829c33ebab215f714cc"
   integrity sha512-UfZZFnDsERI3c3CZGxzvNJd02SHjaSJ8kgW1djn65H1KK8rehwTjyrRKOG3VTMG8wtHZ5rgAO5oTHtHi9GCCmw==
